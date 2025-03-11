@@ -4,9 +4,16 @@
  */
 package alumno;
 
+import conexion.Conexion;
 import java.awt.Image;
 import java.awt.Toolkit;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javax.swing.ImageIcon;
+import javax.swing.JOptionPane;
 import javax.swing.SwingUtilities;
 
 /**
@@ -45,6 +52,31 @@ public class Login_alumno extends javax.swing.JFrame {
          Image icon_inscripcion = Toolkit.getDefaultToolkit().getImage(getClass().getResource("/img/icon_inscripcion.jpg"));
          lb_icon_inscripcion.setIcon(new ImageIcon(icon_inscripcion.getScaledInstance(lb_icon_inscripcion.getWidth(), lb_icon_inscripcion.getHeight(), Image.SCALE_SMOOTH)));
     }
+    
+    public void iniciar_sesion(String numControl, String password) throws SQLException {
+        Conexion cx = new Conexion();//Variable para la conexion a la base de datos
+        
+        //Creaciond de consulta segura con Prepared
+        String query = "SELECT * FROM alumno WHERE num_control = ? and password = ?";
+        //Preparar consulta
+        PreparedStatement ps = cx.conectar().prepareStatement(query);
+        ps.setString(1, numControl);
+        ps.setString(2, password);
+        //Executar consulta
+        ResultSet rs = ps.executeQuery();
+        
+        //Si los datos del alumno son correctos redigir al menu de Alumnos
+        if(rs.next()){
+            MenuAlumno ventana = new MenuAlumno();
+            ventana.setVisible(true);
+            this.dispose();
+        }
+        //Si los datos no son correctos
+        else{
+             JOptionPane.showMessageDialog(null, "Numero de control o contraseña incorrectos", "Usuario no valido", JOptionPane.ERROR_MESSAGE);
+            return;
+        }
+    }
 
     /**
      * This method is called from within the constructor to initialize the form.
@@ -60,15 +92,17 @@ public class Login_alumno extends javax.swing.JFrame {
         jPanel2 = new javax.swing.JPanel();
         lb_alumno_icon = new javax.swing.JLabel();
         entrada_numControl = new javax.swing.JTextField();
-        entrada_password = new javax.swing.JPasswordField();
+        password_entrada = new javax.swing.JPasswordField();
         lb_password = new javax.swing.JLabel();
         lb_numControl = new javax.swing.JLabel();
         btn_soporte = new javax.swing.JButton();
         btn_registro = new javax.swing.JButton();
         lb_icon_inscripcion = new javax.swing.JLabel();
         btn_iniciarSesion = new javax.swing.JButton();
+        mostrar_password = new javax.swing.JCheckBox();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
+        setResizable(false);
         getContentPane().setLayout(new org.netbeans.lib.awtextra.AbsoluteLayout());
 
         jPanel1.setBackground(new java.awt.Color(255, 255, 255));
@@ -86,7 +120,7 @@ public class Login_alumno extends javax.swing.JFrame {
         lb_alumno_icon.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
         jPanel2.add(lb_alumno_icon, new org.netbeans.lib.awtextra.AbsoluteConstraints(140, 30, 160, 160));
         jPanel2.add(entrada_numControl, new org.netbeans.lib.awtextra.AbsoluteConstraints(50, 240, 360, 50));
-        jPanel2.add(entrada_password, new org.netbeans.lib.awtextra.AbsoluteConstraints(50, 340, 360, 50));
+        jPanel2.add(password_entrada, new org.netbeans.lib.awtextra.AbsoluteConstraints(50, 340, 360, 50));
 
         lb_password.setFont(new java.awt.Font("Segoe UI", 0, 18)); // NOI18N
         lb_password.setText("Contraseña");
@@ -99,12 +133,17 @@ public class Login_alumno extends javax.swing.JFrame {
         btn_soporte.setBackground(new java.awt.Color(153, 153, 153));
         btn_soporte.setFont(new java.awt.Font("Segoe UI", 1, 14)); // NOI18N
         btn_soporte.setText("?       SOPORTE");
-        jPanel2.add(btn_soporte, new org.netbeans.lib.awtextra.AbsoluteConstraints(30, 430, 210, 40));
+        jPanel2.add(btn_soporte, new org.netbeans.lib.awtextra.AbsoluteConstraints(30, 450, 210, 40));
 
         btn_registro.setBackground(new java.awt.Color(0, 255, 0));
         btn_registro.setFont(new java.awt.Font("Segoe UI", 1, 18)); // NOI18N
         btn_registro.setForeground(new java.awt.Color(255, 255, 255));
         btn_registro.setText("Registro");
+        btn_registro.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btn_registroActionPerformed(evt);
+            }
+        });
         jPanel2.add(btn_registro, new org.netbeans.lib.awtextra.AbsoluteConstraints(570, 250, 190, 40));
 
         lb_icon_inscripcion.setText("jLabel1");
@@ -114,12 +153,63 @@ public class Login_alumno extends javax.swing.JFrame {
         btn_iniciarSesion.setFont(new java.awt.Font("Segoe UI", 1, 14)); // NOI18N
         btn_iniciarSesion.setForeground(new java.awt.Color(255, 255, 255));
         btn_iniciarSesion.setText("Iniciar sesión");
-        jPanel2.add(btn_iniciarSesion, new org.netbeans.lib.awtextra.AbsoluteConstraints(310, 430, 220, 40));
+        btn_iniciarSesion.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btn_iniciarSesionActionPerformed(evt);
+            }
+        });
+        jPanel2.add(btn_iniciarSesion, new org.netbeans.lib.awtextra.AbsoluteConstraints(310, 450, 220, 40));
+
+        mostrar_password.setText("Mostrar contraseña");
+        mostrar_password.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                mostrar_passwordActionPerformed(evt);
+            }
+        });
+        jPanel2.add(mostrar_password, new org.netbeans.lib.awtextra.AbsoluteConstraints(140, 400, -1, -1));
 
         getContentPane().add(jPanel2, new org.netbeans.lib.awtextra.AbsoluteConstraints(0, 80, 800, 520));
 
         pack();
     }// </editor-fold>//GEN-END:initComponents
+
+    private void mostrar_passwordActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_mostrar_passwordActionPerformed
+        //boton para mostrar y ocultar contraseña
+        if (mostrar_password.isSelected()) {
+            // Mostrar la contraseña en texto
+            password_entrada.setEchoChar((char) 0);
+            password_entrada.requestFocusInWindow();
+        } else {
+            // Ocultar la contraseña con el carácter por defecto (asterisco)
+            password_entrada.setEchoChar('*');
+            password_entrada.requestFocusInWindow();
+        }
+    }//GEN-LAST:event_mostrar_passwordActionPerformed
+
+    private void btn_iniciarSesionActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btn_iniciarSesionActionPerformed
+        //Almacena los valores de entrada
+        String numControl = entrada_numControl.getText().trim();
+        String password = String.valueOf(password_entrada.getPassword());
+        
+        //Valida que los campos no sean vacios
+        if(numControl.isEmpty() || password.isEmpty()){
+           JOptionPane.showMessageDialog(null, "Por favor ingrese usuario y contraseña", "Campos Vacios", JOptionPane.ERROR_MESSAGE);
+            return;
+       }
+        
+        try { 
+            iniciar_sesion(numControl,password);
+        } catch (SQLException ex) {
+            Logger.getLogger(Login_alumno.class.getName()).log(Level.SEVERE, null, ex);
+        }
+    }//GEN-LAST:event_btn_iniciarSesionActionPerformed
+
+    private void btn_registroActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btn_registroActionPerformed
+        //Redirigir a la seccion de inscripcion
+        InscripcionAlumno ventana = new InscripcionAlumno();
+        ventana.setVisible(true);
+        this.dispose();
+    }//GEN-LAST:event_btn_registroActionPerformed
 
     /**
      * @param args the command line arguments
@@ -161,7 +251,6 @@ public class Login_alumno extends javax.swing.JFrame {
     private javax.swing.JButton btn_registro;
     private javax.swing.JButton btn_soporte;
     private javax.swing.JTextField entrada_numControl;
-    private javax.swing.JPasswordField entrada_password;
     private javax.swing.JPanel jPanel1;
     private javax.swing.JPanel jPanel2;
     private javax.swing.JLabel lb_alumno_icon;
@@ -169,5 +258,7 @@ public class Login_alumno extends javax.swing.JFrame {
     private javax.swing.JLabel lb_numControl;
     private javax.swing.JLabel lb_password;
     private javax.swing.JLabel logo_ita;
+    private javax.swing.JCheckBox mostrar_password;
+    private javax.swing.JPasswordField password_entrada;
     // End of variables declaration//GEN-END:variables
 }
