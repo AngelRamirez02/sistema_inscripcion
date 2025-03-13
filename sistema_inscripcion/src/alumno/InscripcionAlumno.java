@@ -149,40 +149,46 @@ public class InscripcionAlumno extends javax.swing.JFrame {
             String ine = guardar_pdf(ruta_ine.getText(), rutaCarpetaAlumno, "ine");
 
             // Preparar la consulta SQL
-            String sql = "INSERT INTO `alumno` (`num_control`, `carrera`, `nombres`, `apellido_paterno`, "
+            String sql = "INSERT INTO `alumno` (`num_control`, `carrera`,`semestre` ,`nombres`, `apellido_paterno`, "
                     + "`apellido_materno`, `genero`, `password`, `telefono`, `correo`, `codigo_postal`, "
                     + "`estado`, `municipio`, `colonia`, `calle`, `num_interior`, `num_exterior`) "
-                    + "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
+                    + "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
 
             PreparedStatement pstmt = cx.conectar().prepareStatement(sql);
             // Establecer los valores para cada parámetro
             pstmt.setString(1, numControl);
             pstmt.setString(2, entrada_carrera.getSelectedItem().toString());
-            pstmt.setString(3, valida.formatearNombresApellidos(entrada_nombres.getText()));
-            pstmt.setString(4, valida.formatearNombresApellidos(entrada_apellidoPaterno.getText()));
-            pstmt.setString(5, valida.formatearNombresApellidos(entrada_apellidoMaterno.getText()));
-            pstmt.setString(6, entrada_genero.getSelectedItem().toString());
-            pstmt.setString(7, "999");
-            pstmt.setString(8, entrada_telefono.getText());
-            pstmt.setString(9, entrada_correo.getText());
-            pstmt.setString(10, entrada_cp.getText());
-            pstmt.setString(11, entrada_estado.getSelectedItem().toString());
-            pstmt.setString(12, entrada_municipio.getSelectedItem().toString());
-            pstmt.setString(13, entrada_colonia.getSelectedItem().toString());
-            pstmt.setString(14, entrada_calle.getText());
-            pstmt.setString(15, entrada_numInterior.getText());
-            pstmt.setString(16, entrada_numExterior.getText());
+            pstmt.setString(3, "Primero");
+            pstmt.setString(4, valida.formatearNombresApellidos(entrada_nombres.getText()));
+            pstmt.setString(5, valida.formatearNombresApellidos(entrada_apellidoPaterno.getText()));
+            pstmt.setString(6, valida.formatearNombresApellidos(entrada_apellidoMaterno.getText()));
+            pstmt.setString(7, entrada_genero.getSelectedItem().toString());
+            pstmt.setString(8, "999");
+            pstmt.setString(9, entrada_telefono.getText());
+            pstmt.setString(10, entrada_correo.getText());
+            pstmt.setString(11, entrada_cp.getText());
+            pstmt.setString(12, entrada_estado.getSelectedItem().toString());
+            pstmt.setString(13, entrada_municipio.getSelectedItem().toString());
+            pstmt.setString(14, entrada_colonia.getSelectedItem().toString());
+            pstmt.setString(15, entrada_calle.getText());
+            pstmt.setString(16, entrada_numInterior.getText());
+            pstmt.setString(17, entrada_numExterior.getText());
             
              //Verifica que se realizó el registro
             int filas_insertadas = pstmt.executeUpdate();
             if(filas_insertadas >0){
                 alta_documentos(numControl, acta, certificado, curp, ine);
-                JOptionPane.showMessageDialog(null,"Datos registrados exitosamente", "Registro existoso", JOptionPane.INFORMATION_MESSAGE);
+                JOptionPane.showMessageDialog(null,"Datos registrados exitosamente\b"
+                        + "Numero de control asignado: "+numControl, "Registro existoso", JOptionPane.INFORMATION_MESSAGE);
                 
             }else{
                  JOptionPane.showMessageDialog(null,"Hubo un error al registrar los datos, intente otra vez", "Error en el registro", JOptionPane.WARNING_MESSAGE);
                  return;
             }
+        }
+        else{
+             JOptionPane.showMessageDialog(null,"Hubo un error al registrar los datos, intente otra vez", "Error en el registro", JOptionPane.WARNING_MESSAGE);
+                 return;
         }
 
     }
@@ -203,7 +209,7 @@ public class InscripcionAlumno extends javax.swing.JFrame {
         //Verifica que se realizó el registro
         int filas_insertadas = pstmt.executeUpdate();
         if (filas_insertadas > 0) {
-            JOptionPane.showMessageDialog(null, "Documentos cargados cone exito", "Registro existoso", JOptionPane.INFORMATION_MESSAGE);
+            JOptionPane.showMessageDialog(null, "Documentos cargados con exito", "Registro existoso", JOptionPane.INFORMATION_MESSAGE);
 
         } else {
             JOptionPane.showMessageDialog(null, "Hubo un error al registrar los docuemntos, intente otra vez", "Error en el registro", JOptionPane.WARNING_MESSAGE);
@@ -635,6 +641,11 @@ public class InscripcionAlumno extends javax.swing.JFrame {
             entrada_correo.requestFocusInWindow();
             return;
         }
+        if(!valida.validarNumeroTelefono(entrada_telefono.getText())){
+            JOptionPane.showMessageDialog(null, "Ingrese un numero de telefono valido", "Numero de telefono no valido", JOptionPane.WARNING_MESSAGE);
+            entrada_telefono.requestFocusInWindow();
+            return;
+        }
         if (!valida.cpValido(entrada_cp.getText())) {
             JOptionPane.showMessageDialog(null, "Ingrese un codigo postal valido", "Codigo postal no valido", JOptionPane.WARNING_MESSAGE);
             entrada_cp.requestFocusInWindow();    // Borde al tener foco;
@@ -653,6 +664,18 @@ public class InscripcionAlumno extends javax.swing.JFrame {
         if (!valida.numInteriorExteriorValido(entrada_numInterior.getText())) {
             JOptionPane.showMessageDialog(null, "Ingrese un numero exterior valido", "Numero interior no valido", JOptionPane.WARNING_MESSAGE);
             entrada_numInterior.requestFocusInWindow();    // Borde al tener foco;
+            return;
+        }       
+        if (ruta_acta.getText().isEmpty()) {
+            JOptionPane.showMessageDialog(null, "Debe cargar su acta de nacimiento en formato pdf para continuar", "No ha cargado documento", JOptionPane.WARNING_MESSAGE);
+            return;
+        }
+        if (ruta_certificado.getText().isEmpty()) {
+            JOptionPane.showMessageDialog(null, "Debe cargar su certificado de preparatoria en formato pdf para continuar", "No ha cargado documento", JOptionPane.WARNING_MESSAGE);
+            return;
+        }
+         if(ruta_curp.getText().isEmpty()){
+            JOptionPane.showMessageDialog(null, "Debe cargar su curp en formato pdf para continuar", "No ha cargado documento", JOptionPane.WARNING_MESSAGE);
             return;
         }
         try {

@@ -47,7 +47,40 @@ public class Validacion {
         Matcher matcher = pattern.matcher(num);
         return matcher.matches();//retorna el resultado de evaluar el correo con la expresion regular
     }
-    
+
+    /**
+    * Valida si una cadena de texto corresponde a un número de teléfono válido.
+    * Acepta formatos como:
+    * - +123456789012
+    * - 123-456-7890
+    * - (123) 456-7890
+    * - 123 456 7890
+    */
+    public boolean validarNumeroTelefono(String numeroTelefono) {
+        // Verificar que no sea null o vacío
+        if (numeroTelefono == null || numeroTelefono.trim().isEmpty()) {
+            return false;
+        }
+
+        // Verificar que no contenga puntos
+        if (numeroTelefono.contains(".")) {
+            return false;
+        }
+
+        // Eliminar espacios en blanco
+        numeroTelefono = numeroTelefono.trim();
+
+        // Patrones comunes para números de teléfono
+        String patron1 = "^\\+?[0-9]{10,15}$"; // Formato internacional: +123456789012 o 1234567890
+        String patron2 = "^\\(?[0-9]{3}\\)?[-]?[0-9]{3}[-]?[0-9]{4}$"; // Formatos: (123) 456-7890, 123-456-7890
+        String patron3 = "^\\(?[0-9]{3}\\)?\\s?[0-9]{3}\\s?[0-9]{4}$"; // Formato con espacios: 123 456 7890
+
+        // Verificar si coincide con alguno de los patrones
+        return numeroTelefono.matches(patron1)
+                || numeroTelefono.matches(patron2)
+                || numeroTelefono.matches(patron3);
+    }
+
     
     public String formatearNombresApellidos(String nombre) {
         if (nombre == null || nombre.isEmpty()) {

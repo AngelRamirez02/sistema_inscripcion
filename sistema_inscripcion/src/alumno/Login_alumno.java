@@ -5,6 +5,7 @@
 package alumno;
 
 import conexion.Conexion;
+import inicio.Inicio;
 import java.awt.Image;
 import java.awt.Toolkit;
 import java.sql.PreparedStatement;
@@ -100,6 +101,8 @@ public class Login_alumno extends javax.swing.JFrame {
         lb_icon_inscripcion = new javax.swing.JLabel();
         btn_iniciarSesion = new javax.swing.JButton();
         mostrar_password = new javax.swing.JCheckBox();
+        jLabel1 = new javax.swing.JLabel();
+        btn_regresar = new javax.swing.JButton();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
         setResizable(false);
@@ -168,6 +171,19 @@ public class Login_alumno extends javax.swing.JFrame {
         });
         jPanel2.add(mostrar_password, new org.netbeans.lib.awtextra.AbsoluteConstraints(140, 400, -1, -1));
 
+        jLabel1.setFont(new java.awt.Font("Segoe UI", 1, 24)); // NOI18N
+        jLabel1.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
+        jLabel1.setText("ALUMNO");
+        jPanel2.add(jLabel1, new org.netbeans.lib.awtextra.AbsoluteConstraints(150, 20, 510, 40));
+
+        btn_regresar.setText("Regresar");
+        btn_regresar.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btn_regresarActionPerformed(evt);
+            }
+        });
+        jPanel2.add(btn_regresar, new org.netbeans.lib.awtextra.AbsoluteConstraints(30, 20, 100, 30));
+
         getContentPane().add(jPanel2, new org.netbeans.lib.awtextra.AbsoluteConstraints(0, 80, 800, 520));
 
         pack();
@@ -211,6 +227,12 @@ public class Login_alumno extends javax.swing.JFrame {
         this.dispose();
     }//GEN-LAST:event_btn_registroActionPerformed
 
+    private void btn_regresarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btn_regresarActionPerformed
+        Inicio ventana = new Inicio();
+        ventana.setVisible(true);
+        this.dispose();
+    }//GEN-LAST:event_btn_regresarActionPerformed
+
     /**
      * @param args the command line arguments
      */
@@ -249,8 +271,10 @@ public class Login_alumno extends javax.swing.JFrame {
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton btn_iniciarSesion;
     private javax.swing.JButton btn_registro;
+    private javax.swing.JButton btn_regresar;
     private javax.swing.JButton btn_soporte;
     private javax.swing.JTextField entrada_numControl;
+    private javax.swing.JLabel jLabel1;
     private javax.swing.JPanel jPanel1;
     private javax.swing.JPanel jPanel2;
     private javax.swing.JLabel lb_alumno_icon;
