@@ -58,9 +58,10 @@ public class ModificarAlumno extends javax.swing.JFrame {
     
      //Funcion para toda la configuracion de la ventana 
     private void configuracion_ventana(){
-        
         //Centrar ventana
         this.setLocationRelativeTo(null);//La ventana aparece en el centro
+        //
+        panel_doc.setVisible(false);
     }
     
     
@@ -334,27 +335,13 @@ public class ModificarAlumno extends javax.swing.JFrame {
         jScrollPane1 = new javax.swing.JScrollPane();
         jPanel2 = new javax.swing.JPanel();
         jLabel1 = new javax.swing.JLabel();
-        ruta_acta = new javax.swing.JTextField();
-        btn_subir_acta = new javax.swing.JLabel();
-        ruta_certificado = new javax.swing.JTextField();
-        btn_subir_certificado = new javax.swing.JLabel();
-        ruta_curp = new javax.swing.JTextField();
-        btn_subir_curp = new javax.swing.JLabel();
-        ruta_ine = new javax.swing.JTextField();
-        btn_subir_ine = new javax.swing.JLabel();
-        jLabel2 = new javax.swing.JLabel();
-        lb_curp = new javax.swing.JLabel();
         jLabel4 = new javax.swing.JLabel();
-        lb_curp1 = new javax.swing.JLabel();
-        lb_curp2 = new javax.swing.JLabel();
         entrada_numControl = new javax.swing.JTextField();
         entrada_apellidoPaterno = new javax.swing.JTextField();
-        jLabel5 = new javax.swing.JLabel();
         jLabel6 = new javax.swing.JLabel();
         jLabel7 = new javax.swing.JLabel();
         entrada_carrera = new javax.swing.JComboBox<>();
         jLabel8 = new javax.swing.JLabel();
-        jLabel3 = new javax.swing.JLabel();
         jLabel9 = new javax.swing.JLabel();
         entrada_apellidoMaterno = new javax.swing.JTextField();
         entrada_telefono = new javax.swing.JTextField();
@@ -385,6 +372,22 @@ public class ModificarAlumno extends javax.swing.JFrame {
         jLabel21 = new javax.swing.JLabel();
         btn_registrar = new javax.swing.JButton();
         btn_cancelar = new javax.swing.JButton();
+        panel_doc = new javax.swing.JPanel();
+        jLabel2 = new javax.swing.JLabel();
+        jLabel5 = new javax.swing.JLabel();
+        ruta_acta = new javax.swing.JTextField();
+        lb_curp1 = new javax.swing.JLabel();
+        ruta_certificado = new javax.swing.JTextField();
+        lb_curp2 = new javax.swing.JLabel();
+        ruta_curp = new javax.swing.JTextField();
+        lb_curp = new javax.swing.JLabel();
+        ruta_ine = new javax.swing.JTextField();
+        jLabel3 = new javax.swing.JLabel();
+        btn_subir_ine = new javax.swing.JLabel();
+        btn_subir_acta = new javax.swing.JLabel();
+        btn_subir_certificado = new javax.swing.JLabel();
+        btn_subir_curp = new javax.swing.JLabel();
+        btn_regresar = new javax.swing.JButton();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
         setResizable(false);
@@ -410,97 +413,15 @@ public class ModificarAlumno extends javax.swing.JFrame {
         jLabel1.setText("DOMICILIO");
         jPanel2.add(jLabel1, new org.netbeans.lib.awtextra.AbsoluteConstraints(390, 1020, 370, 30));
 
-        ruta_acta.setEditable(false);
-        ruta_acta.setBackground(new java.awt.Color(204, 204, 204));
-        ruta_acta.setHorizontalAlignment(javax.swing.JTextField.CENTER);
-        ruta_acta.setBorder(null);
-        ruta_acta.setFocusable(false);
-        jPanel2.add(ruta_acta, new org.netbeans.lib.awtextra.AbsoluteConstraints(590, 110, 340, 40));
-
-        btn_subir_acta.setText("jLabel2");
-        btn_subir_acta.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
-        btn_subir_acta.addMouseListener(new java.awt.event.MouseAdapter() {
-            public void mousePressed(java.awt.event.MouseEvent evt) {
-                btn_subir_actaMousePressed(evt);
-            }
-        });
-        jPanel2.add(btn_subir_acta, new org.netbeans.lib.awtextra.AbsoluteConstraints(940, 90, 80, 80));
-
-        ruta_certificado.setEditable(false);
-        ruta_certificado.setBackground(new java.awt.Color(204, 204, 204));
-        ruta_certificado.setBorder(null);
-        ruta_certificado.setFocusable(false);
-        jPanel2.add(ruta_certificado, new org.netbeans.lib.awtextra.AbsoluteConstraints(590, 220, 340, 40));
-
-        btn_subir_certificado.setText("jLabel2");
-        btn_subir_certificado.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
-        btn_subir_certificado.addMouseListener(new java.awt.event.MouseAdapter() {
-            public void mousePressed(java.awt.event.MouseEvent evt) {
-                btn_subir_certificadoMousePressed(evt);
-            }
-        });
-        jPanel2.add(btn_subir_certificado, new org.netbeans.lib.awtextra.AbsoluteConstraints(940, 200, 80, 80));
-
-        ruta_curp.setEditable(false);
-        ruta_curp.setBackground(new java.awt.Color(204, 204, 204));
-        ruta_curp.setBorder(null);
-        ruta_curp.setFocusable(false);
-        jPanel2.add(ruta_curp, new org.netbeans.lib.awtextra.AbsoluteConstraints(590, 330, 340, 40));
-
-        btn_subir_curp.setText("jLabel2");
-        btn_subir_curp.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
-        btn_subir_curp.addMouseListener(new java.awt.event.MouseAdapter() {
-            public void mousePressed(java.awt.event.MouseEvent evt) {
-                btn_subir_curpMousePressed(evt);
-            }
-        });
-        jPanel2.add(btn_subir_curp, new org.netbeans.lib.awtextra.AbsoluteConstraints(940, 310, 80, 80));
-
-        ruta_ine.setEditable(false);
-        ruta_ine.setBackground(new java.awt.Color(204, 204, 204));
-        ruta_ine.setBorder(null);
-        ruta_ine.setFocusable(false);
-        jPanel2.add(ruta_ine, new org.netbeans.lib.awtextra.AbsoluteConstraints(590, 440, 340, 40));
-
-        btn_subir_ine.setText("jLabel2");
-        btn_subir_ine.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
-        btn_subir_ine.addMouseListener(new java.awt.event.MouseAdapter() {
-            public void mousePressed(java.awt.event.MouseEvent evt) {
-                btn_subir_ineMousePressed(evt);
-            }
-        });
-        jPanel2.add(btn_subir_ine, new org.netbeans.lib.awtextra.AbsoluteConstraints(940, 420, 80, 80));
-
-        jLabel2.setFont(new java.awt.Font("Segoe UI", 1, 24)); // NOI18N
-        jLabel2.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
-        jLabel2.setText("ACTUALIZAR ARCHIVOS");
-        jPanel2.add(jLabel2, new org.netbeans.lib.awtextra.AbsoluteConstraints(580, 20, 360, 20));
-
-        lb_curp.setFont(new java.awt.Font("Segoe UI", 1, 18)); // NOI18N
-        lb_curp.setText("INE");
-        jPanel2.add(lb_curp, new org.netbeans.lib.awtextra.AbsoluteConstraints(590, 410, -1, -1));
-
         jLabel4.setFont(new java.awt.Font("Segoe UI", 1, 18)); // NOI18N
         jLabel4.setText("Numero telefonico");
         jPanel2.add(jLabel4, new org.netbeans.lib.awtextra.AbsoluteConstraints(50, 770, -1, -1));
-
-        lb_curp1.setFont(new java.awt.Font("Segoe UI", 1, 18)); // NOI18N
-        lb_curp1.setText("Certificado de bachillerato");
-        jPanel2.add(lb_curp1, new org.netbeans.lib.awtextra.AbsoluteConstraints(590, 190, -1, -1));
-
-        lb_curp2.setFont(new java.awt.Font("Segoe UI", 1, 18)); // NOI18N
-        lb_curp2.setText("Curp");
-        jPanel2.add(lb_curp2, new org.netbeans.lib.awtextra.AbsoluteConstraints(590, 300, -1, -1));
-        jPanel2.add(entrada_numControl, new org.netbeans.lib.awtextra.AbsoluteConstraints(50, 100, 370, 50));
+        jPanel2.add(entrada_numControl, new org.netbeans.lib.awtextra.AbsoluteConstraints(50, 110, 370, 50));
         jPanel2.add(entrada_apellidoPaterno, new org.netbeans.lib.awtextra.AbsoluteConstraints(50, 290, 370, 50));
-
-        jLabel5.setFont(new java.awt.Font("Segoe UI", 1, 18)); // NOI18N
-        jLabel5.setText("Acta de nacimiento");
-        jPanel2.add(jLabel5, new org.netbeans.lib.awtextra.AbsoluteConstraints(590, 80, -1, -1));
 
         jLabel6.setFont(new java.awt.Font("Segoe UI", 1, 18)); // NOI18N
         jLabel6.setText("Numero de control");
-        jPanel2.add(jLabel6, new org.netbeans.lib.awtextra.AbsoluteConstraints(50, 70, -1, -1));
+        jPanel2.add(jLabel6, new org.netbeans.lib.awtextra.AbsoluteConstraints(50, 80, -1, -1));
 
         jLabel7.setFont(new java.awt.Font("Segoe UI", 1, 18)); // NOI18N
         jLabel7.setText("Apellido paterno");
@@ -513,12 +434,6 @@ public class ModificarAlumno extends javax.swing.JFrame {
         jLabel8.setFont(new java.awt.Font("Segoe UI", 1, 18)); // NOI18N
         jLabel8.setText("Apellido materno");
         jPanel2.add(jLabel8, new org.netbeans.lib.awtextra.AbsoluteConstraints(50, 360, -1, -1));
-
-        jLabel3.setFont(new java.awt.Font("Segoe UI", 1, 12)); // NOI18N
-        jLabel3.setForeground(new java.awt.Color(255, 0, 0));
-        jLabel3.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
-        jLabel3.setText("* Nota: debe digitalizar cuando menos tres para poder inscribrse");
-        jPanel2.add(jLabel3, new org.netbeans.lib.awtextra.AbsoluteConstraints(580, 500, 380, 30));
 
         jLabel9.setFont(new java.awt.Font("Segoe UI", 1, 18)); // NOI18N
         jLabel9.setText("Fecha de Nacimiento");
@@ -533,7 +448,7 @@ public class ModificarAlumno extends javax.swing.JFrame {
         jLabel11.setFont(new java.awt.Font("Segoe UI", 1, 24)); // NOI18N
         jLabel11.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
         jLabel11.setText("DATOS PERSONALES");
-        jPanel2.add(jLabel11, new org.netbeans.lib.awtextra.AbsoluteConstraints(40, 20, 370, 30));
+        jPanel2.add(jLabel11, new org.netbeans.lib.awtextra.AbsoluteConstraints(40, 40, 370, 30));
         jPanel2.add(entrada_correo, new org.netbeans.lib.awtextra.AbsoluteConstraints(50, 920, 370, 50));
 
         jLabel12.setFont(new java.awt.Font("Segoe UI", 1, 18)); // NOI18N
@@ -636,6 +551,107 @@ public class ModificarAlumno extends javax.swing.JFrame {
             }
         });
         jPanel2.add(btn_cancelar, new org.netbeans.lib.awtextra.AbsoluteConstraints(580, 1370, 180, 40));
+
+        panel_doc.setBackground(new java.awt.Color(255, 255, 255));
+        panel_doc.setLayout(new org.netbeans.lib.awtextra.AbsoluteLayout());
+
+        jLabel2.setFont(new java.awt.Font("Segoe UI", 1, 24)); // NOI18N
+        jLabel2.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
+        jLabel2.setText("ACTUALIZAR ARCHIVOS");
+        panel_doc.add(jLabel2, new org.netbeans.lib.awtextra.AbsoluteConstraints(60, 10, 360, 40));
+
+        jLabel5.setFont(new java.awt.Font("Segoe UI", 1, 18)); // NOI18N
+        jLabel5.setText("Acta de nacimiento");
+        panel_doc.add(jLabel5, new org.netbeans.lib.awtextra.AbsoluteConstraints(70, 60, -1, -1));
+
+        ruta_acta.setEditable(false);
+        ruta_acta.setBackground(new java.awt.Color(204, 204, 204));
+        ruta_acta.setHorizontalAlignment(javax.swing.JTextField.CENTER);
+        ruta_acta.setBorder(null);
+        ruta_acta.setFocusable(false);
+        panel_doc.add(ruta_acta, new org.netbeans.lib.awtextra.AbsoluteConstraints(70, 90, 340, 40));
+
+        lb_curp1.setFont(new java.awt.Font("Segoe UI", 1, 18)); // NOI18N
+        lb_curp1.setText("Certificado de bachillerato");
+        panel_doc.add(lb_curp1, new org.netbeans.lib.awtextra.AbsoluteConstraints(70, 160, -1, -1));
+
+        ruta_certificado.setEditable(false);
+        ruta_certificado.setBackground(new java.awt.Color(204, 204, 204));
+        ruta_certificado.setBorder(null);
+        ruta_certificado.setFocusable(false);
+        panel_doc.add(ruta_certificado, new org.netbeans.lib.awtextra.AbsoluteConstraints(70, 200, 340, 40));
+
+        lb_curp2.setFont(new java.awt.Font("Segoe UI", 1, 18)); // NOI18N
+        lb_curp2.setText("Curp");
+        panel_doc.add(lb_curp2, new org.netbeans.lib.awtextra.AbsoluteConstraints(80, 270, -1, -1));
+
+        ruta_curp.setEditable(false);
+        ruta_curp.setBackground(new java.awt.Color(204, 204, 204));
+        ruta_curp.setBorder(null);
+        ruta_curp.setFocusable(false);
+        panel_doc.add(ruta_curp, new org.netbeans.lib.awtextra.AbsoluteConstraints(80, 300, 340, 40));
+
+        lb_curp.setFont(new java.awt.Font("Segoe UI", 1, 18)); // NOI18N
+        lb_curp.setText("INE");
+        panel_doc.add(lb_curp, new org.netbeans.lib.awtextra.AbsoluteConstraints(80, 390, -1, -1));
+
+        ruta_ine.setEditable(false);
+        ruta_ine.setBackground(new java.awt.Color(204, 204, 204));
+        ruta_ine.setBorder(null);
+        ruta_ine.setFocusable(false);
+        panel_doc.add(ruta_ine, new org.netbeans.lib.awtextra.AbsoluteConstraints(80, 430, 340, 40));
+
+        jLabel3.setFont(new java.awt.Font("Segoe UI", 1, 12)); // NOI18N
+        jLabel3.setForeground(new java.awt.Color(255, 0, 0));
+        jLabel3.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
+        jLabel3.setText("* Nota: debe digitalizar cuando menos tres para poder inscribrse");
+        panel_doc.add(jLabel3, new org.netbeans.lib.awtextra.AbsoluteConstraints(70, 490, 380, 30));
+
+        btn_subir_ine.setText("jLabel2");
+        btn_subir_ine.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
+        btn_subir_ine.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mousePressed(java.awt.event.MouseEvent evt) {
+                btn_subir_ineMousePressed(evt);
+            }
+        });
+        panel_doc.add(btn_subir_ine, new org.netbeans.lib.awtextra.AbsoluteConstraints(430, 400, 80, 80));
+
+        btn_subir_acta.setText("jLabel2");
+        btn_subir_acta.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
+        btn_subir_acta.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mousePressed(java.awt.event.MouseEvent evt) {
+                btn_subir_actaMousePressed(evt);
+            }
+        });
+        panel_doc.add(btn_subir_acta, new org.netbeans.lib.awtextra.AbsoluteConstraints(420, 70, 80, 80));
+
+        btn_subir_certificado.setText("jLabel2");
+        btn_subir_certificado.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
+        btn_subir_certificado.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mousePressed(java.awt.event.MouseEvent evt) {
+                btn_subir_certificadoMousePressed(evt);
+            }
+        });
+        panel_doc.add(btn_subir_certificado, new org.netbeans.lib.awtextra.AbsoluteConstraints(430, 180, 80, 80));
+
+        btn_subir_curp.setText("jLabel2");
+        btn_subir_curp.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
+        btn_subir_curp.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mousePressed(java.awt.event.MouseEvent evt) {
+                btn_subir_curpMousePressed(evt);
+            }
+        });
+        panel_doc.add(btn_subir_curp, new org.netbeans.lib.awtextra.AbsoluteConstraints(430, 290, 80, 80));
+
+        jPanel2.add(panel_doc, new org.netbeans.lib.awtextra.AbsoluteConstraints(510, 20, 520, 550));
+
+        btn_regresar.setText("Regresar");
+        btn_regresar.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btn_regresarActionPerformed(evt);
+            }
+        });
+        jPanel2.add(btn_regresar, new org.netbeans.lib.awtextra.AbsoluteConstraints(10, 10, 100, 30));
 
         jScrollPane1.setViewportView(jPanel2);
 
@@ -797,6 +813,16 @@ public class ModificarAlumno extends javax.swing.JFrame {
         }
     }//GEN-LAST:event_btn_cancelarActionPerformed
 
+    private void btn_regresarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btn_regresarActionPerformed
+        try {
+            SeccionAlumnos ventana = new SeccionAlumnos(this.rfc_coordinador);
+            ventana.setVisible(true);
+            this.dispose();
+        } catch (SQLException ex) {
+            Logger.getLogger(ModificarAlumno.class.getName()).log(Level.SEVERE, null, ex);
+        }
+    }//GEN-LAST:event_btn_regresarActionPerformed
+
     /**
      * @param args the command line arguments
      */
@@ -837,6 +863,7 @@ public class ModificarAlumno extends javax.swing.JFrame {
     private javax.swing.JButton btn_buscarCodigoPostal;
     private javax.swing.JButton btn_cancelar;
     private javax.swing.JButton btn_registrar;
+    private javax.swing.JButton btn_regresar;
     private javax.swing.JLabel btn_subir_acta;
     private javax.swing.JLabel btn_subir_certificado;
     private javax.swing.JLabel btn_subir_curp;
@@ -886,6 +913,7 @@ public class ModificarAlumno extends javax.swing.JFrame {
     private javax.swing.JLabel lb_curp1;
     private javax.swing.JLabel lb_curp2;
     private javax.swing.JLabel logo_ita;
+    private javax.swing.JPanel panel_doc;
     private javax.swing.JTextField ruta_acta;
     private javax.swing.JTextField ruta_certificado;
     private javax.swing.JTextField ruta_curp;

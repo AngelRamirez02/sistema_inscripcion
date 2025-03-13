@@ -326,6 +326,7 @@ public class InscripcionAlumno extends javax.swing.JFrame {
         entrada_colonia = new javax.swing.JComboBox<>();
         entrada_fechaNacimiento = new com.toedter.calendar.JDateChooser();
         jLabel20 = new javax.swing.JLabel();
+        btn_regresar = new javax.swing.JButton();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
         setResizable(false);
@@ -463,7 +464,7 @@ public class InscripcionAlumno extends javax.swing.JFrame {
                 btn_registrarActionPerformed(evt);
             }
         });
-        jPanel2.add(btn_registrar, new org.netbeans.lib.awtextra.AbsoluteConstraints(520, 1230, 180, 40));
+        jPanel2.add(btn_registrar, new org.netbeans.lib.awtextra.AbsoluteConstraints(460, 1230, 180, 40));
 
         jLabel3.setFont(new java.awt.Font("Segoe UI", 1, 12)); // NOI18N
         jLabel3.setForeground(new java.awt.Color(255, 0, 0));
@@ -552,6 +553,14 @@ public class InscripcionAlumno extends javax.swing.JFrame {
         jLabel20.setFont(new java.awt.Font("Segoe UI", 1, 18)); // NOI18N
         jLabel20.setText("Apellido materno");
         jPanel2.add(jLabel20, new org.netbeans.lib.awtextra.AbsoluteConstraints(40, 290, -1, -1));
+
+        btn_regresar.setText("Regresar");
+        btn_regresar.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btn_regresarActionPerformed(evt);
+            }
+        });
+        jPanel2.add(btn_regresar, new org.netbeans.lib.awtextra.AbsoluteConstraints(10, 10, 100, 30));
 
         jScrollPane1.setViewportView(jPanel2);
 
@@ -699,6 +708,12 @@ public class InscripcionAlumno extends javax.swing.JFrame {
         }
     }//GEN-LAST:event_btn_registrarActionPerformed
 
+    private void btn_regresarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btn_regresarActionPerformed
+        Login_alumno ventana = new Login_alumno();
+        ventana.setVisible(true);
+        this.dispose();
+    }//GEN-LAST:event_btn_regresarActionPerformed
+
     /**
      * @param args the command line arguments
      */
@@ -737,6 +752,7 @@ public class InscripcionAlumno extends javax.swing.JFrame {
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton btn_buscarCodigoPostal;
     private javax.swing.JButton btn_registrar;
+    private javax.swing.JButton btn_regresar;
     private javax.swing.JLabel btn_subir_acta;
     private javax.swing.JLabel btn_subir_certificado;
     private javax.swing.JLabel btn_subir_curp;

@@ -4,17 +4,25 @@
  */
 package coordinador;
 
+import com.itextpdf.text.DocumentException;
 import maestro.*;
 import conexion.Conexion;
 import coordinador.*;
+import java.awt.Dimension;
 import java.awt.Image;
 import java.awt.Toolkit;
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.IOException;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.swing.ImageIcon;
+import javax.swing.JFileChooser;
 import javax.swing.JOptionPane;
 import javax.swing.JScrollBar;
 import javax.swing.SwingUtilities;
@@ -23,13 +31,18 @@ import javax.swing.SwingUtilities;
  *
  * @author ar275
  */
+    
+
 public class SeccionAlumnos extends javax.swing.JFrame {
+
+    public List<AlumnosPDF> listAlumnos = new ArrayList<AlumnosPDF>();
     Conexion cx = new Conexion();
-   private  String rfc_coordinador;
-   
+    private String rfc_coordinador;
+    AlumnosPDF x;
+
     public SeccionAlumnos(String rfc) throws SQLException {
         this.rfc_coordinador = rfc;
-        
+
         initComponents();
         configuracion_ventana();
         cargar_img();
@@ -51,7 +64,10 @@ public class SeccionAlumnos extends javax.swing.JFrame {
         logo_ita.setIcon(new ImageIcon(logo_ita_img.getScaledInstance(logo_ita.getWidth(), logo_ita.getHeight(), Image.SCALE_SMOOTH)));
         
         Image img_buscar = Toolkit.getDefaultToolkit().getImage(getClass().getResource("/img/icon_buscar.png"));
-        icon_buscar.setIcon(new ImageIcon(img_buscar.getScaledInstance(icon_buscar.getWidth(), icon_buscar.getHeight(), Image.SCALE_SMOOTH)));       
+        icon_buscar.setIcon(new ImageIcon(img_buscar.getScaledInstance(icon_buscar.getWidth(), icon_buscar.getHeight(), Image.SCALE_SMOOTH))); 
+        
+        Image img_descarga = Toolkit.getDefaultToolkit().getImage(getClass().getResource("/img/descarga_icono.png"));
+        btn_descargarPDF.setIcon(new ImageIcon(img_descarga.getScaledInstance(btn_descargarPDF.getWidth(), btn_descargarPDF.getHeight(), Image.SCALE_SMOOTH)));
     }
     
     private void buscar_alumno(String numControl) throws SQLException {
@@ -106,8 +122,24 @@ public class SeccionAlumnos extends javax.swing.JFrame {
             System.out.println(ex);
         }
     }
-    private void cargarDatoAlumnos(String numControl){
-        String sql  = "SELECT num_control,nombres, apellido_paterno, apellido_materno, carrera, semestre FROM alumno";
+
+    private void cargarDatoAlumnos() throws SQLException {
+        String sql = "SELECT num_control,nombres, apellido_paterno, apellido_materno, fecha_nacimiento,carrera, semestre FROM alumno";
+        PreparedStatement ps = cx.conectar().prepareStatement(sql);
+        ResultSet rs = ps.executeQuery();
+        Object[] alumno = new Object[7];
+        while (rs.next()) {
+            //se obtienen los datos de la tabla
+            alumno[0] = rs.getString("num_control");
+            alumno[1] = rs.getString("apellido_paterno");
+            alumno[2] = rs.getString("apellido_materno");
+            alumno[3] = rs.getString("nombres");
+            alumno[4] = rs.getDate("fecha_nacimiento").toString();
+            alumno[5] = rs.getString("carrera");
+            alumno[6] = rs.getString("semestre");
+            x = new AlumnosPDF(alumno[0].toString(), alumno[1].toString(), alumno[2].toString(), alumno[3].toString(), alumno[4].toString(), alumno[5].toString(), alumno[6].toString());
+            listAlumnos.add(x);
+        }
     }
     /**
      * This method is called from within the constructor to initialize the form.
@@ -151,7 +183,6 @@ public class SeccionAlumnos extends javax.swing.JFrame {
         estado = new javax.swing.JTextField();
         titulo_calle = new javax.swing.JTextField();
         calle = new javax.swing.JTextField();
-        lb_datosAlumno2 = new javax.swing.JLabel();
         titulo_numInterior = new javax.swing.JTextField();
         titulo_numExterior = new javax.swing.JTextField();
         num_exterior = new javax.swing.JTextField();
@@ -159,15 +190,12 @@ public class SeccionAlumnos extends javax.swing.JFrame {
         btn_eliminar = new javax.swing.JButton();
         btn_editar = new javax.swing.JButton();
         lb_datosAlumno3 = new javax.swing.JLabel();
-        jLabel1 = new javax.swing.JLabel();
-        jLabel2 = new javax.swing.JLabel();
-        jLabel3 = new javax.swing.JLabel();
-        jLabel4 = new javax.swing.JLabel();
         titulo_calle1 = new javax.swing.JTextField();
         codigo_postal = new javax.swing.JTextField();
         titulo_fechaNacimiento = new javax.swing.JTextField();
         fecha_nacimiento = new javax.swing.JTextField();
         btn_descargarPDF = new javax.swing.JLabel();
+        btn_regresar = new javax.swing.JButton();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
         setBackground(new java.awt.Color(255, 255, 255));
@@ -424,10 +452,6 @@ public class SeccionAlumnos extends javax.swing.JFrame {
         calle.setFocusable(false);
         panel_datos.add(calle, new org.netbeans.lib.awtextra.AbsoluteConstraints(100, 560, 230, 40));
 
-        lb_datosAlumno2.setFont(new java.awt.Font("Roboto", 1, 24)); // NOI18N
-        lb_datosAlumno2.setText("Documentos");
-        panel_datos.add(lb_datosAlumno2, new org.netbeans.lib.awtextra.AbsoluteConstraints(100, 610, 350, 40));
-
         titulo_numInterior.setEditable(false);
         titulo_numInterior.setBackground(new java.awt.Color(102, 102, 255));
         titulo_numInterior.setFont(new java.awt.Font("Roboto", 1, 14)); // NOI18N
@@ -488,18 +512,6 @@ public class SeccionAlumnos extends javax.swing.JFrame {
         lb_datosAlumno3.setText("Domicilio");
         panel_datos.add(lb_datosAlumno3, new org.netbeans.lib.awtextra.AbsoluteConstraints(100, 380, 350, 40));
 
-        jLabel1.setText("jLabel1");
-        panel_datos.add(jLabel1, new org.netbeans.lib.awtextra.AbsoluteConstraints(900, 670, 230, 40));
-
-        jLabel2.setText("jLabel1");
-        panel_datos.add(jLabel2, new org.netbeans.lib.awtextra.AbsoluteConstraints(100, 670, 230, 40));
-
-        jLabel3.setText("jLabel1");
-        panel_datos.add(jLabel3, new org.netbeans.lib.awtextra.AbsoluteConstraints(390, 670, 230, 40));
-
-        jLabel4.setText("jLabel1");
-        panel_datos.add(jLabel4, new org.netbeans.lib.awtextra.AbsoluteConstraints(630, 680, 230, 40));
-
         titulo_calle1.setEditable(false);
         titulo_calle1.setBackground(new java.awt.Color(102, 102, 255));
         titulo_calle1.setFont(new java.awt.Font("Roboto", 1, 14)); // NOI18N
@@ -537,12 +549,21 @@ public class SeccionAlumnos extends javax.swing.JFrame {
         jPanel2.add(panel_datos, new org.netbeans.lib.awtextra.AbsoluteConstraints(0, 240, 1190, 910));
 
         btn_descargarPDF.setText("jLabel5");
+        btn_descargarPDF.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
         btn_descargarPDF.addMouseListener(new java.awt.event.MouseAdapter() {
             public void mousePressed(java.awt.event.MouseEvent evt) {
                 btn_descargarPDFMousePressed(evt);
             }
         });
-        jPanel2.add(btn_descargarPDF, new org.netbeans.lib.awtextra.AbsoluteConstraints(1030, 50, 100, 80));
+        jPanel2.add(btn_descargarPDF, new org.netbeans.lib.awtextra.AbsoluteConstraints(1030, 50, 100, 100));
+
+        btn_regresar.setText("Regresar");
+        btn_regresar.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btn_regresarActionPerformed(evt);
+            }
+        });
+        jPanel2.add(btn_regresar, new org.netbeans.lib.awtextra.AbsoluteConstraints(20, 20, 100, 30));
 
         contendor.setViewportView(jPanel2);
 
@@ -599,10 +620,47 @@ public class SeccionAlumnos extends javax.swing.JFrame {
     }//GEN-LAST:event_btn_editarActionPerformed
 
     private void btn_descargarPDFMousePressed(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_btn_descargarPDFMousePressed
-       if (SwingUtilities.isLeftMouseButton(evt)) {
-            
+        //generar pdf de los registros
+        if (SwingUtilities.isLeftMouseButton(evt)) {
+            //Mostrar interfaz para seleccionar la carpeta
+            JFileChooser fileChooser = new JFileChooser();
+            fileChooser.setPreferredSize(new Dimension(800, 600));//Tamño de la ventana
+            fileChooser.setDialogTitle("Seleccionar carpeta");
+            fileChooser.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY); // Solo permitir seleccionar carpetas
+            int opcion = fileChooser.showSaveDialog(null); // Mostrar el diálogo de guardar
+            //si selecciona una ruta valida
+            if (opcion == JFileChooser.APPROVE_OPTION) {
+                try {
+                    // Obtener la carpeta seleccionada por el usuario
+                    cargarDatoAlumnos();
+                } catch (SQLException ex) {
+                    Logger.getLogger(SeccionAlumnos.class.getName()).log(Level.SEVERE, null, ex);
+                }
+                File directorioSeleccionado = fileChooser.getSelectedFile();
+                String rutaCarpeta = directorioSeleccionado.getAbsolutePath();
+                try {
+                    x.PdfTodosLosAlumnos(listAlumnos, rutaCarpeta);
+                    //JOptionPane.showMessageDialog(null,"PDF guardado correctamente", "Reporte Generado",JOptionPane.INFORMATION_MESSAGE);
+                } catch (FileNotFoundException ex) {
+                    Logger.getLogger(SeccionAlumnos.class.getName()).log(Level.SEVERE, null, ex);
+                } catch (DocumentException ex) {
+                    Logger.getLogger(SeccionAlumnos.class.getName()).log(Level.SEVERE, null, ex);
+                } catch (IOException ex) {
+                    Logger.getLogger(SeccionAlumnos.class.getName()).log(Level.SEVERE, null, ex);
+                }
+            }
         }
     }//GEN-LAST:event_btn_descargarPDFMousePressed
+
+    private void btn_regresarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btn_regresarActionPerformed
+        try {
+            MenuCoordinador ventana = new MenuCoordinador(this.rfc_coordinador);
+            ventana.setVisible(true);
+            this.dispose();
+        } catch (SQLException ex) {
+            Logger.getLogger(ModificarAlumno.class.getName()).log(Level.SEVERE, null, ex);
+        }
+    }//GEN-LAST:event_btn_regresarActionPerformed
 
     /**
      * @param args the command line arguments
@@ -664,6 +722,7 @@ public class SeccionAlumnos extends javax.swing.JFrame {
     private javax.swing.JLabel btn_descargarPDF;
     private javax.swing.JButton btn_editar;
     private javax.swing.JButton btn_eliminar;
+    private javax.swing.JButton btn_regresar;
     private javax.swing.JTextField calle;
     private javax.swing.JTextField carrera;
     private javax.swing.JTextField codigo_postal;
@@ -673,14 +732,9 @@ public class SeccionAlumnos extends javax.swing.JFrame {
     private javax.swing.JTextField estado;
     private javax.swing.JTextField fecha_nacimiento;
     private javax.swing.JLabel icon_buscar;
-    private javax.swing.JLabel jLabel1;
-    private javax.swing.JLabel jLabel2;
-    private javax.swing.JLabel jLabel3;
-    private javax.swing.JLabel jLabel4;
     private javax.swing.JPanel jPanel1;
     private javax.swing.JPanel jPanel2;
     private javax.swing.JLabel lb_datosAlumno;
-    private javax.swing.JLabel lb_datosAlumno2;
     private javax.swing.JLabel lb_datosAlumno3;
     private javax.swing.JLabel lb_inicial;
     private javax.swing.JLabel logo_ita;

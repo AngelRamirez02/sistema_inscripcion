@@ -68,7 +68,7 @@ public class Login_alumno extends javax.swing.JFrame {
         
         //Si los datos del alumno son correctos redigir al menu de Alumnos
         if(rs.next()){
-            MenuAlumno ventana = new MenuAlumno();
+            MenuAlumno ventana = new MenuAlumno(numControl);
             ventana.setVisible(true);
             this.dispose();
         }
