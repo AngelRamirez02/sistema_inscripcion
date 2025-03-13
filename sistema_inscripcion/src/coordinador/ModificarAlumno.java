@@ -2,8 +2,9 @@
  * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
  * Click nbfs://nbhost/SystemFileSystem/Templates/GUIForms/JFrame.java to edit this template
  */
-package alumno;
+package coordinador;
 
+import alumno.*;
 import conexion.Conexion;
 import direccion.ObtenerDireccion;
 import java.awt.Dimension;
@@ -32,18 +33,23 @@ import validacion.Validacion;
  *
  * @author ar275
  */
-public class InscripcionAlumno extends javax.swing.JFrame {
+public class ModificarAlumno extends javax.swing.JFrame {
 
     /**
      * Creates new form InscripcionAlumno
      */
+    
+    private String rfc_coordinador;
+    private String numControl_original;
+    private String correo_original;
     
     Validacion valida = new Validacion();
     ObtenerDireccion direc;//objeto para obtener la direccion ¿
     Conexion cx = new Conexion();
     Alumno alum = new Alumno();
     
-    public InscripcionAlumno() {
+    public ModificarAlumno(String rfc) {
+        this.rfc_coordinador=rfc;
         initComponents();
         configuracion_ventana();
         cargar_img();
@@ -138,30 +144,29 @@ public class InscripcionAlumno extends javax.swing.JFrame {
     }
 
 
-    private void inscribir_alumno() throws SQLException {
+    private void actualizar_alumno() throws SQLException {
         //Obtener todos los datos de entrada
         Date fecha_nacimiento = entrada_fechaNacimiento.getDate();
         java.sql.Date fecha_sql = new java.sql.Date(fecha_nacimiento.getTime());
         
-        //Generar el numero de control del alumno
-        String numControl = alum.generarNumeroControl(codigoCarrera(entrada_carrera.getSelectedItem().toString()));
-        String rutaCarpetaAlumno = crear_carpetaAlumno(numControl);
+        
 
-        if (!rutaCarpetaAlumno.isEmpty()) {
-            String acta = guardar_pdf(ruta_acta.getText(), rutaCarpetaAlumno, "acta_nacimiento");
+        //if (!rutaCarpetaAlumno.isEmpty()) {
+            /*String acta = guardar_pdf(ruta_acta.getText(), rutaCarpetaAlumno, "acta_nacimiento");
             String certificado = guardar_pdf(ruta_certificado.getText(), rutaCarpetaAlumno, "certificado_bachillerato");
             String curp = guardar_pdf(ruta_curp.getText(), rutaCarpetaAlumno, "curp");
-            String ine = guardar_pdf(ruta_ine.getText(), rutaCarpetaAlumno, "ine");
+            String ine = guardar_pdf(ruta_ine.getText(), rutaCarpetaAlumno, "ine");*/
 
-            // Preparar la consulta SQL
-            String sql = "INSERT INTO `alumno` (`num_control`, `carrera`,`semestre` ,`nombres`, `apellido_paterno`, "
-                    + "`apellido_materno`, `genero`, `fecha_nacimiento`,`password`, `telefono`, `correo`, `codigo_postal`, "
-                    + "`estado`, `municipio`, `colonia`, `calle`, `num_interior`, `num_exterior`) "
-                    + "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?,?)";
+           
+            String sql = "UPDATE `alumno` SET `carrera` = ?, `semestre` = ?, `nombres` = ?, `apellido_paterno` = ?, "
+           + "`apellido_materno` = ?, `genero` = ?, `fecha_nacimiento` = ?, `password` = ?, `telefono` = ?, "
+           + "`correo` = ?, `codigo_postal` = ?, `estado` = ?, `municipio` = ?, `colonia` = ?, "
+           + "`calle` = ?, `num_interior` = ?, `num_exterior` = ? "
+           + "WHERE `num_control` = ?";
 
             PreparedStatement pstmt = cx.conectar().prepareStatement(sql);
             // Establecer los valores para cada parámetro
-            pstmt.setString(1, numControl);
+            pstmt.setString(1, entrada_numControl.getText());
             pstmt.setString(2, entrada_carrera.getSelectedItem().toString());
             pstmt.setString(3, "Primero");
             pstmt.setString(4, valida.formatearNombresApellidos(entrada_nombres.getText()));
@@ -180,22 +185,24 @@ public class InscripcionAlumno extends javax.swing.JFrame {
             pstmt.setString(17, entrada_numInterior.getText());
             pstmt.setString(18, entrada_numExterior.getText());
             
+            //Num de control a modificar
+            pstmt.setString(19, this.numControl_original);
+            
              //Verifica que se realizó el registro
             int filas_insertadas = pstmt.executeUpdate();
             if(filas_insertadas >0){
-                alta_documentos(numControl, acta, certificado, curp, ine);
-                JOptionPane.showMessageDialog(null,"Datos registrados exitosamente\b"
-                        + "Numero de control asignado: "+numControl, "Registro existoso", JOptionPane.INFORMATION_MESSAGE);
+                //alta_documentos(numControl, acta, certificado, curp, ine);
+                JOptionPane.showMessageDialog(null,"Datos actualizados exitosamente" ,"Registro existoso", JOptionPane.INFORMATION_MESSAGE);
                 
             }else{
                  JOptionPane.showMessageDialog(null,"Hubo un error al registrar los datos, intente otra vez", "Error en el registro", JOptionPane.WARNING_MESSAGE);
                  return;
             }
-        }
+       /* }
         else{
              JOptionPane.showMessageDialog(null,"Hubo un error al registrar los datos, intente otra vez", "Error en el registro", JOptionPane.WARNING_MESSAGE);
                  return;
-        }
+        }*/
 
     }
 
@@ -223,7 +230,39 @@ public class InscripcionAlumno extends javax.swing.JFrame {
         }
     }
     
+    public void buscar_alumno(String numControl) throws SQLException {
+        String sql = "SELECT * FROM alumno WHERE num_control = ?";
+        PreparedStatement ps = cx.conectar().prepareStatement(sql);
+        ps.setString(1, numControl);
+        ResultSet rs = ps.executeQuery();
+        if (rs.next()) {
+            this.numControl_original=rs.getString("num_control");
+            this.correo_original=rs.getString("correo");
+            //datos del alumno
+            entrada_numControl.setText(rs.getString("num_control"));
+            entrada_nombres.setText(rs.getString("nombres"));
+            entrada_apellidoPaterno.setText(rs.getString("apellido_paterno"));
+            entrada_apellidoMaterno.setText(rs.getString("apellido_materno"));
+            entrada_semestre.setSelectedItem(rs.getString("semestre"));
+            entrada_carrera.setSelectedItem(rs.getString("carrera"));
+            entrada_telefono.setText(rs.getString("telefono"));
+            entrada_correo.setText(rs.getString("correo"));
+            entrada_fechaNacimiento.setDate(rs.getDate("fecha_nacimiento"));
+            entrada_cp.setText(rs.getString("codigo_postal"));
+            obtenerDireccion(entrada_cp.getText());
+            entrada_calle.setText(rs.getString("calle"));
+            entrada_numInterior.setText(rs.getString("num_interior"));
+            entrada_numExterior.setText(rs.getString("num_exterior"));
+
+        } else {
+            JOptionPane.showMessageDialog(null, "No se encontó a ningun alumno con el numero de control ingresado", "Registro no encontrado", JOptionPane.WARNING_MESSAGE);
+        }
+    }
+    
     public boolean correoRepetido(){
+        if(entrada_correo.getText().equals(this.correo_original)){
+            return false;
+        }
         try {
             //Prepara la consulta para verificar si existe el correo
             String consulta_correo = "SELECT * FROM alumno WHERE correo = ?";
@@ -234,7 +273,7 @@ public class InscripcionAlumno extends javax.swing.JFrame {
                 return true;
             }
         } catch (SQLException ex) {
-            Logger.getLogger(InscripcionAlumno.class.getName()).log(Level.SEVERE, null, ex);
+            Logger.getLogger(ModificarAlumno.class.getName()).log(Level.SEVERE, null, ex);
         }
         return false;//Retorna falso si no encuentra el correo
     }
@@ -265,6 +304,22 @@ public class InscripcionAlumno extends javax.swing.JFrame {
         return "";
     }
 
+    public void obtenerDireccion(String colonia) {
+        try {
+            direc = new ObtenerDireccion(entrada_cp.getText());
+            entrada_estado.removeAllItems();
+            entrada_municipio.removeAllItems();
+            entrada_colonia.removeAllItems();
+            //si el estado no esta vacio quiere decir que el codigo pertenece a mexico
+            entrada_estado.addItem(direc.estado);
+            entrada_municipio.addItem(direc.municipio);
+            entrada_colonia.setModel(new DefaultComboBoxModel<>(direc.colonias));
+            entrada_colonia.setSelectedItem(colonia);
+        } catch (Exception ex) {
+            Logger.getLogger(ModificarAlumno.class.getName()).log(Level.SEVERE, null, ex);
+        }
+    }
+    
     /**
      * This method is called from within the constructor to initialize the form.
      * WARNING: Do NOT modify this code. The content of this method is always
@@ -292,14 +347,13 @@ public class InscripcionAlumno extends javax.swing.JFrame {
         jLabel4 = new javax.swing.JLabel();
         lb_curp1 = new javax.swing.JLabel();
         lb_curp2 = new javax.swing.JLabel();
-        entrada_nombres = new javax.swing.JTextField();
+        entrada_numControl = new javax.swing.JTextField();
         entrada_apellidoPaterno = new javax.swing.JTextField();
         jLabel5 = new javax.swing.JLabel();
         jLabel6 = new javax.swing.JLabel();
         jLabel7 = new javax.swing.JLabel();
         entrada_carrera = new javax.swing.JComboBox<>();
         jLabel8 = new javax.swing.JLabel();
-        btn_registrar = new javax.swing.JButton();
         jLabel3 = new javax.swing.JLabel();
         jLabel9 = new javax.swing.JLabel();
         entrada_apellidoMaterno = new javax.swing.JTextField();
@@ -324,8 +378,13 @@ public class InscripcionAlumno extends javax.swing.JFrame {
         entrada_estado = new javax.swing.JComboBox<>();
         entrada_municipio = new javax.swing.JComboBox<>();
         entrada_colonia = new javax.swing.JComboBox<>();
-        entrada_fechaNacimiento = new com.toedter.calendar.JDateChooser();
+        entrada_nombres = new javax.swing.JTextField();
         jLabel20 = new javax.swing.JLabel();
+        entrada_semestre = new javax.swing.JComboBox<>();
+        entrada_fechaNacimiento = new com.toedter.calendar.JDateChooser();
+        jLabel21 = new javax.swing.JLabel();
+        btn_registrar = new javax.swing.JButton();
+        btn_cancelar = new javax.swing.JButton();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
         setResizable(false);
@@ -342,13 +401,14 @@ public class InscripcionAlumno extends javax.swing.JFrame {
         jScrollPane1.setHorizontalScrollBarPolicy(javax.swing.ScrollPaneConstants.HORIZONTAL_SCROLLBAR_NEVER);
 
         jPanel2.setBackground(new java.awt.Color(255, 255, 255));
-        jPanel2.setPreferredSize(new java.awt.Dimension(1020, 1300));
+        jPanel2.setMinimumSize(new java.awt.Dimension(1020, 1200));
+        jPanel2.setPreferredSize(new java.awt.Dimension(1020, 1500));
         jPanel2.setLayout(new org.netbeans.lib.awtextra.AbsoluteLayout());
 
         jLabel1.setFont(new java.awt.Font("Segoe UI", 1, 24)); // NOI18N
         jLabel1.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
         jLabel1.setText("DOMICILIO");
-        jPanel2.add(jLabel1, new org.netbeans.lib.awtextra.AbsoluteConstraints(400, 950, 370, 30));
+        jPanel2.add(jLabel1, new org.netbeans.lib.awtextra.AbsoluteConstraints(390, 1020, 370, 30));
 
         ruta_acta.setEditable(false);
         ruta_acta.setBackground(new java.awt.Color(204, 204, 204));
@@ -413,8 +473,8 @@ public class InscripcionAlumno extends javax.swing.JFrame {
 
         jLabel2.setFont(new java.awt.Font("Segoe UI", 1, 24)); // NOI18N
         jLabel2.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
-        jLabel2.setText("SUBIR ARCHIVOS");
-        jPanel2.add(jLabel2, new org.netbeans.lib.awtextra.AbsoluteConstraints(580, 50, 360, 20));
+        jLabel2.setText("ACTUALIZAR ARCHIVOS");
+        jPanel2.add(jLabel2, new org.netbeans.lib.awtextra.AbsoluteConstraints(580, 20, 360, 20));
 
         lb_curp.setFont(new java.awt.Font("Segoe UI", 1, 18)); // NOI18N
         lb_curp.setText("INE");
@@ -422,7 +482,7 @@ public class InscripcionAlumno extends javax.swing.JFrame {
 
         jLabel4.setFont(new java.awt.Font("Segoe UI", 1, 18)); // NOI18N
         jLabel4.setText("Numero telefonico");
-        jPanel2.add(jLabel4, new org.netbeans.lib.awtextra.AbsoluteConstraints(50, 700, -1, -1));
+        jPanel2.add(jLabel4, new org.netbeans.lib.awtextra.AbsoluteConstraints(50, 770, -1, -1));
 
         lb_curp1.setFont(new java.awt.Font("Segoe UI", 1, 18)); // NOI18N
         lb_curp1.setText("Certificado de bachillerato");
@@ -431,39 +491,28 @@ public class InscripcionAlumno extends javax.swing.JFrame {
         lb_curp2.setFont(new java.awt.Font("Segoe UI", 1, 18)); // NOI18N
         lb_curp2.setText("Curp");
         jPanel2.add(lb_curp2, new org.netbeans.lib.awtextra.AbsoluteConstraints(590, 300, -1, -1));
-        jPanel2.add(entrada_nombres, new org.netbeans.lib.awtextra.AbsoluteConstraints(40, 110, 370, 50));
-        jPanel2.add(entrada_apellidoPaterno, new org.netbeans.lib.awtextra.AbsoluteConstraints(40, 220, 370, 50));
+        jPanel2.add(entrada_numControl, new org.netbeans.lib.awtextra.AbsoluteConstraints(50, 100, 370, 50));
+        jPanel2.add(entrada_apellidoPaterno, new org.netbeans.lib.awtextra.AbsoluteConstraints(50, 290, 370, 50));
 
         jLabel5.setFont(new java.awt.Font("Segoe UI", 1, 18)); // NOI18N
         jLabel5.setText("Acta de nacimiento");
         jPanel2.add(jLabel5, new org.netbeans.lib.awtextra.AbsoluteConstraints(590, 80, -1, -1));
 
         jLabel6.setFont(new java.awt.Font("Segoe UI", 1, 18)); // NOI18N
-        jLabel6.setText("Nombre(s)");
-        jPanel2.add(jLabel6, new org.netbeans.lib.awtextra.AbsoluteConstraints(40, 80, -1, -1));
+        jLabel6.setText("Numero de control");
+        jPanel2.add(jLabel6, new org.netbeans.lib.awtextra.AbsoluteConstraints(50, 70, -1, -1));
 
         jLabel7.setFont(new java.awt.Font("Segoe UI", 1, 18)); // NOI18N
         jLabel7.setText("Apellido paterno");
-        jPanel2.add(jLabel7, new org.netbeans.lib.awtextra.AbsoluteConstraints(40, 190, -1, -1));
+        jPanel2.add(jLabel7, new org.netbeans.lib.awtextra.AbsoluteConstraints(50, 260, -1, -1));
 
         entrada_carrera.setFont(new java.awt.Font("Segoe UI", 0, 18)); // NOI18N
         entrada_carrera.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Ingenieria en sistemas computacionales", "Ingenieria bioquimica", "Ingenieria electromecanica", "Arquitectura" }));
-        jPanel2.add(entrada_carrera, new org.netbeans.lib.awtextra.AbsoluteConstraints(50, 620, 370, 50));
+        jPanel2.add(entrada_carrera, new org.netbeans.lib.awtextra.AbsoluteConstraints(50, 690, 370, 50));
 
         jLabel8.setFont(new java.awt.Font("Segoe UI", 1, 18)); // NOI18N
-        jLabel8.setText("Fecha de nacimiento");
-        jPanel2.add(jLabel8, new org.netbeans.lib.awtextra.AbsoluteConstraints(40, 390, -1, -1));
-
-        btn_registrar.setBackground(new java.awt.Color(0, 0, 255));
-        btn_registrar.setFont(new java.awt.Font("Segoe UI", 1, 18)); // NOI18N
-        btn_registrar.setForeground(new java.awt.Color(255, 255, 255));
-        btn_registrar.setText("Registrar");
-        btn_registrar.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                btn_registrarActionPerformed(evt);
-            }
-        });
-        jPanel2.add(btn_registrar, new org.netbeans.lib.awtextra.AbsoluteConstraints(520, 1230, 180, 40));
+        jLabel8.setText("Apellido materno");
+        jPanel2.add(jLabel8, new org.netbeans.lib.awtextra.AbsoluteConstraints(50, 360, -1, -1));
 
         jLabel3.setFont(new java.awt.Font("Segoe UI", 1, 12)); // NOI18N
         jLabel3.setForeground(new java.awt.Color(255, 0, 0));
@@ -472,60 +521,60 @@ public class InscripcionAlumno extends javax.swing.JFrame {
         jPanel2.add(jLabel3, new org.netbeans.lib.awtextra.AbsoluteConstraints(580, 500, 380, 30));
 
         jLabel9.setFont(new java.awt.Font("Segoe UI", 1, 18)); // NOI18N
-        jLabel9.setText("Genero");
-        jPanel2.add(jLabel9, new org.netbeans.lib.awtextra.AbsoluteConstraints(50, 480, -1, -1));
-        jPanel2.add(entrada_apellidoMaterno, new org.netbeans.lib.awtextra.AbsoluteConstraints(40, 320, 370, 50));
-        jPanel2.add(entrada_telefono, new org.netbeans.lib.awtextra.AbsoluteConstraints(50, 730, 370, 50));
+        jLabel9.setText("Fecha de Nacimiento");
+        jPanel2.add(jLabel9, new org.netbeans.lib.awtextra.AbsoluteConstraints(40, 560, -1, -1));
+        jPanel2.add(entrada_apellidoMaterno, new org.netbeans.lib.awtextra.AbsoluteConstraints(50, 390, 370, 50));
+        jPanel2.add(entrada_telefono, new org.netbeans.lib.awtextra.AbsoluteConstraints(50, 800, 370, 50));
 
         jLabel10.setFont(new java.awt.Font("Segoe UI", 1, 18)); // NOI18N
         jLabel10.setText("Correo electronico");
-        jPanel2.add(jLabel10, new org.netbeans.lib.awtextra.AbsoluteConstraints(50, 810, -1, -1));
+        jPanel2.add(jLabel10, new org.netbeans.lib.awtextra.AbsoluteConstraints(50, 880, -1, -1));
 
         jLabel11.setFont(new java.awt.Font("Segoe UI", 1, 24)); // NOI18N
         jLabel11.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
         jLabel11.setText("DATOS PERSONALES");
-        jPanel2.add(jLabel11, new org.netbeans.lib.awtextra.AbsoluteConstraints(40, 40, 370, 30));
-        jPanel2.add(entrada_correo, new org.netbeans.lib.awtextra.AbsoluteConstraints(50, 850, 370, 50));
+        jPanel2.add(jLabel11, new org.netbeans.lib.awtextra.AbsoluteConstraints(40, 20, 370, 30));
+        jPanel2.add(entrada_correo, new org.netbeans.lib.awtextra.AbsoluteConstraints(50, 920, 370, 50));
 
         jLabel12.setFont(new java.awt.Font("Segoe UI", 1, 18)); // NOI18N
         jLabel12.setText("Código postal");
-        jPanel2.add(jLabel12, new org.netbeans.lib.awtextra.AbsoluteConstraints(40, 980, -1, 40));
-        jPanel2.add(entrada_cp, new org.netbeans.lib.awtextra.AbsoluteConstraints(40, 1020, 180, 40));
+        jPanel2.add(jLabel12, new org.netbeans.lib.awtextra.AbsoluteConstraints(40, 1070, -1, 40));
+        jPanel2.add(entrada_cp, new org.netbeans.lib.awtextra.AbsoluteConstraints(40, 1110, 180, 40));
 
         jLabel13.setFont(new java.awt.Font("Segoe UI", 1, 18)); // NOI18N
         jLabel13.setText("Estado");
-        jPanel2.add(jLabel13, new org.netbeans.lib.awtextra.AbsoluteConstraints(400, 980, -1, 40));
-        jPanel2.add(entrada_numInterior, new org.netbeans.lib.awtextra.AbsoluteConstraints(870, 1130, 150, 40));
+        jPanel2.add(jLabel13, new org.netbeans.lib.awtextra.AbsoluteConstraints(400, 1070, -1, 40));
+        jPanel2.add(entrada_numInterior, new org.netbeans.lib.awtextra.AbsoluteConstraints(870, 1220, 150, 40));
 
         jLabel15.setFont(new java.awt.Font("Segoe UI", 1, 18)); // NOI18N
         jLabel15.setText("Colonia");
-        jPanel2.add(jLabel15, new org.netbeans.lib.awtextra.AbsoluteConstraints(30, 1090, -1, 40));
+        jPanel2.add(jLabel15, new org.netbeans.lib.awtextra.AbsoluteConstraints(30, 1180, -1, 40));
 
         jLabel16.setFont(new java.awt.Font("Segoe UI", 1, 18)); // NOI18N
         jLabel16.setText("N° Interior");
-        jPanel2.add(jLabel16, new org.netbeans.lib.awtextra.AbsoluteConstraints(870, 1090, -1, 40));
-        jPanel2.add(entrada_calle, new org.netbeans.lib.awtextra.AbsoluteConstraints(330, 1130, 270, 40));
+        jPanel2.add(jLabel16, new org.netbeans.lib.awtextra.AbsoluteConstraints(870, 1180, -1, 40));
+        jPanel2.add(entrada_calle, new org.netbeans.lib.awtextra.AbsoluteConstraints(330, 1220, 270, 40));
 
         jLabel17.setFont(new java.awt.Font("Segoe UI", 1, 18)); // NOI18N
         jLabel17.setText("Municipio");
-        jPanel2.add(jLabel17, new org.netbeans.lib.awtextra.AbsoluteConstraints(780, 980, -1, 40));
-        jPanel2.add(entrada_numExterior, new org.netbeans.lib.awtextra.AbsoluteConstraints(660, 1130, 150, 40));
+        jPanel2.add(jLabel17, new org.netbeans.lib.awtextra.AbsoluteConstraints(780, 1070, -1, 40));
+        jPanel2.add(entrada_numExterior, new org.netbeans.lib.awtextra.AbsoluteConstraints(660, 1220, 150, 40));
 
         jLabel18.setFont(new java.awt.Font("Segoe UI", 1, 18)); // NOI18N
         jLabel18.setText("Calle");
-        jPanel2.add(jLabel18, new org.netbeans.lib.awtextra.AbsoluteConstraints(330, 1090, -1, 40));
+        jPanel2.add(jLabel18, new org.netbeans.lib.awtextra.AbsoluteConstraints(330, 1180, -1, 40));
 
         jLabel19.setFont(new java.awt.Font("Segoe UI", 1, 18)); // NOI18N
         jLabel19.setText("N° Exterior");
-        jPanel2.add(jLabel19, new org.netbeans.lib.awtextra.AbsoluteConstraints(660, 1090, -1, 40));
+        jPanel2.add(jLabel19, new org.netbeans.lib.awtextra.AbsoluteConstraints(660, 1180, -1, 40));
 
         jLabel14.setFont(new java.awt.Font("Segoe UI", 1, 18)); // NOI18N
         jLabel14.setText("Carrrera");
-        jPanel2.add(jLabel14, new org.netbeans.lib.awtextra.AbsoluteConstraints(50, 590, -1, -1));
+        jPanel2.add(jLabel14, new org.netbeans.lib.awtextra.AbsoluteConstraints(50, 660, -1, -1));
 
         entrada_genero.setFont(new java.awt.Font("Segoe UI", 0, 18)); // NOI18N
         entrada_genero.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Masculino", "Femenino", "Otro" }));
-        jPanel2.add(entrada_genero, new org.netbeans.lib.awtextra.AbsoluteConstraints(50, 510, 370, 50));
+        jPanel2.add(entrada_genero, new org.netbeans.lib.awtextra.AbsoluteConstraints(40, 490, 370, 50));
 
         btn_buscarCodigoPostal.setBackground(new java.awt.Color(204, 204, 204));
         btn_buscarCodigoPostal.setFont(new java.awt.Font("Segoe UI", 1, 14)); // NOI18N
@@ -535,23 +584,58 @@ public class InscripcionAlumno extends javax.swing.JFrame {
                 btn_buscarCodigoPostalActionPerformed(evt);
             }
         });
-        jPanel2.add(btn_buscarCodigoPostal, new org.netbeans.lib.awtextra.AbsoluteConstraints(230, 1020, 110, 40));
+        jPanel2.add(btn_buscarCodigoPostal, new org.netbeans.lib.awtextra.AbsoluteConstraints(230, 1110, 110, 40));
 
         entrada_estado.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "<seleccionar>" }));
         entrada_estado.setEnabled(false);
-        jPanel2.add(entrada_estado, new org.netbeans.lib.awtextra.AbsoluteConstraints(400, 1020, 230, 40));
+        jPanel2.add(entrada_estado, new org.netbeans.lib.awtextra.AbsoluteConstraints(400, 1110, 230, 40));
 
         entrada_municipio.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "<seleccionar>" }));
         entrada_municipio.setEnabled(false);
-        jPanel2.add(entrada_municipio, new org.netbeans.lib.awtextra.AbsoluteConstraints(780, 1020, 210, 40));
+        jPanel2.add(entrada_municipio, new org.netbeans.lib.awtextra.AbsoluteConstraints(780, 1110, 210, 40));
 
         entrada_colonia.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "<seleccionar>" }));
-        jPanel2.add(entrada_colonia, new org.netbeans.lib.awtextra.AbsoluteConstraints(20, 1130, 240, 50));
-        jPanel2.add(entrada_fechaNacimiento, new org.netbeans.lib.awtextra.AbsoluteConstraints(40, 420, 370, 50));
+        jPanel2.add(entrada_colonia, new org.netbeans.lib.awtextra.AbsoluteConstraints(20, 1220, 240, 50));
+        jPanel2.add(entrada_nombres, new org.netbeans.lib.awtextra.AbsoluteConstraints(50, 190, 370, 50));
 
         jLabel20.setFont(new java.awt.Font("Segoe UI", 1, 18)); // NOI18N
-        jLabel20.setText("Apellido materno");
-        jPanel2.add(jLabel20, new org.netbeans.lib.awtextra.AbsoluteConstraints(40, 290, -1, -1));
+        jLabel20.setText("Nombre(s)");
+        jPanel2.add(jLabel20, new org.netbeans.lib.awtextra.AbsoluteConstraints(50, 160, -1, -1));
+
+        entrada_semestre.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Primero", "Segundo", "Tercero" }));
+        entrada_semestre.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                entrada_semestreActionPerformed(evt);
+            }
+        });
+        jPanel2.add(entrada_semestre, new org.netbeans.lib.awtextra.AbsoluteConstraints(500, 690, 180, 50));
+        jPanel2.add(entrada_fechaNacimiento, new org.netbeans.lib.awtextra.AbsoluteConstraints(40, 592, 380, 50));
+
+        jLabel21.setFont(new java.awt.Font("Segoe UI", 1, 18)); // NOI18N
+        jLabel21.setText("Genero");
+        jPanel2.add(jLabel21, new org.netbeans.lib.awtextra.AbsoluteConstraints(50, 460, -1, -1));
+
+        btn_registrar.setBackground(new java.awt.Color(0, 0, 255));
+        btn_registrar.setFont(new java.awt.Font("Segoe UI", 1, 18)); // NOI18N
+        btn_registrar.setForeground(new java.awt.Color(255, 255, 255));
+        btn_registrar.setText("Actualizar");
+        btn_registrar.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btn_registrarActionPerformed(evt);
+            }
+        });
+        jPanel2.add(btn_registrar, new org.netbeans.lib.awtextra.AbsoluteConstraints(260, 1370, 180, 40));
+
+        btn_cancelar.setBackground(new java.awt.Color(102, 102, 102));
+        btn_cancelar.setFont(new java.awt.Font("Segoe UI", 1, 18)); // NOI18N
+        btn_cancelar.setForeground(new java.awt.Color(255, 255, 255));
+        btn_cancelar.setText("Cancelar");
+        btn_cancelar.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btn_cancelarActionPerformed(evt);
+            }
+        });
+        jPanel2.add(btn_cancelar, new org.netbeans.lib.awtextra.AbsoluteConstraints(580, 1370, 180, 40));
 
         jScrollPane1.setViewportView(jPanel2);
 
@@ -628,8 +712,12 @@ public class InscripcionAlumno extends javax.swing.JFrame {
         }
     }//GEN-LAST:event_btn_buscarCodigoPostalActionPerformed
 
+    private void entrada_semestreActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_entrada_semestreActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_entrada_semestreActionPerformed
+
     private void btn_registrarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btn_registrarActionPerformed
-       //Validaciones 
+        //Validaciones
         if (!valida.nombresValidos(valida.formatearNombresApellidos(entrada_nombres.getText()))) {
             JOptionPane.showMessageDialog(null, "Ingrese un nombre valido", "Nombre no valido", JOptionPane.WARNING_MESSAGE);
             entrada_nombres.requestFocusInWindow();
@@ -679,8 +767,8 @@ public class InscripcionAlumno extends javax.swing.JFrame {
             JOptionPane.showMessageDialog(null, "Ingrese un numero exterior valido", "Numero interior no valido", JOptionPane.WARNING_MESSAGE);
             entrada_numInterior.requestFocusInWindow();    // Borde al tener foco;
             return;
-        }       
-        if (ruta_acta.getText().isEmpty()) {
+        }
+        /*if (ruta_acta.getText().isEmpty()) {
             JOptionPane.showMessageDialog(null, "Debe cargar su acta de nacimiento en formato pdf para continuar", "No ha cargado documento", JOptionPane.WARNING_MESSAGE);
             return;
         }
@@ -688,16 +776,26 @@ public class InscripcionAlumno extends javax.swing.JFrame {
             JOptionPane.showMessageDialog(null, "Debe cargar su certificado de preparatoria en formato pdf para continuar", "No ha cargado documento", JOptionPane.WARNING_MESSAGE);
             return;
         }
-         if(ruta_curp.getText().isEmpty()){
+        if(ruta_curp.getText().isEmpty()){
             JOptionPane.showMessageDialog(null, "Debe cargar su curp en formato pdf para continuar", "No ha cargado documento", JOptionPane.WARNING_MESSAGE);
             return;
-        }
+        }*/
         try {
-            inscribir_alumno();
+            actualizar_alumno();
         } catch (SQLException ex) {
             Logger.getLogger(InscripcionAlumno.class.getName()).log(Level.SEVERE, null, ex);
         }
     }//GEN-LAST:event_btn_registrarActionPerformed
+
+    private void btn_cancelarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btn_cancelarActionPerformed
+        try {
+            SeccionAlumnos ventana = new SeccionAlumnos(this.rfc_coordinador);
+            ventana.setVisible(true);
+            this.dispose();
+        } catch (SQLException ex) {
+            Logger.getLogger(ModificarAlumno.class.getName()).log(Level.SEVERE, null, ex);
+        }
+    }//GEN-LAST:event_btn_cancelarActionPerformed
 
     /**
      * @param args the command line arguments
@@ -716,26 +814,28 @@ public class InscripcionAlumno extends javax.swing.JFrame {
                 }
             }
         } catch (ClassNotFoundException ex) {
-            java.util.logging.Logger.getLogger(InscripcionAlumno.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+            java.util.logging.Logger.getLogger(ModificarAlumno.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
         } catch (InstantiationException ex) {
-            java.util.logging.Logger.getLogger(InscripcionAlumno.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+            java.util.logging.Logger.getLogger(ModificarAlumno.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
         } catch (IllegalAccessException ex) {
-            java.util.logging.Logger.getLogger(InscripcionAlumno.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+            java.util.logging.Logger.getLogger(ModificarAlumno.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
         } catch (javax.swing.UnsupportedLookAndFeelException ex) {
-            java.util.logging.Logger.getLogger(InscripcionAlumno.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+            java.util.logging.Logger.getLogger(ModificarAlumno.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
         }
+        //</editor-fold>
         //</editor-fold>
 
         /* Create and display the form */
         java.awt.EventQueue.invokeLater(new Runnable() {
             public void run() {
-                new InscripcionAlumno().setVisible(true);
+                new ModificarAlumno(null).setVisible(true);
             }
         });
     }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton btn_buscarCodigoPostal;
+    private javax.swing.JButton btn_cancelar;
     private javax.swing.JButton btn_registrar;
     private javax.swing.JLabel btn_subir_acta;
     private javax.swing.JLabel btn_subir_certificado;
@@ -753,8 +853,10 @@ public class InscripcionAlumno extends javax.swing.JFrame {
     private javax.swing.JComboBox<String> entrada_genero;
     private javax.swing.JComboBox<String> entrada_municipio;
     private javax.swing.JTextField entrada_nombres;
+    private javax.swing.JTextField entrada_numControl;
     private javax.swing.JTextField entrada_numExterior;
     private javax.swing.JTextField entrada_numInterior;
+    private javax.swing.JComboBox<String> entrada_semestre;
     private javax.swing.JTextField entrada_telefono;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel10;
@@ -769,6 +871,7 @@ public class InscripcionAlumno extends javax.swing.JFrame {
     private javax.swing.JLabel jLabel19;
     private javax.swing.JLabel jLabel2;
     private javax.swing.JLabel jLabel20;
+    private javax.swing.JLabel jLabel21;
     private javax.swing.JLabel jLabel3;
     private javax.swing.JLabel jLabel4;
     private javax.swing.JLabel jLabel5;

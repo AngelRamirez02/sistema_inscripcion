@@ -55,21 +55,21 @@ public class Login_coordinador extends javax.swing.JFrame {
          lb_icon_inscripcion.setIcon(new ImageIcon(icon_inscripcion.getScaledInstance(lb_icon_inscripcion.getWidth(), lb_icon_inscripcion.getHeight(), Image.SCALE_SMOOTH)));
     }
     
-    public void iniciar_sesion(String numControl, String password) throws SQLException {
+    public void iniciar_sesion(String rfc, String password) throws SQLException {
         Conexion cx = new Conexion();//Variable para la conexion a la base de datos
         
         //Creaciond de consulta segura con Prepared
         String query = "SELECT * FROM coordinador WHERE rfc = ? and password = ?";
         //Preparar consulta
         PreparedStatement ps = cx.conectar().prepareStatement(query);
-        ps.setString(1, numControl);
+        ps.setString(1, rfc);
         ps.setString(2, password);
         //Executar consulta
         ResultSet rs = ps.executeQuery();
         
         //Si los datos del alumno son correctos redigir al menu de Alumnos
         if(rs.next()){
-            MenuCoordinador ventana = new MenuCoordinador();
+            MenuCoordinador ventana = new MenuCoordinador(rfc);
             ventana.setVisible(true);
             this.dispose();
         }
@@ -93,7 +93,7 @@ public class Login_coordinador extends javax.swing.JFrame {
         logo_ita = new javax.swing.JLabel();
         jPanel2 = new javax.swing.JPanel();
         lb_alumno_icon = new javax.swing.JLabel();
-        entrada_usuario = new javax.swing.JTextField();
+        entrada_rfc = new javax.swing.JTextField();
         password_entrada = new javax.swing.JPasswordField();
         lb_password = new javax.swing.JLabel();
         lb_numControl = new javax.swing.JLabel();
@@ -122,7 +122,7 @@ public class Login_coordinador extends javax.swing.JFrame {
         lb_alumno_icon.setText("jLabel1");
         lb_alumno_icon.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
         jPanel2.add(lb_alumno_icon, new org.netbeans.lib.awtextra.AbsoluteConstraints(140, 30, 160, 160));
-        jPanel2.add(entrada_usuario, new org.netbeans.lib.awtextra.AbsoluteConstraints(50, 240, 360, 50));
+        jPanel2.add(entrada_rfc, new org.netbeans.lib.awtextra.AbsoluteConstraints(50, 240, 360, 50));
         jPanel2.add(password_entrada, new org.netbeans.lib.awtextra.AbsoluteConstraints(50, 340, 360, 50));
 
         lb_password.setFont(new java.awt.Font("Segoe UI", 0, 18)); // NOI18N
@@ -193,17 +193,17 @@ public class Login_coordinador extends javax.swing.JFrame {
 
     private void btn_iniciarSesionActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btn_iniciarSesionActionPerformed
         //Almacena los valores de entrada
-        String numControl = entrada_usuario.getText().trim();
+        String rfc = entrada_rfc.getText().trim();
         String password = String.valueOf(password_entrada.getPassword());
         
         //Valida que los campos no sean vacios
-        if(numControl.isEmpty() || password.isEmpty()){
+        if(rfc.isEmpty() || password.isEmpty()){
            JOptionPane.showMessageDialog(null, "Por favor ingrese usuario y contraseña", "Campos Vacios", JOptionPane.ERROR_MESSAGE);
             return;
        }
         
         try { 
-            iniciar_sesion(numControl,password);
+            iniciar_sesion(rfc,password);
         } catch (SQLException ex) {
             Logger.getLogger(Login_coordinador.class.getName()).log(Level.SEVERE, null, ex);
         }
@@ -257,7 +257,7 @@ public class Login_coordinador extends javax.swing.JFrame {
     private javax.swing.JButton btn_iniciarSesion;
     private javax.swing.JButton btn_regresar;
     private javax.swing.JButton btn_soporte;
-    private javax.swing.JTextField entrada_usuario;
+    private javax.swing.JTextField entrada_rfc;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JPanel jPanel1;
     private javax.swing.JPanel jPanel2;
