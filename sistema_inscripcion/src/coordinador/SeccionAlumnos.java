@@ -238,6 +238,7 @@ public class SeccionAlumnos extends javax.swing.JFrame {
         });
         jPanel2.add(icon_buscar, new org.netbeans.lib.awtextra.AbsoluteConstraints(890, 130, 70, 70));
 
+        panel_datos.setBackground(new java.awt.Color(255, 255, 255));
         panel_datos.setLayout(new org.netbeans.lib.awtextra.AbsoluteLayout());
 
         titulo_numControl.setEditable(false);

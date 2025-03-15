@@ -90,6 +90,7 @@ public class MenuProfesor extends javax.swing.JFrame {
         btn_cerrar_sesion = new paneles.PanelRound();
         jLabel2 = new javax.swing.JLabel();
         lb_nombreProfesor = new javax.swing.JLabel();
+        jLabel6 = new javax.swing.JLabel();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
         setBackground(new java.awt.Color(255, 255, 255));
@@ -203,6 +204,11 @@ public class MenuProfesor extends javax.swing.JFrame {
         lb_nombreProfesor.setText("jLabel6");
         jPanel2.add(lb_nombreProfesor, new org.netbeans.lib.awtextra.AbsoluteConstraints(30, 320, 340, 80));
 
+        jLabel6.setFont(new java.awt.Font("Segoe UI", 1, 24)); // NOI18N
+        jLabel6.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
+        jLabel6.setText("DOCENTE");
+        jPanel2.add(jLabel6, new org.netbeans.lib.awtextra.AbsoluteConstraints(40, 30, 300, 50));
+
         jScrollPane1.setViewportView(jPanel2);
 
         getContentPane().add(jScrollPane1, new org.netbeans.lib.awtextra.AbsoluteConstraints(0, 90, 1200, 560));
@@ -265,6 +271,7 @@ public class MenuProfesor extends javax.swing.JFrame {
     private javax.swing.JLabel jLabel3;
     private javax.swing.JLabel jLabel4;
     private javax.swing.JLabel jLabel5;
+    private javax.swing.JLabel jLabel6;
     private javax.swing.JPanel jPanel1;
     private javax.swing.JPanel jPanel2;
     private javax.swing.JScrollPane jScrollPane1;

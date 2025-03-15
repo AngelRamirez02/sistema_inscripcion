@@ -4,17 +4,24 @@
  */
 package alumno;
 
+import com.itextpdf.text.BadElementException;
+import com.itextpdf.text.DocumentException;
 import maestro.*;
 import conexion.Conexion;
 import coordinador.*;
+import java.awt.Dimension;
 import java.awt.Image;
 import java.awt.Toolkit;
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.IOException;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.swing.ImageIcon;
+import javax.swing.JFileChooser;
 import javax.swing.SwingUtilities;
 
 /**
@@ -40,7 +47,7 @@ public class MenuAlumno extends javax.swing.JFrame {
         this.setLocationRelativeTo(null);//La ventana aparece en el centro
     }
     
-        //Funcion para cargar imagenes
+    //Funcion para cargar imagenes
     private void cargar_img(){
         //CARGAR EL LOGO PRINCIPAL DEL TEC
         Image logo_ita_img= Toolkit.getDefaultToolkit().getImage(getClass().getResource("/img/logo_ITA.png"));
@@ -81,7 +88,7 @@ public class MenuAlumno extends javax.swing.JFrame {
         jPanel2 = new javax.swing.JPanel();
         lb_profesor_icon = new javax.swing.JLabel();
         panelRound1 = new paneles.PanelRound();
-        jLabel1 = new javax.swing.JLabel();
+        btn_imprimirHorario = new javax.swing.JLabel();
         panelRound4 = new paneles.PanelRound();
         Calificaciones = new javax.swing.JLabel();
         lb_nombreAlumno = new javax.swing.JLabel();
@@ -117,12 +124,17 @@ public class MenuAlumno extends javax.swing.JFrame {
         panelRound1.setRoundTopRight(20);
         panelRound1.setLayout(new org.netbeans.lib.awtextra.AbsoluteLayout());
 
-        jLabel1.setFont(new java.awt.Font("Segoe UI", 1, 24)); // NOI18N
-        jLabel1.setForeground(new java.awt.Color(51, 51, 255));
-        jLabel1.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
-        jLabel1.setText("Imprimir horario");
-        jLabel1.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
-        panelRound1.add(jLabel1, new org.netbeans.lib.awtextra.AbsoluteConstraints(0, 0, 500, 60));
+        btn_imprimirHorario.setFont(new java.awt.Font("Segoe UI", 1, 24)); // NOI18N
+        btn_imprimirHorario.setForeground(new java.awt.Color(51, 51, 255));
+        btn_imprimirHorario.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
+        btn_imprimirHorario.setText("Imprimir horario");
+        btn_imprimirHorario.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
+        btn_imprimirHorario.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mousePressed(java.awt.event.MouseEvent evt) {
+                btn_imprimirHorarioMousePressed(evt);
+            }
+        });
+        panelRound1.add(btn_imprimirHorario, new org.netbeans.lib.awtextra.AbsoluteConstraints(0, 0, 500, 60));
 
         jPanel2.add(panelRound1, new org.netbeans.lib.awtextra.AbsoluteConstraints(620, 130, 500, 60));
 
@@ -136,7 +148,7 @@ public class MenuAlumno extends javax.swing.JFrame {
         Calificaciones.setFont(new java.awt.Font("Segoe UI", 1, 24)); // NOI18N
         Calificaciones.setForeground(new java.awt.Color(51, 51, 255));
         Calificaciones.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
-        Calificaciones.setText("Capturar calificaciones");
+        Calificaciones.setText("Consultar calificaciones");
         Calificaciones.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
         panelRound4.add(Calificaciones, new org.netbeans.lib.awtextra.AbsoluteConstraints(0, 0, 500, 60));
 
@@ -196,6 +208,36 @@ public class MenuAlumno extends javax.swing.JFrame {
         }
     }//GEN-LAST:event_btn_salirMousePressed
 
+    private void btn_imprimirHorarioMousePressed(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_btn_imprimirHorarioMousePressed
+        //generar pdf de los registros
+        if (SwingUtilities.isLeftMouseButton(evt)) {
+            //Mostrar interfaz para seleccionar la carpeta
+            JFileChooser fileChooser = new JFileChooser();
+            fileChooser.setPreferredSize(new Dimension(800, 600));//Tamño de la ventana
+            fileChooser.setDialogTitle("Seleccionar carpeta");
+            fileChooser.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY); // Solo permitir seleccionar carpetas
+            int opcion = fileChooser.showSaveDialog(null); // Mostrar el diálogo de guardar
+            //si selecciona una ruta valida
+            if (opcion == JFileChooser.APPROVE_OPTION) {
+                File directorioSeleccionado = fileChooser.getSelectedFile();
+                String rutaCarpeta = directorioSeleccionado.getAbsolutePath();
+                try {
+                   HorarioPDF x = new HorarioPDF();
+                   x.PdfTodosLosAlumnos("25324651", rutaCarpeta);
+                    //JOptionPane.showMessageDialog(null,"PDF guardado correctamente", "Reporte Generado",JOptionPane.INFORMATION_MESSAGE);
+                } catch (FileNotFoundException ex) {
+                    Logger.getLogger(SeccionAlumnos.class.getName()).log(Level.SEVERE, null, ex);
+                } catch (DocumentException ex) {
+                    Logger.getLogger(SeccionAlumnos.class.getName()).log(Level.SEVERE, null, ex);
+                } catch (IOException ex) {
+                    Logger.getLogger(SeccionAlumnos.class.getName()).log(Level.SEVERE, null, ex);
+                } catch (SQLException ex) {
+                    Logger.getLogger(MenuAlumno.class.getName()).log(Level.SEVERE, null, ex);
+                }
+            }
+        }
+    }//GEN-LAST:event_btn_imprimirHorarioMousePressed
+
     /**
      * @param args the command line arguments
      */
@@ -241,8 +283,8 @@ public class MenuAlumno extends javax.swing.JFrame {
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JLabel Calificaciones;
     private paneles.PanelRound btn_cerrar_sesion;
+    private javax.swing.JLabel btn_imprimirHorario;
     private javax.swing.JLabel btn_salir;
-    private javax.swing.JLabel jLabel1;
     private javax.swing.JPanel jPanel1;
     private javax.swing.JPanel jPanel2;
     private javax.swing.JScrollPane jScrollPane1;

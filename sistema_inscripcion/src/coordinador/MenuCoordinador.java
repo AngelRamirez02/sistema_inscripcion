@@ -91,6 +91,7 @@ public class MenuCoordinador extends javax.swing.JFrame {
         btn_cerrar_sesion = new paneles.PanelRound();
         jLabel2 = new javax.swing.JLabel();
         lb_nombreCoordinador = new javax.swing.JLabel();
+        jLabel1 = new javax.swing.JLabel();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
         setBackground(new java.awt.Color(255, 255, 255));
@@ -209,6 +210,11 @@ public class MenuCoordinador extends javax.swing.JFrame {
         lb_nombreCoordinador.setText("jLabel6");
         jPanel2.add(lb_nombreCoordinador, new org.netbeans.lib.awtextra.AbsoluteConstraints(30, 320, 340, 80));
 
+        jLabel1.setFont(new java.awt.Font("Segoe UI", 1, 24)); // NOI18N
+        jLabel1.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
+        jLabel1.setText("COORDINADOR");
+        jPanel2.add(jLabel1, new org.netbeans.lib.awtextra.AbsoluteConstraints(40, 30, 300, 50));
+
         jScrollPane1.setViewportView(jPanel2);
 
         getContentPane().add(jScrollPane1, new org.netbeans.lib.awtextra.AbsoluteConstraints(0, 90, 1200, 560));
@@ -285,6 +291,7 @@ public class MenuCoordinador extends javax.swing.JFrame {
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JLabel btn_alumnos;
     private paneles.PanelRound btn_cerrar_sesion;
+    private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel2;
     private javax.swing.JLabel jLabel3;
     private javax.swing.JLabel jLabel4;
