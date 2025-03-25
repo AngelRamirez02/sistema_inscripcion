@@ -223,15 +223,16 @@ public class MenuAlumno extends javax.swing.JFrame {
                 LocalTime horaFinSesion = LocalTime.now();//Hora de salida
                 LocalDate fecha_salida = LocalDate.now();//Fecha de salida
                 String sql = "INSERT INTO historial_sesiones"
-                    + "(usuario, fecha_entrada, hora_entrada, fecha_salida, hora_salida)"
-                    + "values (?,?,?,?,?)";
+                        + "(usuario,tipo_usuario,fecha_entrada, hora_entrada, fecha_salida, hora_salida)"
+                        + "values (?,?,?,?,?,?)";
                 try {
                     PreparedStatement ps = cx.conectar().prepareStatement(sql);//Creacion de la consulta
                     ps.setString(1, this.numControl);
-                    ps.setObject(2, this.fechaInicioSesion);
-                    ps.setObject(3, this.horaInicioSesion);
-                    ps.setObject(4, fecha_salida);
-                    ps.setObject(5, horaFinSesion);
+                    ps.setString(2, "Alumno");
+                    ps.setObject(3, this.fechaInicioSesion);
+                    ps.setObject(4, this.horaInicioSesion);
+                    ps.setObject(5, fecha_salida);
+                    ps.setObject(6, horaFinSesion);
                     // Paso 4: Ejecutar la consulta
                     int rowsInserted = ps.executeUpdate();
                     if (rowsInserted > 0) {
@@ -291,15 +292,16 @@ public class MenuAlumno extends javax.swing.JFrame {
             LocalTime horaFinSesion = LocalTime.now();//Hora de salida
             LocalDate fecha_salida = LocalDate.now();//Fecha de salida
             String sql = "INSERT INTO historial_sesiones"
-                    + "(usuario, fecha_entrada, hora_entrada, fecha_salida, hora_salida)"
-                    + "values (?,?,?,?,?)";
+                    + "(usuario,tipo_usuario,fecha_entrada, hora_entrada, fecha_salida, hora_salida)"
+                    + "values (?,?,?,?,?,?)";
             try {
                 PreparedStatement ps = cx.conectar().prepareStatement(sql);//Creacion de la consulta
                 ps.setString(1, this.numControl);
-                ps.setObject(2, this.fechaInicioSesion);
-                ps.setObject(3, this.horaInicioSesion);
-                ps.setObject(4, fecha_salida);
-                ps.setObject(5, horaFinSesion);
+                ps.setString(2, "Alumno");
+                ps.setObject(3, this.fechaInicioSesion);
+                ps.setObject(4, this.horaInicioSesion);
+                ps.setObject(5, fecha_salida);
+                ps.setObject(6, horaFinSesion);
                 // Paso 4: Ejecutar la consulta
                 int rowsInserted = ps.executeUpdate();
                 if (rowsInserted > 0) {
@@ -313,7 +315,6 @@ public class MenuAlumno extends javax.swing.JFrame {
         } else {
             this.setDefaultCloseOperation(this.DO_NOTHING_ON_CLOSE);
         }
-
     }//GEN-LAST:event_formWindowClosing
 
     /**

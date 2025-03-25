@@ -4,6 +4,8 @@
  */
 package maestro;
 
+import alumno.Login_alumno;
+import alumno.MenuAlumno;
 import conexion.Conexion;
 import coordinador.*;
 import java.awt.Image;
@@ -11,9 +13,12 @@ import java.awt.Toolkit;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.time.LocalDate;
+import java.time.LocalTime;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.swing.ImageIcon;
+import javax.swing.JOptionPane;
 import javax.swing.SwingUtilities;
 
 /**
@@ -21,12 +26,20 @@ import javax.swing.SwingUtilities;
  * @author ar275
  */
 public class MenuProfesor extends javax.swing.JFrame {
+
     Conexion cx = new Conexion();
-   private  String rfc;
-   
-    public MenuProfesor(String rfc) throws SQLException {
+
+    //VARIABLES PARA BITACORA
+    private String rfc;
+    private LocalDate fechaInicioSesion;
+    private LocalTime horaInicioSesion;
+
+    public MenuProfesor(String rfc,LocalDate fechaInicioSesion, LocalTime horaInicioSesion) throws SQLException {
+        //INICIALIZAR VARIABLES PARA LA BITACORAS
         this.rfc = rfc;
-        
+        this.fechaInicioSesion = fechaInicioSesion;
+        this.horaInicioSesion = horaInicioSesion;
+
         initComponents();
         configuracion_ventana();
         cargar_img();
@@ -94,6 +107,11 @@ public class MenuProfesor extends javax.swing.JFrame {
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
         setBackground(new java.awt.Color(255, 255, 255));
+        addWindowListener(new java.awt.event.WindowAdapter() {
+            public void windowClosing(java.awt.event.WindowEvent evt) {
+                formWindowClosing(evt);
+            }
+        });
         getContentPane().setLayout(new org.netbeans.lib.awtextra.AbsoluteLayout());
 
         jPanel1.setBackground(new java.awt.Color(255, 255, 255));
@@ -217,12 +235,95 @@ public class MenuProfesor extends javax.swing.JFrame {
     }// </editor-fold>//GEN-END:initComponents
 
     private void btn_cerrar_sesionMousePressed(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_btn_cerrar_sesionMousePressed
-        if(SwingUtilities.isLeftMouseButton(evt)){
-            Login_coordinador ventana = new Login_coordinador();
-            ventana.setVisible(true);
-            this.dispose();
+        if (SwingUtilities.isLeftMouseButton(evt)) {
+            Object[] opciones = {"Aceptar", "Cancelar"};
+            // Si existe información que no ha sido guardada
+            // Mostrar diálogo que pregunta si desea confirmar la salida
+            int opcionSeleccionada = JOptionPane.showOptionDialog(
+                    null,
+                    "¿Cerrar sesión?",
+                    "Confirmación de salida",
+                    JOptionPane.YES_NO_OPTION,
+                    JOptionPane.WARNING_MESSAGE,
+                    null,
+                    opciones,
+                    opciones[1]); // Por defecto, la opción seleccionada es "Cancelar"
+
+            // Manejar las opciones seleccionadas
+            if (opcionSeleccionada == JOptionPane.YES_OPTION) {
+                //Creacion de consulta para el historial de sesione
+                LocalTime horaFinSesion = LocalTime.now();//Hora de salida
+                LocalDate fecha_salida = LocalDate.now();//Fecha de salida
+                String sql = "INSERT INTO historial_sesiones"
+                    + "(usuario,tipo_usuario,fecha_entrada, hora_entrada, fecha_salida, hora_salida)"
+                    + "values (?,?,?,?,?,?)";
+            try {
+                PreparedStatement ps = cx.conectar().prepareStatement(sql);//Creacion de la consulta
+                ps.setString(1, this.rfc);
+                ps.setString(2, "Docente");
+                ps.setObject(3, this.fechaInicioSesion);
+                ps.setObject(4, this.horaInicioSesion);
+                ps.setObject(5, fecha_salida);
+                ps.setObject(6, horaFinSesion);
+                    // Paso 4: Ejecutar la consulta
+                    int rowsInserted = ps.executeUpdate();
+                    if (rowsInserted > 0) {
+                        System.out.println("Historial guardado");
+                    }
+                } catch (SQLException ex) {
+                    Logger.getLogger(MenuAlumno.class.getName()).log(Level.SEVERE, null, ex);
+                }
+                //Cerrar la sesión y volver al login del maestro
+                Login_maestro ventana = new Login_maestro();
+                ventana.setVisible(true);
+                this.dispose();
+            }
         }
     }//GEN-LAST:event_btn_cerrar_sesionMousePressed
+
+    private void formWindowClosing(java.awt.event.WindowEvent evt) {//GEN-FIRST:event_formWindowClosing
+        Object[] opciones = {"Aceptar", "Cancelar"};
+        // Si existe información que no ha sido guardada
+        // Mostrar diálogo que pregunta si desea confirmar la salida
+        int opcionSeleccionada = JOptionPane.showOptionDialog(
+                null,
+                "¿Cerrar sesión?",
+                "Confirmación de salida",
+                JOptionPane.YES_NO_OPTION,
+                JOptionPane.WARNING_MESSAGE,
+                null,
+                opciones,
+                opciones[1]); // Por defecto, la opción seleccionada es "Cancelar"
+
+        // Manejar las opciones seleccionadas
+        if (opcionSeleccionada == JOptionPane.YES_OPTION) {
+            //Creacion de consulta para el historial de sesione
+            LocalTime horaFinSesion = LocalTime.now();//Hora de salida
+            LocalDate fecha_salida = LocalDate.now();//Fecha de salida
+            String sql = "INSERT INTO historial_sesiones"
+                    + "(usuario,tipo_usuario,fecha_entrada, hora_entrada, fecha_salida, hora_salida)"
+                    + "values (?,?,?,?,?,?)";
+            try {
+                PreparedStatement ps = cx.conectar().prepareStatement(sql);//Creacion de la consulta
+                ps.setString(1, this.rfc);
+                ps.setString(2, "Docente");
+                ps.setObject(3, this.fechaInicioSesion);
+                ps.setObject(4, this.horaInicioSesion);
+                ps.setObject(5, fecha_salida);
+                ps.setObject(6, horaFinSesion);
+                // Paso 4: Ejecutar la consulta
+                int rowsInserted = ps.executeUpdate();
+                if (rowsInserted > 0) {
+                    System.out.println("Historial guardado");
+                }
+            } catch (SQLException ex) {
+                Logger.getLogger(MenuAlumno.class.getName()).log(Level.SEVERE, null, ex);
+            }
+            // Cerrar la aplicación
+            this.setDefaultCloseOperation(this.EXIT_ON_CLOSE);
+        }
+        this.setDefaultCloseOperation(this.DO_NOTHING_ON_CLOSE);
+    }//GEN-LAST:event_formWindowClosing
 
     /**
      * @param args the command line arguments
@@ -256,7 +357,7 @@ public class MenuProfesor extends javax.swing.JFrame {
         java.awt.EventQueue.invokeLater(new Runnable() {
             public void run() {
                 try {
-                    new MenuProfesor(null).setVisible(true);
+                    new MenuProfesor(null,null,null).setVisible(true);
                 } catch (SQLException ex) {
                     Logger.getLogger(MenuProfesor.class.getName()).log(Level.SEVERE, null, ex);
                 }

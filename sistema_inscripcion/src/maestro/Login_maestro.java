@@ -13,6 +13,8 @@ import java.awt.Toolkit;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.time.LocalDate;
+import java.time.LocalTime;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.swing.ImageIcon;
@@ -70,7 +72,10 @@ public class Login_maestro extends javax.swing.JFrame {
         
         //Si los datos del alumno son correctos redigir al menu de Alumnos
         if(rs.next()){
-            MenuProfesor ventana = new MenuProfesor(rfc);
+            LocalDate fechaInicioSesion = LocalDate.now();//obtener la fecha del inicio de sesion
+            LocalTime horaInicioSesion = LocalTime.now();
+
+            MenuProfesor ventana = new MenuProfesor(rfc, fechaInicioSesion, horaInicioSesion);
             ventana.setVisible(true);
             this.dispose();
         }

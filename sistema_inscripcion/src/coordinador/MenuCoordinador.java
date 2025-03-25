@@ -4,17 +4,26 @@
  */
 package coordinador;
 
+import bitacora.BitacoraPDF;
+import com.itextpdf.text.DocumentException;
 import maestro.*;
 import conexion.Conexion;
 import coordinador.*;
+import java.awt.Dimension;
 import java.awt.Image;
 import java.awt.Toolkit;
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.IOException;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.swing.ImageIcon;
+import javax.swing.JFileChooser;
 import javax.swing.SwingUtilities;
 
 /**
@@ -22,8 +31,15 @@ import javax.swing.SwingUtilities;
  * @author ar275
  */
 public class MenuCoordinador extends javax.swing.JFrame {
+   //VARIABLE DE CONEXION A DB
     Conexion cx = new Conexion();
+   
+   //
    private  String rfc;
+   
+   //VARIABLES PARA LA BITACORA
+   public List<BitacoraPDF> listaBitacora = new ArrayList<BitacoraPDF>();
+   BitacoraPDF registros;
    
     public MenuCoordinador(String rfc) throws SQLException {
         this.rfc = rfc;
@@ -66,6 +82,31 @@ public class MenuCoordinador extends javax.swing.JFrame {
         }
     }
     
+    private void cargarDatosBitacora() throws SQLException {
+        String sql = "SELECT *FROM historial_sesiones";//Consulta para traer los datos de las sesiones
+        Object[] datos = new Object[7];//Arreglo para almacenar cada dato
+        //Ejecución de consulta
+        PreparedStatement ps = cx.conectar().prepareStatement(sql);
+        ResultSet rs = ps.executeQuery();
+        while (rs.next()) {
+            //se obtienen los datos de la tabla
+            datos[0] = rs.getInt("id_sesion");
+            datos[1] = rs.getString("usuario");
+            datos[2] = rs.getString("tipo_usuario");
+            datos[3] = rs.getDate("fecha_entrada");
+            datos[4] = rs.getTime("hora_entrada");
+            datos[5] = rs.getDate("fecha_salida");
+            datos[6] = rs.getTime("hora_salida");
+            
+            //Crear un nuevo registro para la bitacora
+            registros = new BitacoraPDF(datos[0].toString(),datos[1].toString(),datos[2].toString(),
+                    datos[3].toString(),datos[4].toString(),datos[5].toString(),datos[6].toString());
+            
+            //Agregar el registro a la lista
+            listaBitacora.add(registros);
+        }
+    }
+    
     /**
      * This method is called from within the constructor to initialize the form.
      * WARNING: Do NOT modify this code. The content of this method is always
@@ -92,6 +133,8 @@ public class MenuCoordinador extends javax.swing.JFrame {
         jLabel2 = new javax.swing.JLabel();
         lb_nombreCoordinador = new javax.swing.JLabel();
         jLabel1 = new javax.swing.JLabel();
+        btn_bitacora = new paneles.PanelRound();
+        jLabel6 = new javax.swing.JLabel();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
         setBackground(new java.awt.Color(255, 255, 255));
@@ -108,7 +151,7 @@ public class MenuCoordinador extends javax.swing.JFrame {
         jScrollPane1.setHorizontalScrollBarPolicy(javax.swing.ScrollPaneConstants.HORIZONTAL_SCROLLBAR_NEVER);
 
         jPanel2.setBackground(new java.awt.Color(255, 255, 255));
-        jPanel2.setPreferredSize(new java.awt.Dimension(998, 500));
+        jPanel2.setPreferredSize(new java.awt.Dimension(998, 700));
         jPanel2.setLayout(new org.netbeans.lib.awtextra.AbsoluteLayout());
 
         lb_profesor_icon.setText("jLabel1");
@@ -203,7 +246,7 @@ public class MenuCoordinador extends javax.swing.JFrame {
         jLabel2.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
         btn_cerrar_sesion.add(jLabel2, new org.netbeans.lib.awtextra.AbsoluteConstraints(0, 0, 500, 60));
 
-        jPanel2.add(btn_cerrar_sesion, new org.netbeans.lib.awtextra.AbsoluteConstraints(630, 470, 500, 60));
+        jPanel2.add(btn_cerrar_sesion, new org.netbeans.lib.awtextra.AbsoluteConstraints(630, 600, 500, 60));
 
         lb_nombreCoordinador.setFont(new java.awt.Font("Segoe UI", 1, 18)); // NOI18N
         lb_nombreCoordinador.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
@@ -214,6 +257,27 @@ public class MenuCoordinador extends javax.swing.JFrame {
         jLabel1.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
         jLabel1.setText("COORDINADOR");
         jPanel2.add(jLabel1, new org.netbeans.lib.awtextra.AbsoluteConstraints(40, 30, 300, 50));
+
+        btn_bitacora.setBackground(new java.awt.Color(153, 153, 153));
+        btn_bitacora.setRoundBottomLeft(20);
+        btn_bitacora.setRoundBottomRight(20);
+        btn_bitacora.setRoundTopLeft(20);
+        btn_bitacora.setRoundTopRight(20);
+        btn_bitacora.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mousePressed(java.awt.event.MouseEvent evt) {
+                btn_bitacoraMousePressed(evt);
+            }
+        });
+        btn_bitacora.setLayout(new org.netbeans.lib.awtextra.AbsoluteLayout());
+
+        jLabel6.setFont(new java.awt.Font("Segoe UI", 1, 24)); // NOI18N
+        jLabel6.setForeground(new java.awt.Color(51, 51, 255));
+        jLabel6.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
+        jLabel6.setText("Imprimir bitácora");
+        jLabel6.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
+        btn_bitacora.add(jLabel6, new org.netbeans.lib.awtextra.AbsoluteConstraints(0, 0, 500, 60));
+
+        jPanel2.add(btn_bitacora, new org.netbeans.lib.awtextra.AbsoluteConstraints(630, 480, 500, 60));
 
         jScrollPane1.setViewportView(jPanel2);
 
@@ -241,6 +305,39 @@ public class MenuCoordinador extends javax.swing.JFrame {
             }
         }
     }//GEN-LAST:event_btn_alumnosMouseClicked
+
+    private void btn_bitacoraMousePressed(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_btn_bitacoraMousePressed
+        //generar pdf de los registros
+        if (SwingUtilities.isLeftMouseButton(evt)) {
+            //Mostrar interfaz para seleccionar la carpeta
+            JFileChooser fileChooser = new JFileChooser();
+            fileChooser.setPreferredSize(new Dimension(800, 600));//Tamño de la ventana
+            fileChooser.setDialogTitle("Seleccionar carpeta");
+            fileChooser.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY); // Solo permitir seleccionar carpetas
+            int opcion = fileChooser.showSaveDialog(null); // Mostrar el diálogo de guardar
+            //si selecciona una ruta valida
+            if (opcion == JFileChooser.APPROVE_OPTION) {
+                try {
+                    // Obtener la carpeta seleccionada por el usuario
+                    cargarDatosBitacora();
+                } catch (SQLException ex) {
+                    Logger.getLogger(SeccionAlumnos.class.getName()).log(Level.SEVERE, null, ex);
+                }
+                File directorioSeleccionado = fileChooser.getSelectedFile();
+                String rutaCarpeta = directorioSeleccionado.getAbsolutePath();
+                try {
+                    registros.generarBitacora(listaBitacora, rutaCarpeta);
+                    //JOptionPane.showMessageDialog(null,"PDF guardado correctamente", "Reporte Generado",JOptionPane.INFORMATION_MESSAGE);
+                } catch (FileNotFoundException ex) {
+                    Logger.getLogger(SeccionAlumnos.class.getName()).log(Level.SEVERE, null, ex);
+                } catch (DocumentException ex) {
+                    Logger.getLogger(SeccionAlumnos.class.getName()).log(Level.SEVERE, null, ex);
+                } catch (IOException ex) {
+                    Logger.getLogger(SeccionAlumnos.class.getName()).log(Level.SEVERE, null, ex);
+                }
+            }
+        }
+    }//GEN-LAST:event_btn_bitacoraMousePressed
 
     /**
      * @param args the command line arguments
@@ -290,12 +387,14 @@ public class MenuCoordinador extends javax.swing.JFrame {
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JLabel btn_alumnos;
+    private paneles.PanelRound btn_bitacora;
     private paneles.PanelRound btn_cerrar_sesion;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel2;
     private javax.swing.JLabel jLabel3;
     private javax.swing.JLabel jLabel4;
     private javax.swing.JLabel jLabel5;
+    private javax.swing.JLabel jLabel6;
     private javax.swing.JPanel jPanel1;
     private javax.swing.JPanel jPanel2;
     private javax.swing.JScrollPane jScrollPane1;
