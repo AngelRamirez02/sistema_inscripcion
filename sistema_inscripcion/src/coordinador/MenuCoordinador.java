@@ -53,10 +53,10 @@ public class MenuCoordinador extends javax.swing.JFrame {
     }
 
     private void cargarDatos_coordinador() throws SQLException {
-        // Seleccionar los datos del profesor
+        // Seleccionar los datos del coordinador
         String consulta = "SELECT nombres, apellido_paterno, apellido_materno FROM coordinador WHERE rfc = ?";
         PreparedStatement ps = cx.conectar().prepareStatement(consulta);
-        ps.setString(1, rfc); // Asegúrate de asignar el valor del RFC
+        ps.setString(1, this.rfc); // Asegúrate de asignar el valor del RFC
         ResultSet rs = ps.executeQuery();
 
         // Arreglo de datos

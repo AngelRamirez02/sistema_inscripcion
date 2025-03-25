@@ -50,14 +50,13 @@ public class InscripcionAlumno extends javax.swing.JFrame {
         
     }
     
-     //Funcion para toda la configuracion de la ventana 
+    //Funcion para toda la configuracion de la ventana 
     private void configuracion_ventana(){
         
         //Centrar ventana
         this.setLocationRelativeTo(null);//La ventana aparece en el centro
     }
-    
-    
+     
     //Funcion para cargar imagenes
     private void cargar_img(){
         //CARGAR EL LOGO PRINCIPAL DEL TEC
@@ -147,11 +146,16 @@ public class InscripcionAlumno extends javax.swing.JFrame {
         String numControl = alum.generarNumeroControl(codigoCarrera(entrada_carrera.getSelectedItem().toString()));
         String rutaCarpetaAlumno = crear_carpetaAlumno(numControl);
 
-        if (!rutaCarpetaAlumno.isEmpty()) {
+        if (!rutaCarpetaAlumno.isEmpty()){
             String acta = guardar_pdf(ruta_acta.getText(), rutaCarpetaAlumno, "acta_nacimiento");
             String certificado = guardar_pdf(ruta_certificado.getText(), rutaCarpetaAlumno, "certificado_bachillerato");
             String curp = guardar_pdf(ruta_curp.getText(), rutaCarpetaAlumno, "curp");
-            String ine = guardar_pdf(ruta_ine.getText(), rutaCarpetaAlumno, "ine");
+            String ine =null;
+           
+            //Si cargó el ine subir la ruta, sino dejar en blanco
+            if(!ruta_ine.getText().isEmpty()){
+               ine = guardar_pdf(ruta_ine.getText(), rutaCarpetaAlumno, "ine"); 
+            }
 
             // Preparar la consulta SQL
             String sql = "INSERT INTO `alumno` (`num_control`, `carrera`,`semestre` ,`nombres`, `apellido_paterno`, "
@@ -432,7 +436,19 @@ public class InscripcionAlumno extends javax.swing.JFrame {
         lb_curp2.setFont(new java.awt.Font("Segoe UI", 1, 18)); // NOI18N
         lb_curp2.setText("Curp");
         jPanel2.add(lb_curp2, new org.netbeans.lib.awtextra.AbsoluteConstraints(590, 300, -1, -1));
+
+        entrada_nombres.addKeyListener(new java.awt.event.KeyAdapter() {
+            public void keyTyped(java.awt.event.KeyEvent evt) {
+                entrada_nombresKeyTyped(evt);
+            }
+        });
         jPanel2.add(entrada_nombres, new org.netbeans.lib.awtextra.AbsoluteConstraints(40, 110, 370, 50));
+
+        entrada_apellidoPaterno.addKeyListener(new java.awt.event.KeyAdapter() {
+            public void keyTyped(java.awt.event.KeyEvent evt) {
+                entrada_apellidoPaternoKeyTyped(evt);
+            }
+        });
         jPanel2.add(entrada_apellidoPaterno, new org.netbeans.lib.awtextra.AbsoluteConstraints(40, 220, 370, 50));
 
         jLabel5.setFont(new java.awt.Font("Segoe UI", 1, 18)); // NOI18N
@@ -475,7 +491,19 @@ public class InscripcionAlumno extends javax.swing.JFrame {
         jLabel9.setFont(new java.awt.Font("Segoe UI", 1, 18)); // NOI18N
         jLabel9.setText("Genero");
         jPanel2.add(jLabel9, new org.netbeans.lib.awtextra.AbsoluteConstraints(50, 480, -1, -1));
+
+        entrada_apellidoMaterno.addKeyListener(new java.awt.event.KeyAdapter() {
+            public void keyTyped(java.awt.event.KeyEvent evt) {
+                entrada_apellidoMaternoKeyTyped(evt);
+            }
+        });
         jPanel2.add(entrada_apellidoMaterno, new org.netbeans.lib.awtextra.AbsoluteConstraints(40, 320, 370, 50));
+
+        entrada_telefono.addKeyListener(new java.awt.event.KeyAdapter() {
+            public void keyTyped(java.awt.event.KeyEvent evt) {
+                entrada_telefonoKeyTyped(evt);
+            }
+        });
         jPanel2.add(entrada_telefono, new org.netbeans.lib.awtextra.AbsoluteConstraints(50, 730, 370, 50));
 
         jLabel10.setFont(new java.awt.Font("Segoe UI", 1, 18)); // NOI18N
@@ -486,12 +514,24 @@ public class InscripcionAlumno extends javax.swing.JFrame {
         jLabel11.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
         jLabel11.setText("DATOS PERSONALES");
         jPanel2.add(jLabel11, new org.netbeans.lib.awtextra.AbsoluteConstraints(40, 40, 370, 30));
+
+        entrada_correo.addKeyListener(new java.awt.event.KeyAdapter() {
+            public void keyTyped(java.awt.event.KeyEvent evt) {
+                entrada_correoKeyTyped(evt);
+            }
+        });
         jPanel2.add(entrada_correo, new org.netbeans.lib.awtextra.AbsoluteConstraints(50, 850, 370, 50));
 
         jLabel12.setFont(new java.awt.Font("Segoe UI", 1, 18)); // NOI18N
         jLabel12.setText("Código postal");
-        jPanel2.add(jLabel12, new org.netbeans.lib.awtextra.AbsoluteConstraints(40, 980, -1, 40));
-        jPanel2.add(entrada_cp, new org.netbeans.lib.awtextra.AbsoluteConstraints(40, 1020, 180, 40));
+        jPanel2.add(jLabel12, new org.netbeans.lib.awtextra.AbsoluteConstraints(20, 980, -1, 40));
+
+        entrada_cp.addKeyListener(new java.awt.event.KeyAdapter() {
+            public void keyTyped(java.awt.event.KeyEvent evt) {
+                entrada_cpKeyTyped(evt);
+            }
+        });
+        jPanel2.add(entrada_cp, new org.netbeans.lib.awtextra.AbsoluteConstraints(20, 1020, 200, 40));
 
         jLabel13.setFont(new java.awt.Font("Segoe UI", 1, 18)); // NOI18N
         jLabel13.setText("Estado");
@@ -548,6 +588,9 @@ public class InscripcionAlumno extends javax.swing.JFrame {
 
         entrada_colonia.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "<seleccionar>" }));
         jPanel2.add(entrada_colonia, new org.netbeans.lib.awtextra.AbsoluteConstraints(20, 1130, 240, 50));
+
+        entrada_fechaNacimiento.setMaxSelectableDate(new java.util.Date(1167634886000L));
+        entrada_fechaNacimiento.setMinSelectableDate(new java.util.Date(1072940486000L));
         jPanel2.add(entrada_fechaNacimiento, new org.netbeans.lib.awtextra.AbsoluteConstraints(40, 420, 370, 50));
 
         jLabel20.setFont(new java.awt.Font("Segoe UI", 1, 18)); // NOI18N
@@ -619,7 +662,6 @@ public class InscripcionAlumno extends javax.swing.JFrame {
                     entrada_estado.addItem(direc.estado);
                     entrada_municipio.addItem(direc.municipio);
                     entrada_colonia.setModel(new DefaultComboBoxModel<>(direc.colonias));
-
                 } else {
                     JOptionPane.showMessageDialog(null, "Ingrese un codigo postal de Mexico", "Codigo postal no valido", JOptionPane.WARNING_MESSAGE);
                     entrada_cp.requestFocusInWindow();    // Borde al tener foco;
@@ -662,6 +704,11 @@ public class InscripcionAlumno extends javax.swing.JFrame {
         if (correoRepetido()) {
             JOptionPane.showMessageDialog(null, "El correo ya se encuentra registrado\nPor favor ingrese otro", "Correo repetido", JOptionPane.WARNING_MESSAGE);
             entrada_correo.requestFocusInWindow();
+            return;
+        }
+        if (entrada_fechaNacimiento.getDate() == null) {
+            JOptionPane.showMessageDialog(null, "Ingrese una fecha de nacimiento valida", "Fecha no valido", JOptionPane.WARNING_MESSAGE);
+            entrada_fechaNacimiento.requestFocusInWindow();
             return;
         }
         if(!valida.validarNumeroTelefono(entrada_telefono.getText())){
@@ -708,11 +755,55 @@ public class InscripcionAlumno extends javax.swing.JFrame {
         }
     }//GEN-LAST:event_btn_registrarActionPerformed
 
+    //------BOTON PARA REGRESAR AL LOGIN
     private void btn_regresarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btn_regresarActionPerformed
         Login_alumno ventana = new Login_alumno();
         ventana.setVisible(true);
         this.dispose();
     }//GEN-LAST:event_btn_regresarActionPerformed
+
+    //------------------VALIDA LA LONGITUD DE ENTRADA DE LOS CAMPOS-------------------
+    private void entrada_nombresKeyTyped(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_entrada_nombresKeyTyped
+        if (entrada_nombres.getText().length() >= 59) {//si la longitud es mayor a 59 no permite seguir escribiendo
+            JOptionPane.showMessageDialog(null, "El numero maximo de caracteres es de 60", "Número maximo de cáracteres alcanzados", JOptionPane.WARNING_MESSAGE);
+            evt.consume();
+        }
+    }//GEN-LAST:event_entrada_nombresKeyTyped
+
+    private void entrada_apellidoPaternoKeyTyped(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_entrada_apellidoPaternoKeyTyped
+        if (entrada_apellidoPaterno.getText().length() >= 59) {//si la longitud es mayor a 59 no permite seguir escribiendo
+            JOptionPane.showMessageDialog(null, "El numero maximo de caracteres es de 60", "Número maximo de cáracteres alcanzados", JOptionPane.WARNING_MESSAGE);
+            evt.consume();
+        }
+    }//GEN-LAST:event_entrada_apellidoPaternoKeyTyped
+
+    private void entrada_apellidoMaternoKeyTyped(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_entrada_apellidoMaternoKeyTyped
+        if (entrada_apellidoMaterno.getText().length() >= 59) {//si la longitud es mayor a 59 no permite seguir escribiendo
+            JOptionPane.showMessageDialog(null, "El numero maximo de caracteres es de 60", "Número maximo de cáracteres alcanzados", JOptionPane.WARNING_MESSAGE);
+            evt.consume();
+        }
+    }//GEN-LAST:event_entrada_apellidoMaternoKeyTyped
+
+    private void entrada_telefonoKeyTyped(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_entrada_telefonoKeyTyped
+        if (entrada_telefono.getText().length() >= 14) {//si la longitud es mayor a 59 no permite seguir escribiendo
+            JOptionPane.showMessageDialog(null, "El numero maximo de caracteres es de 15", "Número maximo de cáracteres alcanzados", JOptionPane.WARNING_MESSAGE);
+            evt.consume();
+        }
+    }//GEN-LAST:event_entrada_telefonoKeyTyped
+
+    private void entrada_correoKeyTyped(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_entrada_correoKeyTyped
+       if (entrada_correo.getText().length() >= 69) {//si la longitud es mayor a 69 no permite seguir escribiendo
+            JOptionPane.showMessageDialog(null, "El numero maximo de caracteres es de 70", "Número maximo de cáracteres alcanzados", JOptionPane.WARNING_MESSAGE);
+            evt.consume();
+        }
+    }//GEN-LAST:event_entrada_correoKeyTyped
+
+    private void entrada_cpKeyTyped(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_entrada_cpKeyTyped
+        if (entrada_cp.getText().length() >= 8) {//si la longitud es mayor a 8 no permite seguir escribiendo
+            JOptionPane.showMessageDialog(null, "El numero maximo de caracteres es de 8", "Número maximo de cáracteres alcanzados", JOptionPane.WARNING_MESSAGE);
+            evt.consume();
+        }
+    }//GEN-LAST:event_entrada_cpKeyTyped
 
     /**
      * @param args the command line arguments

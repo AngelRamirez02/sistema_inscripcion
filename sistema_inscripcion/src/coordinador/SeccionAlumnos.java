@@ -5,9 +5,8 @@
 package coordinador;
 
 import com.itextpdf.text.DocumentException;
-import maestro.*;
 import conexion.Conexion;
-import coordinador.*;
+import java.awt.Desktop;
 import java.awt.Dimension;
 import java.awt.Image;
 import java.awt.Toolkit;
@@ -95,8 +94,37 @@ public class SeccionAlumnos extends javax.swing.JFrame {
             calle.setText(rs.getString("calle"));
             num_Interior.setText(rs.getString("num_interior"));
             num_exterior.setText(rs.getString("num_exterior"));
+            CargarDocumentos(numControl);
         } else {
             JOptionPane.showMessageDialog(null, "No se encontó a ningun alumno con el numero de control ingresado", "Registro no encontrado", JOptionPane.WARNING_MESSAGE);
+        }
+    }
+    
+    private void CargarDocumentos(String numeroControl) throws SQLException{
+         String sql = "SELECT * FROM documentos WHERE num_control = ?";
+        PreparedStatement ps = cx.conectar().prepareStatement(sql);
+        ps.setString(1, numeroControl);
+        ResultSet rs = ps.executeQuery();
+        
+        if(rs.next()){
+            ruta_acta.setText(rs.getString("acta_nacimiento"));
+            ruta_certificado.setText(rs.getString("certificado_bachillerato"));
+            ruta_curp.setText(rs.getString("curp"));
+            if(rs.getString("ine")!=null){
+                ruta_ine.setText(rs.getString("ine"));
+            }else{
+                ruta_ine.setText("SN");
+            }
+        }
+    }
+    
+    private void abrirDocumento(String rutaArchivo){
+                //Abre el archivo generado
+        File path = new File(rutaArchivo);
+        try {
+            Desktop.getDesktop().open(path);
+        } catch (IOException ex) {
+            Logger.getLogger(AlumnosPDF.class.getName()).log(Level.SEVERE, null, ex);
         }
     }
     
@@ -194,6 +222,14 @@ public class SeccionAlumnos extends javax.swing.JFrame {
         codigo_postal = new javax.swing.JTextField();
         titulo_fechaNacimiento = new javax.swing.JTextField();
         fecha_nacimiento = new javax.swing.JTextField();
+        ruta_ine = new javax.swing.JLabel();
+        ruta_acta = new javax.swing.JLabel();
+        ruta_curp = new javax.swing.JLabel();
+        ruta_certificado = new javax.swing.JLabel();
+        jLabel1 = new javax.swing.JLabel();
+        jLabel2 = new javax.swing.JLabel();
+        jLabel3 = new javax.swing.JLabel();
+        jLabel4 = new javax.swing.JLabel();
         btn_descargarPDF = new javax.swing.JLabel();
         btn_regresar = new javax.swing.JButton();
 
@@ -229,7 +265,6 @@ public class SeccionAlumnos extends javax.swing.JFrame {
         lb_inicial.setText("INGRESE EL NUMERO DE CONTROL DEL ALUMNO A CONSULTAR");
         jPanel2.add(lb_inicial, new org.netbeans.lib.awtextra.AbsoluteConstraints(170, 110, 710, 30));
 
-        icon_buscar.setIcon(new javax.swing.ImageIcon("C:\\Users\\ar275\\Documents\\Generador de facturas\\generador-de-facturas\\generador_facturas\\src\\img\\btn_buscar.png")); // NOI18N
         icon_buscar.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
         icon_buscar.addMouseListener(new java.awt.event.MouseAdapter() {
             public void mouseClicked(java.awt.event.MouseEvent evt) {
@@ -496,7 +531,7 @@ public class SeccionAlumnos extends javax.swing.JFrame {
                 btn_eliminarActionPerformed(evt);
             }
         });
-        panel_datos.add(btn_eliminar, new org.netbeans.lib.awtextra.AbsoluteConstraints(700, 770, 160, 50));
+        panel_datos.add(btn_eliminar, new org.netbeans.lib.awtextra.AbsoluteConstraints(710, 810, 160, 50));
 
         btn_editar.setBackground(new java.awt.Color(51, 51, 255));
         btn_editar.setFont(new java.awt.Font("Segoe UI", 1, 18)); // NOI18N
@@ -507,7 +542,7 @@ public class SeccionAlumnos extends javax.swing.JFrame {
                 btn_editarActionPerformed(evt);
             }
         });
-        panel_datos.add(btn_editar, new org.netbeans.lib.awtextra.AbsoluteConstraints(290, 770, 160, 50));
+        panel_datos.add(btn_editar, new org.netbeans.lib.awtextra.AbsoluteConstraints(300, 810, 160, 50));
 
         lb_datosAlumno3.setFont(new java.awt.Font("Roboto", 1, 24)); // NOI18N
         lb_datosAlumno3.setText("Domicilio");
@@ -546,6 +581,66 @@ public class SeccionAlumnos extends javax.swing.JFrame {
         fecha_nacimiento.setBorder(null);
         fecha_nacimiento.setFocusable(false);
         panel_datos.add(fecha_nacimiento, new org.netbeans.lib.awtextra.AbsoluteConstraints(100, 330, 230, 40));
+
+        ruta_ine.setForeground(new java.awt.Color(0, 0, 0));
+        ruta_ine.setText("jLabel1");
+        ruta_ine.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
+        ruta_ine.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mousePressed(java.awt.event.MouseEvent evt) {
+                ruta_ineMousePressed(evt);
+            }
+        });
+        panel_datos.add(ruta_ine, new org.netbeans.lib.awtextra.AbsoluteConstraints(900, 690, 210, 30));
+
+        ruta_acta.setForeground(new java.awt.Color(0, 0, 0));
+        ruta_acta.setText("jLabel1");
+        ruta_acta.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
+        ruta_acta.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mousePressed(java.awt.event.MouseEvent evt) {
+                ruta_actaMousePressed(evt);
+            }
+        });
+        panel_datos.add(ruta_acta, new org.netbeans.lib.awtextra.AbsoluteConstraints(50, 690, 210, 30));
+
+        ruta_curp.setForeground(new java.awt.Color(0, 0, 0));
+        ruta_curp.setText("jLabel1");
+        ruta_curp.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
+        ruta_curp.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mousePressed(java.awt.event.MouseEvent evt) {
+                ruta_curpMousePressed(evt);
+            }
+        });
+        panel_datos.add(ruta_curp, new org.netbeans.lib.awtextra.AbsoluteConstraints(330, 690, 210, 30));
+
+        ruta_certificado.setForeground(new java.awt.Color(0, 0, 0));
+        ruta_certificado.setText("jLabel1");
+        ruta_certificado.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
+        ruta_certificado.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mousePressed(java.awt.event.MouseEvent evt) {
+                ruta_certificadoMousePressed(evt);
+            }
+        });
+        panel_datos.add(ruta_certificado, new org.netbeans.lib.awtextra.AbsoluteConstraints(620, 690, 210, 30));
+
+        jLabel1.setFont(new java.awt.Font("Segoe UI", 1, 14)); // NOI18N
+        jLabel1.setForeground(new java.awt.Color(0, 0, 0));
+        jLabel1.setText("INE");
+        panel_datos.add(jLabel1, new org.netbeans.lib.awtextra.AbsoluteConstraints(900, 660, 200, 30));
+
+        jLabel2.setFont(new java.awt.Font("Segoe UI", 1, 14)); // NOI18N
+        jLabel2.setForeground(new java.awt.Color(0, 0, 0));
+        jLabel2.setText("Acta de nacimiento");
+        panel_datos.add(jLabel2, new org.netbeans.lib.awtextra.AbsoluteConstraints(50, 660, 180, 30));
+
+        jLabel3.setFont(new java.awt.Font("Segoe UI", 1, 14)); // NOI18N
+        jLabel3.setForeground(new java.awt.Color(0, 0, 0));
+        jLabel3.setText("CURP");
+        panel_datos.add(jLabel3, new org.netbeans.lib.awtextra.AbsoluteConstraints(330, 660, 180, 30));
+
+        jLabel4.setFont(new java.awt.Font("Segoe UI", 1, 14)); // NOI18N
+        jLabel4.setForeground(new java.awt.Color(0, 0, 0));
+        jLabel4.setText("Certificado de preparatoria");
+        panel_datos.add(jLabel4, new org.netbeans.lib.awtextra.AbsoluteConstraints(620, 660, 200, 30));
 
         jPanel2.add(panel_datos, new org.netbeans.lib.awtextra.AbsoluteConstraints(0, 240, 1190, 910));
 
@@ -663,6 +758,34 @@ public class SeccionAlumnos extends javax.swing.JFrame {
         }
     }//GEN-LAST:event_btn_regresarActionPerformed
 
+    private void ruta_actaMousePressed(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_ruta_actaMousePressed
+        if (SwingUtilities.isLeftMouseButton(evt)) {
+            abrirDocumento(ruta_acta.getText());
+        }
+    }//GEN-LAST:event_ruta_actaMousePressed
+
+    private void ruta_curpMousePressed(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_ruta_curpMousePressed
+        if (SwingUtilities.isLeftMouseButton(evt)) {
+            abrirDocumento(ruta_curp.getText());
+        }
+    }//GEN-LAST:event_ruta_curpMousePressed
+
+    private void ruta_certificadoMousePressed(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_ruta_certificadoMousePressed
+        if(SwingUtilities.isLeftMouseButton(evt)){
+            abrirDocumento(ruta_certificado.getText());
+        }
+    }//GEN-LAST:event_ruta_certificadoMousePressed
+
+    private void ruta_ineMousePressed(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_ruta_ineMousePressed
+        if (ruta_ine.getText().toString() == "SN") {
+            System.out.println("xdd");
+            return;
+        }
+        if (SwingUtilities.isLeftMouseButton(evt)) {
+            abrirDocumento(ruta_ine.getText());
+        }
+    }//GEN-LAST:event_ruta_ineMousePressed
+
     /**
      * @param args the command line arguments
      */
@@ -733,6 +856,10 @@ public class SeccionAlumnos extends javax.swing.JFrame {
     private javax.swing.JTextField estado;
     private javax.swing.JTextField fecha_nacimiento;
     private javax.swing.JLabel icon_buscar;
+    private javax.swing.JLabel jLabel1;
+    private javax.swing.JLabel jLabel2;
+    private javax.swing.JLabel jLabel3;
+    private javax.swing.JLabel jLabel4;
     private javax.swing.JPanel jPanel1;
     private javax.swing.JPanel jPanel2;
     private javax.swing.JLabel lb_datosAlumno;
@@ -747,6 +874,10 @@ public class SeccionAlumnos extends javax.swing.JFrame {
     private javax.swing.JTextField num_exterior;
     private javax.swing.JTextField num_telefono;
     private javax.swing.JPanel panel_datos;
+    private javax.swing.JLabel ruta_acta;
+    private javax.swing.JLabel ruta_certificado;
+    private javax.swing.JLabel ruta_curp;
+    private javax.swing.JLabel ruta_ine;
     private javax.swing.JTextField semestre;
     private javax.swing.JTextField titulo_apellidoMaterno;
     private javax.swing.JTextField titulo_apellidoPaterno;
