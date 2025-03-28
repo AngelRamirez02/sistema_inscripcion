@@ -358,11 +358,8 @@
                   <Font name="Segoe UI" size="18" style="0"/>
                 </Property>
                 <Property name="model" type="javax.swing.ComboBoxModel" editor="org.netbeans.modules.form.editors2.ComboBoxModelEditor">
-                  <StringArray count="4">
+                  <StringArray count="1">
                     <StringItem index="0" value="Ingenieria en sistemas computacionales"/>
-                    <StringItem index="1" value="Ingenieria bioquimica"/>
-                    <StringItem index="2" value="Ingenieria electromecanica"/>
-                    <StringItem index="3" value="Arquitectura"/>
                   </StringArray>
                 </Property>
               </Properties>

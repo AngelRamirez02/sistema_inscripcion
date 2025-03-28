@@ -42,12 +42,12 @@ public class InscripcionAlumno extends javax.swing.JFrame {
     ObtenerDireccion direc;//objeto para obtener la direccion ¿
     Conexion cx = new Conexion();
     Alumno alum = new Alumno();
+    private String num_control_asignado;
     
-    public InscripcionAlumno() {
+    public InscripcionAlumno(){
         initComponents();
         configuracion_ventana();
-        cargar_img();
-        
+        cargar_img();       
     }
     
     //Funcion para toda la configuracion de la ventana 
@@ -68,35 +68,53 @@ public class InscripcionAlumno extends javax.swing.JFrame {
         btn_subir_acta.setIcon(new ImageIcon(icon_subir_archivo.getScaledInstance(btn_subir_acta.getWidth(), btn_subir_acta.getHeight(), Image.SCALE_SMOOTH)));
         btn_subir_certificado.setIcon(new ImageIcon(icon_subir_archivo.getScaledInstance(btn_subir_certificado.getWidth(), btn_subir_certificado.getHeight(), Image.SCALE_SMOOTH)));
         btn_subir_curp.setIcon(new ImageIcon(icon_subir_archivo.getScaledInstance(btn_subir_curp.getWidth(), btn_subir_ine.getHeight(), Image.SCALE_SMOOTH)));
-        btn_subir_ine.setIcon(new ImageIcon(icon_subir_archivo.getScaledInstance(btn_subir_ine.getWidth(), btn_subir_ine.getHeight(), Image.SCALE_SMOOTH))); 
+        btn_subir_ine.setIcon(new ImageIcon(icon_subir_archivo.getScaledInstance(btn_subir_ine.getWidth(), btn_subir_ine.getHeight(), Image.SCALE_SMOOTH)));
     }
 
     private String seleccionar_pdf() {
-        //Mostrar interfaz para seleccionar la carpeta
+        // Mostrar interfaz para seleccionar el archivo
         JFileChooser fileChooser = new JFileChooser();
-        fileChooser.setPreferredSize(new Dimension(800, 600));//Tamño de la ventana
+        fileChooser.setPreferredSize(new Dimension(800, 600)); // Tamaño de la ventana
         fileChooser.setDialogTitle("Seleccionar archivo");
 
         // Crear un filtro para archivos PDF
         FileNameExtensionFilter filtroPDF = new FileNameExtensionFilter("Archivos PDF (*.pdf)", "pdf");
-        fileChooser.setFileFilter(filtroPDF); // Solo permitir seleccionar carpetas
+        fileChooser.setFileFilter(filtroPDF);
 
         // Abrir el cuadro de diálogo
         int result = fileChooser.showOpenDialog(null);
 
         if (result == JFileChooser.APPROVE_OPTION) {
             File selectedFile = fileChooser.getSelectedFile();
-            // Validar que el archivo termine en ".pdf"
-            if (selectedFile.getName().toLowerCase().endsWith(".pdf")) {
-                return selectedFile.getAbsolutePath();
-            } else {
-                JOptionPane.showMessageDialog(null, "El archivo seleccionado no es un PDF válido.", "Error", JOptionPane.ERROR_MESSAGE);
+
+            // Validar extensión PDF
+            if (!selectedFile.getName().toLowerCase().endsWith(".pdf")) {
+                JOptionPane.showMessageDialog(null,
+                        "El archivo seleccionado no es un PDF válido.",
+                        "Error",
+                        JOptionPane.ERROR_MESSAGE);
                 return "";
             }
+
+            // Validar tamaño máximo (500 KB)
+            long fileSizeInKB = selectedFile.length() / 1024; // Convertir bytes a KB
+            final long MAX_SIZE_KB = 500;
+
+            if (fileSizeInKB > MAX_SIZE_KB) {
+                JOptionPane.showMessageDialog(null,
+                        String.format("El archivo excede el tamaño máximo permitido (%.2f MB). Tamaño actual: %.2f MB",
+                                MAX_SIZE_KB / 1024.0,
+                                fileSizeInKB / 1024.0),
+                        "Error",
+                        JOptionPane.ERROR_MESSAGE);
+                return "";
+            }
+
+            return selectedFile.getAbsolutePath();
         }
         return "";
     }
-    
+
     private String crear_carpetaAlumno(String nombreCarpeta) {
         // Ruta base donde se crearán las nuevas carpetas
         String basePath = "documentos_alumnos";
@@ -143,8 +161,8 @@ public class InscripcionAlumno extends javax.swing.JFrame {
         java.sql.Date fecha_sql = new java.sql.Date(fecha_nacimiento.getTime());
         
         //Generar el numero de control del alumno
-        String numControl = alum.generarNumeroControl(codigoCarrera(entrada_carrera.getSelectedItem().toString()));
-        String rutaCarpetaAlumno = crear_carpetaAlumno(numControl);
+        num_control_asignado = alum.generarNumeroControl(codigoCarrera(entrada_carrera.getSelectedItem().toString()));
+        String rutaCarpetaAlumno = crear_carpetaAlumno(num_control_asignado);
 
         if (!rutaCarpetaAlumno.isEmpty()){
             String acta = guardar_pdf(ruta_acta.getText(), rutaCarpetaAlumno, "acta_nacimiento");
@@ -165,7 +183,7 @@ public class InscripcionAlumno extends javax.swing.JFrame {
 
             PreparedStatement pstmt = cx.conectar().prepareStatement(sql);
             // Establecer los valores para cada parámetro
-            pstmt.setString(1, numControl);
+            pstmt.setString(1, num_control_asignado);
             pstmt.setString(2, entrada_carrera.getSelectedItem().toString());
             pstmt.setString(3, "Primero");
             pstmt.setString(4, valida.formatearNombresApellidos(entrada_nombres.getText()));
@@ -187,9 +205,11 @@ public class InscripcionAlumno extends javax.swing.JFrame {
              //Verifica que se realizó el registro
             int filas_insertadas = pstmt.executeUpdate();
             if(filas_insertadas >0){
-                alta_documentos(numControl, acta, certificado, curp, ine);
-                JOptionPane.showMessageDialog(null,"Datos registrados exitosamente\b"
-                        + "Numero de control asignado: "+numControl, "Registro existoso", JOptionPane.INFORMATION_MESSAGE);
+                alta_documentos(num_control_asignado, acta, certificado, curp, ine);
+                JOptionPane.showMessageDialog(null,"Datos registrados exitosamente\n"
+                        + "Numero de control asignado: "+num_control_asignado, "Registro existoso", JOptionPane.INFORMATION_MESSAGE);
+                //Ejecutar función para cargar el horario del alumno
+                asignarHorario();
                 
             }else{
                  JOptionPane.showMessageDialog(null,"Hubo un error al registrar los datos, intente otra vez", "Error en el registro", JOptionPane.WARNING_MESSAGE);
@@ -226,6 +246,42 @@ public class InscripcionAlumno extends javax.swing.JFrame {
             return;
         }
     }
+    
+    private void asignarHorario() throws SQLException {
+        String sql = "INSERT INTO `alumno_grupo` (`num_control`, `id_grupo`) "
+                + "VALUES (?, ?),"
+                + "(?, ?),"
+                + "(?, ?),"
+                + "(?, ?),"
+                + "(?, ?),"
+                + "(?, ?)";
+
+        PreparedStatement pstmt = cx.conectar().prepareStatement(sql);
+        pstmt.setString(1, num_control_asignado);
+        pstmt.setString(2, "2");
+        pstmt.setString(3, num_control_asignado);
+        pstmt.setString(4, "3");
+        pstmt.setString(5, num_control_asignado);
+        pstmt.setString(6, "4");
+        pstmt.setString(7, num_control_asignado);
+        pstmt.setString(8, "5");
+        pstmt.setString(9, num_control_asignado);
+        pstmt.setString(10, "6");
+        pstmt.setString(11, num_control_asignado);
+        pstmt.setString(12, "7");
+
+        //Verifica que se realizó el registro
+        int filas_insertadas = pstmt.executeUpdate();
+        if (filas_insertadas > 0) {
+            JOptionPane.showMessageDialog(null, "Puede consultar su horario asignado inicinando sesión\n"
+                    + "con su numero de control y contraseña\n"
+                    + "La contraseña por defualt es 999", "Horario asignado", JOptionPane.INFORMATION_MESSAGE);
+
+        } else {
+            JOptionPane.showMessageDialog(null, "No se asignó el horario", "Error en el registro", JOptionPane.WARNING_MESSAGE);           
+        }
+    }
+    
     
     public boolean correoRepetido(){
         try {
@@ -464,7 +520,7 @@ public class InscripcionAlumno extends javax.swing.JFrame {
         jPanel2.add(jLabel7, new org.netbeans.lib.awtextra.AbsoluteConstraints(40, 190, -1, -1));
 
         entrada_carrera.setFont(new java.awt.Font("Segoe UI", 0, 18)); // NOI18N
-        entrada_carrera.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Ingenieria en sistemas computacionales", "Ingenieria bioquimica", "Ingenieria electromecanica", "Arquitectura" }));
+        entrada_carrera.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Ingenieria en sistemas computacionales" }));
         jPanel2.add(entrada_carrera, new org.netbeans.lib.awtextra.AbsoluteConstraints(50, 620, 370, 50));
 
         jLabel8.setFont(new java.awt.Font("Segoe UI", 1, 18)); // NOI18N

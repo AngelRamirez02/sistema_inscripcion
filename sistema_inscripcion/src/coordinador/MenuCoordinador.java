@@ -138,6 +138,7 @@ public class MenuCoordinador extends javax.swing.JFrame {
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
         setBackground(new java.awt.Color(255, 255, 255));
+        setResizable(false);
         getContentPane().setLayout(new org.netbeans.lib.awtextra.AbsoluteLayout());
 
         jPanel1.setBackground(new java.awt.Color(255, 255, 255));
@@ -193,7 +194,7 @@ public class MenuCoordinador extends javax.swing.JFrame {
         jLabel3.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
         panelRound3.add(jLabel3, new org.netbeans.lib.awtextra.AbsoluteConstraints(0, 0, 500, 60));
 
-        jPanel2.add(panelRound3, new org.netbeans.lib.awtextra.AbsoluteConstraints(630, 250, 500, 60));
+        jPanel2.add(panelRound3, new org.netbeans.lib.awtextra.AbsoluteConstraints(630, 230, 500, 60));
 
         panelRound4.setBackground(new java.awt.Color(153, 153, 153));
         panelRound4.setRoundBottomLeft(20);
@@ -209,7 +210,7 @@ public class MenuCoordinador extends javax.swing.JFrame {
         jLabel4.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
         panelRound4.add(jLabel4, new org.netbeans.lib.awtextra.AbsoluteConstraints(0, 0, 500, 60));
 
-        jPanel2.add(panelRound4, new org.netbeans.lib.awtextra.AbsoluteConstraints(630, 140, 500, 60));
+        jPanel2.add(panelRound4, new org.netbeans.lib.awtextra.AbsoluteConstraints(630, 120, 500, 60));
 
         panelRound5.setBackground(new java.awt.Color(153, 153, 153));
         panelRound5.setRoundBottomLeft(20);
@@ -225,7 +226,7 @@ public class MenuCoordinador extends javax.swing.JFrame {
         jLabel5.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
         panelRound5.add(jLabel5, new org.netbeans.lib.awtextra.AbsoluteConstraints(0, 0, 500, 60));
 
-        jPanel2.add(panelRound5, new org.netbeans.lib.awtextra.AbsoluteConstraints(630, 360, 500, 60));
+        jPanel2.add(panelRound5, new org.netbeans.lib.awtextra.AbsoluteConstraints(630, 330, 500, 60));
 
         btn_cerrar_sesion.setBackground(new java.awt.Color(153, 153, 153));
         btn_cerrar_sesion.setRoundBottomLeft(20);
@@ -246,7 +247,7 @@ public class MenuCoordinador extends javax.swing.JFrame {
         jLabel2.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
         btn_cerrar_sesion.add(jLabel2, new org.netbeans.lib.awtextra.AbsoluteConstraints(0, 0, 500, 60));
 
-        jPanel2.add(btn_cerrar_sesion, new org.netbeans.lib.awtextra.AbsoluteConstraints(630, 600, 500, 60));
+        jPanel2.add(btn_cerrar_sesion, new org.netbeans.lib.awtextra.AbsoluteConstraints(630, 530, 500, 60));
 
         lb_nombreCoordinador.setFont(new java.awt.Font("Segoe UI", 1, 18)); // NOI18N
         lb_nombreCoordinador.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
@@ -277,7 +278,7 @@ public class MenuCoordinador extends javax.swing.JFrame {
         jLabel6.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
         btn_bitacora.add(jLabel6, new org.netbeans.lib.awtextra.AbsoluteConstraints(0, 0, 500, 60));
 
-        jPanel2.add(btn_bitacora, new org.netbeans.lib.awtextra.AbsoluteConstraints(630, 480, 500, 60));
+        jPanel2.add(btn_bitacora, new org.netbeans.lib.awtextra.AbsoluteConstraints(630, 430, 500, 60));
 
         jScrollPane1.setViewportView(jPanel2);
 

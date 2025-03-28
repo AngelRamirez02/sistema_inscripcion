@@ -4,6 +4,7 @@
  */
 package alumno;
 
+import Horario.SeleccionarHorario;
 import com.itextpdf.text.DocumentException;
 import conexion.Conexion;
 import coordinador.*;
@@ -103,6 +104,8 @@ public class MenuAlumno extends javax.swing.JFrame {
         lb_nombreAlumno = new javax.swing.JLabel();
         btn_cerrar_sesion = new paneles.PanelRound();
         btn_salir = new javax.swing.JLabel();
+        btn_elegirMaterias = new paneles.PanelRound();
+        btn_salir1 = new javax.swing.JLabel();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
         setBackground(new java.awt.Color(255, 255, 255));
@@ -193,7 +196,28 @@ public class MenuAlumno extends javax.swing.JFrame {
         btn_salir.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
         btn_cerrar_sesion.add(btn_salir, new org.netbeans.lib.awtextra.AbsoluteConstraints(0, 0, 500, 60));
 
-        jPanel2.add(btn_cerrar_sesion, new org.netbeans.lib.awtextra.AbsoluteConstraints(620, 340, 500, 60));
+        jPanel2.add(btn_cerrar_sesion, new org.netbeans.lib.awtextra.AbsoluteConstraints(620, 450, 500, 60));
+
+        btn_elegirMaterias.setBackground(new java.awt.Color(153, 153, 153));
+        btn_elegirMaterias.setRoundBottomLeft(20);
+        btn_elegirMaterias.setRoundBottomRight(20);
+        btn_elegirMaterias.setRoundTopLeft(20);
+        btn_elegirMaterias.setRoundTopRight(20);
+        btn_elegirMaterias.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mousePressed(java.awt.event.MouseEvent evt) {
+                btn_elegirMateriasMousePressed(evt);
+            }
+        });
+        btn_elegirMaterias.setLayout(new org.netbeans.lib.awtextra.AbsoluteLayout());
+
+        btn_salir1.setFont(new java.awt.Font("Segoe UI", 1, 24)); // NOI18N
+        btn_salir1.setForeground(new java.awt.Color(51, 51, 255));
+        btn_salir1.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
+        btn_salir1.setText("Seleccionar materias");
+        btn_salir1.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
+        btn_elegirMaterias.add(btn_salir1, new org.netbeans.lib.awtextra.AbsoluteConstraints(0, 0, 500, 60));
+
+        jPanel2.add(btn_elegirMaterias, new org.netbeans.lib.awtextra.AbsoluteConstraints(620, 350, 500, 60));
 
         jScrollPane1.setViewportView(jPanel2);
 
@@ -317,6 +341,18 @@ public class MenuAlumno extends javax.swing.JFrame {
         }
     }//GEN-LAST:event_formWindowClosing
 
+    private void btn_elegirMateriasMousePressed(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_btn_elegirMateriasMousePressed
+       if(SwingUtilities.isLeftMouseButton(evt)){
+           try {
+               SeleccionarHorario ventana = new SeleccionarHorario(this.numControl, fechaInicioSesion, horaInicioSesion);
+               ventana.setVisible(true);
+               this.dispose();
+           } catch (SQLException ex) {
+               Logger.getLogger(MenuAlumno.class.getName()).log(Level.SEVERE, null, ex);
+           }
+       }
+    }//GEN-LAST:event_btn_elegirMateriasMousePressed
+
     /**
      * @param args the command line arguments
      */
@@ -362,8 +398,10 @@ public class MenuAlumno extends javax.swing.JFrame {
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JLabel Calificaciones;
     private paneles.PanelRound btn_cerrar_sesion;
+    private paneles.PanelRound btn_elegirMaterias;
     private javax.swing.JLabel btn_imprimirHorario;
     private javax.swing.JLabel btn_salir;
+    private javax.swing.JLabel btn_salir1;
     private javax.swing.JPanel jPanel1;
     private javax.swing.JPanel jPanel2;
     private javax.swing.JScrollPane jScrollPane1;

@@ -64,7 +64,7 @@ public class BitacoraPDF {
         //Ruta para guardar el documento
         String rutaArchivo = ruta+File.separator+"Bitacora"+fechaActual.toString()+".pdf";
         //Crar documento
-        Document documento = new Document(PageSize.A4.rotate());
+        Document documento = new Document(PageSize.A4);
         //Nombre del archivo
         FileOutputStream ficheroPdf = new FileOutputStream(rutaArchivo);
         //Instancia del doc
@@ -80,12 +80,12 @@ public class BitacoraPDF {
          // Dibujar línea de separación
         PdfContentByte cb = writer.getDirectContent();
         
-        PdfPTable encabezado= new PdfPTable(1);
+        PdfPTable encabezado = new PdfPTable(1);
         encabezado.setWidthPercentage(100);
         PdfPCell celdaLogo = new PdfPCell(logo);
-            celdaLogo.setBorder(PdfPCell.NO_BORDER);
-            celdaLogo.setHorizontalAlignment(PdfPCell.ALIGN_CENTER);
-            encabezado.addCell(celdaLogo);
+        celdaLogo.setBorder(PdfPCell.NO_BORDER);
+        celdaLogo.setHorizontalAlignment(PdfPCell.ALIGN_CENTER);
+        encabezado.addCell(celdaLogo);
         documento.add(encabezado);
               
         //Parrafo Titulo
@@ -96,7 +96,7 @@ public class BitacoraPDF {
         
         //salto de linea al doc
         //Crear tabla para alumnos de preescolar y titulos de las columnas
-        float[] relacionColumnas= {1f,1f,1f,1f,1f,1f,1f};
+        float[] relacionColumnas= {2f,3f,2f,2f,2f,2f,2f};
         
         //Tabla para alumnos
         PdfPTable tablaBitacora = new PdfPTable(7);
@@ -132,7 +132,7 @@ public class BitacoraPDF {
         tablaBitacora.addCell(celda_usuario);
         tablaBitacora.addCell(celda_tipoUsuario);
         tablaBitacora.addCell(celda_fechaEntrada);
-        tablaBitacora.addCell(celda_horaSalida);
+        tablaBitacora.addCell(celda_horaEntrada);
         tablaBitacora.addCell(celda_fechaSalida);
         tablaBitacora.addCell(celda_horaSalida);
         
