@@ -12,6 +12,8 @@ import coordinador.*;
 import java.awt.Dimension;
 import java.awt.Image;
 import java.awt.Toolkit;
+import java.awt.event.ComponentAdapter;
+import java.awt.event.ComponentEvent;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
@@ -48,12 +50,25 @@ public class MenuCoordinador extends javax.swing.JFrame {
         configuracion_ventana();
         cargar_img();
         cargarDatos_coordinador();
-    }
-
-        //Funcion para toda la configuracion de la ventana 
-    private void configuracion_ventana(){        
         //Centrar ventana
         this.setLocationRelativeTo(null);//La ventana aparece en el centro
+    }
+
+    //Funcion para toda la configuracion de la ventana 
+    private void configuracion_ventana() {
+        //Añadir el listener para detectar cuando la ventana es redimensionada
+        this.addComponentListener(new ComponentAdapter() {
+            @Override
+            public void componentResized(ComponentEvent e) {
+                int panelWidth = panel_contenido.getWidth();
+                int panel_heigth = panel_contenido.getHeight() - panel_logo.getHeight();
+                int newX = (fondo.getWidth() - panelWidth) / 2; // Calcular la nueva posición en 
+                int newY = (fondo.getHeight() - panel_heigth) / 2;
+                panel_logo.setSize(fondo.getWidth(), panel_logo.getHeight());
+                panel_contenido.setLocation(newX, newY);
+                logo_ita.setLocation(newX, logo_ita.getY());
+            }
+        });
     }
     
         //Funcion para cargar imagenes
@@ -116,9 +131,10 @@ public class MenuCoordinador extends javax.swing.JFrame {
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
 
-        jPanel1 = new javax.swing.JPanel();
+        fondo = new javax.swing.JPanel();
+        panel_logo = new javax.swing.JPanel();
         logo_ita = new javax.swing.JLabel();
-        jScrollPane1 = new javax.swing.JScrollPane();
+        panel_contenido = new javax.swing.JScrollPane();
         jPanel2 = new javax.swing.JPanel();
         lb_profesor_icon = new javax.swing.JLabel();
         panelRound1 = new paneles.PanelRound();
@@ -138,18 +154,24 @@ public class MenuCoordinador extends javax.swing.JFrame {
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
         setBackground(new java.awt.Color(255, 255, 255));
-        setResizable(false);
-        getContentPane().setLayout(new org.netbeans.lib.awtextra.AbsoluteLayout());
+        setMinimumSize(new java.awt.Dimension(1230, 690));
+        getContentPane().setLayout(new java.awt.CardLayout());
 
-        jPanel1.setBackground(new java.awt.Color(255, 255, 255));
-        jPanel1.setLayout(new org.netbeans.lib.awtextra.AbsoluteLayout());
+        fondo.setBackground(new java.awt.Color(255, 255, 255));
+        fondo.setLayout(null);
+
+        panel_logo.setBackground(new java.awt.Color(255, 255, 255));
+        panel_logo.setLayout(new org.netbeans.lib.awtextra.AbsoluteLayout());
 
         logo_ita.setText("LOGO ITA");
-        jPanel1.add(logo_ita, new org.netbeans.lib.awtextra.AbsoluteConstraints(10, 10, 1180, 80));
+        panel_logo.add(logo_ita, new org.netbeans.lib.awtextra.AbsoluteConstraints(10, 10, 1180, 80));
 
-        getContentPane().add(jPanel1, new org.netbeans.lib.awtextra.AbsoluteConstraints(0, 0, 1200, 90));
+        fondo.add(panel_logo);
+        panel_logo.setBounds(0, 0, 1200, 90);
 
-        jScrollPane1.setHorizontalScrollBarPolicy(javax.swing.ScrollPaneConstants.HORIZONTAL_SCROLLBAR_NEVER);
+        panel_contenido.setBorder(null);
+        panel_contenido.setHorizontalScrollBarPolicy(javax.swing.ScrollPaneConstants.HORIZONTAL_SCROLLBAR_NEVER);
+        panel_contenido.setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));
 
         jPanel2.setBackground(new java.awt.Color(255, 255, 255));
         jPanel2.setPreferredSize(new java.awt.Dimension(998, 700));
@@ -280,9 +302,12 @@ public class MenuCoordinador extends javax.swing.JFrame {
 
         jPanel2.add(btn_bitacora, new org.netbeans.lib.awtextra.AbsoluteConstraints(630, 430, 500, 60));
 
-        jScrollPane1.setViewportView(jPanel2);
+        panel_contenido.setViewportView(jPanel2);
 
-        getContentPane().add(jScrollPane1, new org.netbeans.lib.awtextra.AbsoluteConstraints(0, 90, 1200, 560));
+        fondo.add(panel_contenido);
+        panel_contenido.setBounds(0, 100, 1200, 605);
+
+        getContentPane().add(fondo, "card2");
 
         pack();
     }// </editor-fold>//GEN-END:initComponents
@@ -390,15 +415,14 @@ public class MenuCoordinador extends javax.swing.JFrame {
     private javax.swing.JLabel btn_alumnos;
     private paneles.PanelRound btn_bitacora;
     private paneles.PanelRound btn_cerrar_sesion;
+    private javax.swing.JPanel fondo;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel2;
     private javax.swing.JLabel jLabel3;
     private javax.swing.JLabel jLabel4;
     private javax.swing.JLabel jLabel5;
     private javax.swing.JLabel jLabel6;
-    private javax.swing.JPanel jPanel1;
     private javax.swing.JPanel jPanel2;
-    private javax.swing.JScrollPane jScrollPane1;
     private javax.swing.JLabel lb_nombreCoordinador;
     private javax.swing.JLabel lb_profesor_icon;
     private javax.swing.JLabel logo_ita;
@@ -406,5 +430,7 @@ public class MenuCoordinador extends javax.swing.JFrame {
     private paneles.PanelRound panelRound3;
     private paneles.PanelRound panelRound4;
     private paneles.PanelRound panelRound5;
+    private javax.swing.JScrollPane panel_contenido;
+    private javax.swing.JPanel panel_logo;
     // End of variables declaration//GEN-END:variables
 }

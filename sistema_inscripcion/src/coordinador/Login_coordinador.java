@@ -1,4 +1,4 @@
-/*
+ /*
  * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
  * Click nbfs://nbhost/SystemFileSystem/Templates/GUIForms/JFrame.java to edit this template
  */
@@ -9,6 +9,10 @@ import conexion.Conexion;
 import inicio.Inicio;
 import java.awt.Image;
 import java.awt.Toolkit;
+import java.awt.event.ComponentAdapter;
+import java.awt.event.ComponentEvent;
+import java.awt.event.WindowEvent;
+import java.awt.event.WindowStateListener;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -24,25 +28,35 @@ import javax.swing.SwingUtilities;
  */
 public class Login_coordinador extends javax.swing.JFrame {
 
-    /**
-     * Creates new form Login_alumno
-     */
+    Image logo_ita_img= Toolkit.getDefaultToolkit().getImage(getClass().getResource("/img/logo_ITA.png"));
     public Login_coordinador() {
         initComponents();
         configuracion_ventana();
         cargar_img();
+        //Centrar ventana
+        this.setLocationRelativeTo(null);//La ventana aparece en el centro
     }
     
     //Funcion para toda la configuracion de la ventana 
     private void configuracion_ventana(){        
-        //Centrar ventana
-        this.setLocationRelativeTo(null);//La ventana aparece en el centro
+         //Añadir el listener para detectar cuando la ventana es redimensionada
+        this.addComponentListener(new ComponentAdapter() {
+            @Override
+            public void componentResized(ComponentEvent e) {
+                int panelWidth = panel_login.getWidth();
+                int panel_heigth = panel_login.getHeight() - panel_logo.getHeight();
+                int newX = (fondo.getWidth() - panelWidth) / 2; // Calcular la nueva posición en 
+                int newY = (fondo.getHeight() - panel_heigth)/2;
+                panel_logo.setSize(fondo.getWidth(), panel_logo.getHeight());
+                panel_login.setLocation(newX, newY);
+                logo_ita.setLocation(newX, logo_ita.getY());            
+            }
+        });
     }
     
     //Funcion para cargar imagenes
     private void cargar_img(){
         //CARGAR EL LOGO PRINCIPAL DEL TEC
-        Image logo_ita_img= Toolkit.getDefaultToolkit().getImage(getClass().getResource("/img/logo_ITA.png"));
         logo_ita.setIcon(new ImageIcon(logo_ita_img.getScaledInstance(logo_ita.getWidth(), logo_ita.getHeight(), Image.SCALE_SMOOTH)));
         
         //CARGAR ICONO ALUMNO
@@ -51,8 +65,8 @@ public class Login_coordinador extends javax.swing.JFrame {
         lb_alumno_icon.setIcon(new ImageIcon(icon_alumno.getScaledInstance(lb_alumno_icon.getWidth(), lb_alumno_icon.getHeight(), Image.SCALE_SMOOTH)));
         
         //Icono inscripcioo
-         Image icon_inscripcion = Toolkit.getDefaultToolkit().getImage(getClass().getResource("/img/icon_inscripcion.jpg"));
-         lb_icon_inscripcion.setIcon(new ImageIcon(icon_inscripcion.getScaledInstance(lb_icon_inscripcion.getWidth(), lb_icon_inscripcion.getHeight(), Image.SCALE_SMOOTH)));
+        Image icon_inscripcion = Toolkit.getDefaultToolkit().getImage(getClass().getResource("/img/icon_inscripcion.jpg"));
+        lb_icon_inscripcion.setIcon(new ImageIcon(icon_inscripcion.getScaledInstance(lb_icon_inscripcion.getWidth(), lb_icon_inscripcion.getHeight(), Image.SCALE_SMOOTH)));
     }
     
     public void iniciar_sesion(String rfc, String password) throws SQLException {
@@ -89,9 +103,10 @@ public class Login_coordinador extends javax.swing.JFrame {
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
 
-        jPanel1 = new javax.swing.JPanel();
+        fondo = new javax.swing.JPanel();
+        panel_logo = new javax.swing.JPanel();
         logo_ita = new javax.swing.JLabel();
-        jPanel2 = new javax.swing.JPanel();
+        panel_login = new javax.swing.JPanel();
         lb_alumno_icon = new javax.swing.JLabel();
         entrada_rfc = new javax.swing.JTextField();
         password_entrada = new javax.swing.JPasswordField();
@@ -105,41 +120,43 @@ public class Login_coordinador extends javax.swing.JFrame {
         btn_regresar = new javax.swing.JButton();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
-        setResizable(false);
-        getContentPane().setLayout(new org.netbeans.lib.awtextra.AbsoluteLayout());
+        setMinimumSize(new java.awt.Dimension(800, 600));
+        getContentPane().setLayout(new java.awt.CardLayout());
 
-        jPanel1.setBackground(new java.awt.Color(255, 255, 255));
-        jPanel1.setLayout(new org.netbeans.lib.awtextra.AbsoluteLayout());
+        fondo.setBackground(new java.awt.Color(255, 255, 255));
+        fondo.setLayout(null);
 
-        logo_ita.setText("LOGO ITA");
-        jPanel1.add(logo_ita, new org.netbeans.lib.awtextra.AbsoluteConstraints(10, 10, 780, 80));
+        panel_logo.setBackground(new java.awt.Color(255, 255, 255));
+        panel_logo.setLayout(new org.netbeans.lib.awtextra.AbsoluteLayout());
+        panel_logo.add(logo_ita, new org.netbeans.lib.awtextra.AbsoluteConstraints(10, 10, 780, 80));
 
-        getContentPane().add(jPanel1, new org.netbeans.lib.awtextra.AbsoluteConstraints(0, 0, 800, 80));
+        fondo.add(panel_logo);
+        panel_logo.setBounds(0, 0, 800, 80);
 
-        jPanel2.setBackground(new java.awt.Color(255, 255, 255));
-        jPanel2.setLayout(new org.netbeans.lib.awtextra.AbsoluteLayout());
+        panel_login.setBackground(new java.awt.Color(255, 255, 255));
+        panel_login.setLayout(new org.netbeans.lib.awtextra.AbsoluteLayout());
 
         lb_alumno_icon.setText("jLabel1");
         lb_alumno_icon.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
-        jPanel2.add(lb_alumno_icon, new org.netbeans.lib.awtextra.AbsoluteConstraints(140, 30, 160, 160));
-        jPanel2.add(entrada_rfc, new org.netbeans.lib.awtextra.AbsoluteConstraints(50, 240, 360, 50));
-        jPanel2.add(password_entrada, new org.netbeans.lib.awtextra.AbsoluteConstraints(50, 340, 360, 50));
+        panel_login.add(lb_alumno_icon, new org.netbeans.lib.awtextra.AbsoluteConstraints(140, 60, 160, 160));
+        panel_login.add(entrada_rfc, new org.netbeans.lib.awtextra.AbsoluteConstraints(50, 240, 360, 50));
+        panel_login.add(password_entrada, new org.netbeans.lib.awtextra.AbsoluteConstraints(50, 340, 360, 50));
 
         lb_password.setFont(new java.awt.Font("Segoe UI", 0, 18)); // NOI18N
         lb_password.setText("Contraseña");
-        jPanel2.add(lb_password, new org.netbeans.lib.awtextra.AbsoluteConstraints(50, 300, 360, 40));
+        panel_login.add(lb_password, new org.netbeans.lib.awtextra.AbsoluteConstraints(50, 300, 360, 40));
 
         lb_numControl.setFont(new java.awt.Font("Segoe UI", 0, 18)); // NOI18N
         lb_numControl.setText("RFC");
-        jPanel2.add(lb_numControl, new org.netbeans.lib.awtextra.AbsoluteConstraints(50, 200, 360, 40));
+        panel_login.add(lb_numControl, new org.netbeans.lib.awtextra.AbsoluteConstraints(50, 200, 360, 40));
 
         btn_soporte.setBackground(new java.awt.Color(153, 153, 153));
         btn_soporte.setFont(new java.awt.Font("Segoe UI", 1, 14)); // NOI18N
         btn_soporte.setText("?       SOPORTE");
-        jPanel2.add(btn_soporte, new org.netbeans.lib.awtextra.AbsoluteConstraints(30, 450, 210, 40));
+        panel_login.add(btn_soporte, new org.netbeans.lib.awtextra.AbsoluteConstraints(30, 450, 210, 40));
 
         lb_icon_inscripcion.setText("jLabel1");
-        jPanel2.add(lb_icon_inscripcion, new org.netbeans.lib.awtextra.AbsoluteConstraints(570, 40, 190, 190));
+        panel_login.add(lb_icon_inscripcion, new org.netbeans.lib.awtextra.AbsoluteConstraints(580, 100, 190, 190));
 
         btn_iniciarSesion.setBackground(new java.awt.Color(0, 0, 255));
         btn_iniciarSesion.setFont(new java.awt.Font("Segoe UI", 1, 14)); // NOI18N
@@ -150,7 +167,7 @@ public class Login_coordinador extends javax.swing.JFrame {
                 btn_iniciarSesionActionPerformed(evt);
             }
         });
-        jPanel2.add(btn_iniciarSesion, new org.netbeans.lib.awtextra.AbsoluteConstraints(310, 450, 220, 40));
+        panel_login.add(btn_iniciarSesion, new org.netbeans.lib.awtextra.AbsoluteConstraints(310, 450, 220, 40));
 
         mostrar_password.setText("Mostrar contraseña");
         mostrar_password.addActionListener(new java.awt.event.ActionListener() {
@@ -158,12 +175,12 @@ public class Login_coordinador extends javax.swing.JFrame {
                 mostrar_passwordActionPerformed(evt);
             }
         });
-        jPanel2.add(mostrar_password, new org.netbeans.lib.awtextra.AbsoluteConstraints(140, 400, -1, -1));
+        panel_login.add(mostrar_password, new org.netbeans.lib.awtextra.AbsoluteConstraints(140, 400, -1, -1));
 
         jLabel1.setFont(new java.awt.Font("Segoe UI", 1, 18)); // NOI18N
         jLabel1.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
         jLabel1.setText("COORDINADOR");
-        jPanel2.add(jLabel1, new org.netbeans.lib.awtextra.AbsoluteConstraints(300, 20, 210, 40));
+        panel_login.add(jLabel1, new org.netbeans.lib.awtextra.AbsoluteConstraints(300, 50, 210, 40));
 
         btn_regresar.setText("Regresar");
         btn_regresar.addActionListener(new java.awt.event.ActionListener() {
@@ -171,9 +188,12 @@ public class Login_coordinador extends javax.swing.JFrame {
                 btn_regresarActionPerformed(evt);
             }
         });
-        jPanel2.add(btn_regresar, new org.netbeans.lib.awtextra.AbsoluteConstraints(30, 20, 100, 30));
+        panel_login.add(btn_regresar, new org.netbeans.lib.awtextra.AbsoluteConstraints(10, 50, 100, 30));
 
-        getContentPane().add(jPanel2, new org.netbeans.lib.awtextra.AbsoluteConstraints(0, 80, 800, 520));
+        fondo.add(panel_login);
+        panel_login.setBounds(0, 81, 800, 520);
+
+        getContentPane().add(fondo, "card2");
 
         pack();
     }// </editor-fold>//GEN-END:initComponents
@@ -258,15 +278,16 @@ public class Login_coordinador extends javax.swing.JFrame {
     private javax.swing.JButton btn_regresar;
     private javax.swing.JButton btn_soporte;
     private javax.swing.JTextField entrada_rfc;
+    private javax.swing.JPanel fondo;
     private javax.swing.JLabel jLabel1;
-    private javax.swing.JPanel jPanel1;
-    private javax.swing.JPanel jPanel2;
     private javax.swing.JLabel lb_alumno_icon;
     private javax.swing.JLabel lb_icon_inscripcion;
     private javax.swing.JLabel lb_numControl;
     private javax.swing.JLabel lb_password;
     private javax.swing.JLabel logo_ita;
     private javax.swing.JCheckBox mostrar_password;
+    private javax.swing.JPanel panel_login;
+    private javax.swing.JPanel panel_logo;
     private javax.swing.JPasswordField password_entrada;
     // End of variables declaration//GEN-END:variables
 }

@@ -4,11 +4,14 @@
  */
 package alumno;
 
+import com.toedter.calendar.JDateChooser;
 import conexion.Conexion;
 import direccion.ObtenerDireccion;
 import java.awt.Dimension;
 import java.awt.Image;
 import java.awt.Toolkit;
+import java.awt.event.ComponentAdapter;
+import java.awt.event.ComponentEvent;
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
@@ -51,10 +54,25 @@ public class InscripcionAlumno extends javax.swing.JFrame {
     }
     
     //Funcion para toda la configuracion de la ventana 
-    private void configuracion_ventana(){
-        
+    private void configuracion_ventana() {
+
         //Centrar ventana
         this.setLocationRelativeTo(null);//La ventana aparece en el centro
+        //Funcion para toda la configuracion de la ventana 
+    
+        //Añadir el listener para detectar cuando la ventana es redimensionada
+        this.addComponentListener(new ComponentAdapter() {
+            @Override
+            public void componentResized(ComponentEvent e) {
+                int panelWidth = panel_contenido.getWidth();
+                int panel_heigth = panel_contenido.getHeight() - panel_logo.getHeight();
+                int newX = (fondo.getWidth() - panelWidth) / 2; // Calcular la nueva posición en 
+                int newY = (fondo.getHeight() - panel_heigth) / 2;
+                panel_logo.setSize(fondo.getWidth(), panel_logo.getHeight());
+                panel_contenido.setLocation(newX, newY);
+                logo_ita.setLocation(newX, logo_ita.getY());
+            }
+        });
     }
      
     //Funcion para cargar imagenes
@@ -69,6 +87,31 @@ public class InscripcionAlumno extends javax.swing.JFrame {
         btn_subir_certificado.setIcon(new ImageIcon(icon_subir_archivo.getScaledInstance(btn_subir_certificado.getWidth(), btn_subir_certificado.getHeight(), Image.SCALE_SMOOTH)));
         btn_subir_curp.setIcon(new ImageIcon(icon_subir_archivo.getScaledInstance(btn_subir_curp.getWidth(), btn_subir_ine.getHeight(), Image.SCALE_SMOOTH)));
         btn_subir_ine.setIcon(new ImageIcon(icon_subir_archivo.getScaledInstance(btn_subir_ine.getWidth(), btn_subir_ine.getHeight(), Image.SCALE_SMOOTH)));
+    }
+    
+    private void limpiar_campos(){
+        entrada_nombres.setText("");
+        entrada_apellidoPaterno.setText("");
+        entrada_apellidoMaterno.setText("");
+        entrada_fechaNacimiento.setDate(null);
+        entrada_telefono.setText("");
+        entrada_correo.setText("");
+        entrada_cp.setText("");
+        entrada_estado.removeAllItems();
+        entrada_estado.addItem("<seleccionar>");
+        entrada_municipio.removeAllItems();
+        entrada_municipio.addItem("<seleccionar>");
+        entrada_colonia.removeAllItems();
+        entrada_colonia.addItem("<seleccionar>");
+        entrada_numExterior.setText("");
+        entrada_numInterior.setText("");
+        entrada_calle.setText("");
+        
+        //limpiar campos de documentos
+        ruta_acta.setText("");
+        ruta_curp.setText("");
+        ruta_ine.setText("");
+        ruta_certificado.setText("");
     }
 
     private String seleccionar_pdf() {
@@ -154,7 +197,6 @@ public class InscripcionAlumno extends javax.swing.JFrame {
         return "";
     }
 
-
     private void inscribir_alumno() throws SQLException {
         //Obtener todos los datos de entrada
         Date fecha_nacimiento = entrada_fechaNacimiento.getDate();
@@ -209,8 +251,8 @@ public class InscripcionAlumno extends javax.swing.JFrame {
                 JOptionPane.showMessageDialog(null,"Datos registrados exitosamente\n"
                         + "Numero de control asignado: "+num_control_asignado, "Registro existoso", JOptionPane.INFORMATION_MESSAGE);
                 //Ejecutar función para cargar el horario del alumno
-                asignarHorario();
-                
+                asignarHorario(); //Asigna el horario
+                limpiar_campos();//Limpia los campos de datos              
             }else{
                  JOptionPane.showMessageDialog(null,"Hubo un error al registrar los datos, intente otra vez", "Error en el registro", JOptionPane.WARNING_MESSAGE);
                  return;
@@ -273,8 +315,8 @@ public class InscripcionAlumno extends javax.swing.JFrame {
         //Verifica que se realizó el registro
         int filas_insertadas = pstmt.executeUpdate();
         if (filas_insertadas > 0) {
-            JOptionPane.showMessageDialog(null, "Puede consultar su horario asignado inicinando sesión\n"
-                    + "con su numero de control y contraseña\n"
+            JOptionPane.showMessageDialog(null, "Puede consultar su horario asignado iniciando sesión\n"
+                    + "con su número de control y contraseña\n"
                     + "La contraseña por defualt es 999", "Horario asignado", JOptionPane.INFORMATION_MESSAGE);
 
         } else {
@@ -334,9 +376,10 @@ public class InscripcionAlumno extends javax.swing.JFrame {
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
 
-        jPanel1 = new javax.swing.JPanel();
+        fondo = new javax.swing.JPanel();
+        panel_logo = new javax.swing.JPanel();
         logo_ita = new javax.swing.JLabel();
-        jScrollPane1 = new javax.swing.JScrollPane();
+        panel_contenido = new javax.swing.JScrollPane();
         jPanel2 = new javax.swing.JPanel();
         jLabel1 = new javax.swing.JLabel();
         ruta_acta = new javax.swing.JTextField();
@@ -389,18 +432,25 @@ public class InscripcionAlumno extends javax.swing.JFrame {
         btn_regresar = new javax.swing.JButton();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
-        setResizable(false);
-        getContentPane().setLayout(new org.netbeans.lib.awtextra.AbsoluteLayout());
+        setBackground(new java.awt.Color(255, 255, 255));
+        setMinimumSize(new java.awt.Dimension(1100, 750));
+        getContentPane().setLayout(new java.awt.CardLayout());
 
-        jPanel1.setBackground(new java.awt.Color(255, 255, 255));
-        jPanel1.setLayout(new org.netbeans.lib.awtextra.AbsoluteLayout());
+        fondo.setBackground(new java.awt.Color(255, 255, 255));
+        fondo.setLayout(null);
+
+        panel_logo.setBackground(new java.awt.Color(255, 255, 255));
+        panel_logo.setLayout(new org.netbeans.lib.awtextra.AbsoluteLayout());
 
         logo_ita.setText("LOGO ITA");
-        jPanel1.add(logo_ita, new org.netbeans.lib.awtextra.AbsoluteConstraints(10, 0, 1020, 110));
+        panel_logo.add(logo_ita, new org.netbeans.lib.awtextra.AbsoluteConstraints(10, 0, 1020, 110));
 
-        getContentPane().add(jPanel1, new org.netbeans.lib.awtextra.AbsoluteConstraints(0, 0, 1050, 100));
+        fondo.add(panel_logo);
+        panel_logo.setBounds(0, 5, 1050, 110);
 
-        jScrollPane1.setHorizontalScrollBarPolicy(javax.swing.ScrollPaneConstants.HORIZONTAL_SCROLLBAR_NEVER);
+        panel_contenido.setBorder(null);
+        panel_contenido.setHorizontalScrollBarPolicy(javax.swing.ScrollPaneConstants.HORIZONTAL_SCROLLBAR_NEVER);
+        panel_contenido.setPreferredSize(new java.awt.Dimension(1022, 700));
 
         jPanel2.setBackground(new java.awt.Color(255, 255, 255));
         jPanel2.setPreferredSize(new java.awt.Dimension(1020, 1300));
@@ -661,9 +711,12 @@ public class InscripcionAlumno extends javax.swing.JFrame {
         });
         jPanel2.add(btn_regresar, new org.netbeans.lib.awtextra.AbsoluteConstraints(10, 10, 100, 30));
 
-        jScrollPane1.setViewportView(jPanel2);
+        panel_contenido.setViewportView(jPanel2);
 
-        getContentPane().add(jScrollPane1, new org.netbeans.lib.awtextra.AbsoluteConstraints(0, 90, 1050, 610));
+        fondo.add(panel_contenido);
+        panel_contenido.setBounds(-6, 120, 1060, 580);
+
+        getContentPane().add(fondo, "card2");
 
         pack();
     }// </editor-fold>//GEN-END:initComponents
@@ -752,6 +805,20 @@ public class InscripcionAlumno extends javax.swing.JFrame {
             entrada_apellidoMaterno.requestFocusInWindow();
             return;
         }
+        if(entrada_fechaNacimiento.getDate() == null){
+           JOptionPane.showMessageDialog(null, "Ingrese una fecha de nacimiento valida", "Fecha no valido", JOptionPane.WARNING_MESSAGE);
+            entrada_fechaNacimiento.requestFocusInWindow();
+            return; 
+        }     
+        //Valida que la fecha de nacimiento se encuentre en el rango
+        Date minDate = ((JDateChooser) entrada_fechaNacimiento).getMinSelectableDate();
+        Date maxDate = ((JDateChooser) entrada_fechaNacimiento).getMaxSelectableDate();
+
+        if (entrada_fechaNacimiento.getDate().before(minDate) || entrada_fechaNacimiento.getDate().after(maxDate)) {
+            JOptionPane.showMessageDialog(null, "Ingrese una fecha de nacimiento valida", "Fecha no valido", JOptionPane.WARNING_MESSAGE);
+            entrada_fechaNacimiento.requestFocusInWindow();
+            return;
+        }
         if (!valida.correo_valido(entrada_correo.getText())) {
             JOptionPane.showMessageDialog(null, "Ingrese un correo electronico valido", "Correo no valido", JOptionPane.WARNING_MESSAGE);
             entrada_correo.requestFocusInWindow();
@@ -762,17 +829,12 @@ public class InscripcionAlumno extends javax.swing.JFrame {
             entrada_correo.requestFocusInWindow();
             return;
         }
-        if (entrada_fechaNacimiento.getDate() == null) {
-            JOptionPane.showMessageDialog(null, "Ingrese una fecha de nacimiento valida", "Fecha no valido", JOptionPane.WARNING_MESSAGE);
-            entrada_fechaNacimiento.requestFocusInWindow();
-            return;
-        }
         if(!valida.validarNumeroTelefono(entrada_telefono.getText())){
             JOptionPane.showMessageDialog(null, "Ingrese un numero de telefono valido", "Numero de telefono no valido", JOptionPane.WARNING_MESSAGE);
             entrada_telefono.requestFocusInWindow();
             return;
         }
-        if (!valida.cpValido(entrada_cp.getText())) {
+        if(!valida.cpValido(entrada_cp.getText())) {
             JOptionPane.showMessageDialog(null, "Ingrese un codigo postal valido", "Codigo postal no valido", JOptionPane.WARNING_MESSAGE);
             entrada_cp.requestFocusInWindow();    // Borde al tener foco;
             return;
@@ -919,6 +981,7 @@ public class InscripcionAlumno extends javax.swing.JFrame {
     private javax.swing.JTextField entrada_numExterior;
     private javax.swing.JTextField entrada_numInterior;
     private javax.swing.JTextField entrada_telefono;
+    private javax.swing.JPanel fondo;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel10;
     private javax.swing.JLabel jLabel11;
@@ -939,13 +1002,13 @@ public class InscripcionAlumno extends javax.swing.JFrame {
     private javax.swing.JLabel jLabel7;
     private javax.swing.JLabel jLabel8;
     private javax.swing.JLabel jLabel9;
-    private javax.swing.JPanel jPanel1;
     private javax.swing.JPanel jPanel2;
-    private javax.swing.JScrollPane jScrollPane1;
     private javax.swing.JLabel lb_curp;
     private javax.swing.JLabel lb_curp1;
     private javax.swing.JLabel lb_curp2;
     private javax.swing.JLabel logo_ita;
+    private javax.swing.JScrollPane panel_contenido;
+    private javax.swing.JPanel panel_logo;
     private javax.swing.JTextField ruta_acta;
     private javax.swing.JTextField ruta_certificado;
     private javax.swing.JTextField ruta_curp;

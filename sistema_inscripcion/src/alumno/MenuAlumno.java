@@ -342,15 +342,15 @@ public class MenuAlumno extends javax.swing.JFrame {
     }//GEN-LAST:event_formWindowClosing
 
     private void btn_elegirMateriasMousePressed(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_btn_elegirMateriasMousePressed
-       if(SwingUtilities.isLeftMouseButton(evt)){
-           try {
-               SeleccionarHorario ventana = new SeleccionarHorario(this.numControl, fechaInicioSesion, horaInicioSesion);
-               ventana.setVisible(true);
-               this.dispose();
-           } catch (SQLException ex) {
-               Logger.getLogger(MenuAlumno.class.getName()).log(Level.SEVERE, null, ex);
-           }
-       }
+//       if(SwingUtilities.isLeftMouseButton(evt)){
+//           try {
+////               SeleccionarHorario ventana = new SeleccionarHorario(this.numControl, fechaInicioSesion, horaInicioSesion);
+////               ventana.setVisible(true);
+////               this.dispose();
+//           } catch (SQLException ex) {
+//               Logger.getLogger(MenuAlumno.class.getName()).log(Level.SEVERE, null, ex);
+//           }
+//       }
     }//GEN-LAST:event_btn_elegirMateriasMousePressed
 
     /**

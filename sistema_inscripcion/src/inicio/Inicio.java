@@ -8,6 +8,8 @@ import alumno.Login_alumno;
 import coordinador.Login_coordinador;
 import java.awt.Image;
 import java.awt.Toolkit;
+import java.awt.event.ComponentAdapter;
+import java.awt.event.ComponentEvent;
 import javax.swing.ImageIcon;
 import javax.swing.SwingUtilities;
 import maestro.Login_maestro;
@@ -27,6 +29,19 @@ public class Inicio extends javax.swing.JFrame {
         cargar_img();
         
         
+        //Añadir el listener para detectar cuando la ventana es redimensionada
+        this.addComponentListener(new ComponentAdapter() {
+            @Override
+            public void componentResized(ComponentEvent e) {
+                int panelWidth = panel_contenido.getWidth();
+                int panel_heigth = panel_contenido.getHeight();
+                int newX = (fondo.getWidth() - panelWidth) / 2; // Calcular la nueva posición en 
+                int newY = (fondo.getHeight() - panel_heigth) / 2;
+                panel_logo.setSize(fondo.getWidth(), panel_logo.getHeight());
+                panel_contenido.setLocation(newX, newY);
+                logo_ita.setLocation(newX, logo_ita.getY());
+            }
+        });
     }
 
     //Funcion para toda la configuracion de la ventana 
@@ -66,9 +81,8 @@ public class Inicio extends javax.swing.JFrame {
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
 
-        jPanel1 = new javax.swing.JPanel();
-        logo_ita = new javax.swing.JLabel();
-        jPanel2 = new javax.swing.JPanel();
+        fondo = new javax.swing.JPanel();
+        panel_contenido = new javax.swing.JPanel();
         btn_maestro = new javax.swing.JLabel();
         btn_alumno = new javax.swing.JLabel();
         btn_coordinador = new javax.swing.JLabel();
@@ -78,21 +92,19 @@ public class Inicio extends javax.swing.JFrame {
         lb_info_coordinador = new javax.swing.JLabel();
         lb_info_alumno = new javax.swing.JLabel();
         lb_info_maestro = new javax.swing.JLabel();
+        panel_logo = new javax.swing.JPanel();
+        logo_ita = new javax.swing.JLabel();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
-        setResizable(false);
-        getContentPane().setLayout(new org.netbeans.lib.awtextra.AbsoluteLayout());
+        setMinimumSize(new java.awt.Dimension(800, 600));
+        getContentPane().setLayout(new java.awt.CardLayout());
 
-        jPanel1.setBackground(new java.awt.Color(255, 255, 255));
-        jPanel1.setLayout(new org.netbeans.lib.awtextra.AbsoluteLayout());
+        fondo.setBackground(new java.awt.Color(51, 51, 255));
+        fondo.setPreferredSize(new java.awt.Dimension(800, 600));
+        fondo.setLayout(null);
 
-        logo_ita.setText("LOGO ITA");
-        jPanel1.add(logo_ita, new org.netbeans.lib.awtextra.AbsoluteConstraints(10, 10, 780, 80));
-
-        getContentPane().add(jPanel1, new org.netbeans.lib.awtextra.AbsoluteConstraints(0, 0, 800, 80));
-
-        jPanel2.setBackground(new java.awt.Color(51, 51, 255));
-        jPanel2.setLayout(new org.netbeans.lib.awtextra.AbsoluteLayout());
+        panel_contenido.setBackground(new java.awt.Color(51, 51, 255));
+        panel_contenido.setLayout(new org.netbeans.lib.awtextra.AbsoluteLayout());
 
         btn_maestro.setText("jLabel1");
         btn_maestro.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
@@ -101,7 +113,7 @@ public class Inicio extends javax.swing.JFrame {
                 btn_maestroMousePressed(evt);
             }
         });
-        jPanel2.add(btn_maestro, new org.netbeans.lib.awtextra.AbsoluteConstraints(300, 40, 160, 160));
+        panel_contenido.add(btn_maestro, new org.netbeans.lib.awtextra.AbsoluteConstraints(300, 40, 160, 160));
 
         btn_alumno.setText("jLabel1");
         btn_alumno.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
@@ -110,7 +122,7 @@ public class Inicio extends javax.swing.JFrame {
                 btn_alumnoMousePressed(evt);
             }
         });
-        jPanel2.add(btn_alumno, new org.netbeans.lib.awtextra.AbsoluteConstraints(20, 40, 160, 160));
+        panel_contenido.add(btn_alumno, new org.netbeans.lib.awtextra.AbsoluteConstraints(20, 40, 160, 160));
 
         btn_coordinador.setText("jLabel1");
         btn_coordinador.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
@@ -119,31 +131,31 @@ public class Inicio extends javax.swing.JFrame {
                 btn_coordinadorMousePressed(evt);
             }
         });
-        jPanel2.add(btn_coordinador, new org.netbeans.lib.awtextra.AbsoluteConstraints(590, 40, 160, 160));
+        panel_contenido.add(btn_coordinador, new org.netbeans.lib.awtextra.AbsoluteConstraints(590, 40, 160, 160));
 
         jLabel1.setFont(new java.awt.Font("Arial", 3, 20)); // NOI18N
         jLabel1.setForeground(new java.awt.Color(255, 255, 255));
         jLabel1.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
         jLabel1.setText("COORDINADOR");
-        jPanel2.add(jLabel1, new org.netbeans.lib.awtextra.AbsoluteConstraints(590, 210, 160, 40));
+        panel_contenido.add(jLabel1, new org.netbeans.lib.awtextra.AbsoluteConstraints(590, 210, 160, 40));
 
         jLabel2.setFont(new java.awt.Font("Arial", 3, 24)); // NOI18N
         jLabel2.setForeground(new java.awt.Color(255, 255, 255));
         jLabel2.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
         jLabel2.setText("ALUMNO");
-        jPanel2.add(jLabel2, new org.netbeans.lib.awtextra.AbsoluteConstraints(20, 210, 160, 40));
+        panel_contenido.add(jLabel2, new org.netbeans.lib.awtextra.AbsoluteConstraints(20, 210, 160, 40));
 
         jLabel3.setFont(new java.awt.Font("Arial", 3, 24)); // NOI18N
         jLabel3.setForeground(new java.awt.Color(255, 255, 255));
         jLabel3.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
         jLabel3.setText("MAESTRO");
-        jPanel2.add(jLabel3, new org.netbeans.lib.awtextra.AbsoluteConstraints(300, 210, 160, 40));
+        panel_contenido.add(jLabel3, new org.netbeans.lib.awtextra.AbsoluteConstraints(300, 210, 160, 40));
 
         lb_info_coordinador.setFont(new java.awt.Font("Arial", 0, 18)); // NOI18N
         lb_info_coordinador.setForeground(new java.awt.Color(255, 255, 255));
         lb_info_coordinador.setText("Descrip coordinador");
         lb_info_coordinador.setVerticalAlignment(javax.swing.SwingConstants.TOP);
-        jPanel2.add(lb_info_coordinador, new org.netbeans.lib.awtextra.AbsoluteConstraints(590, 260, 160, 130));
+        panel_contenido.add(lb_info_coordinador, new org.netbeans.lib.awtextra.AbsoluteConstraints(590, 260, 160, 130));
 
         lb_info_alumno.setBackground(new java.awt.Color(0, 242, 242));
         lb_info_alumno.setFont(new java.awt.Font("Arial", 0, 18)); // NOI18N
@@ -151,15 +163,27 @@ public class Inicio extends javax.swing.JFrame {
         lb_info_alumno.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
         lb_info_alumno.setText("Descrip alumnos");
         lb_info_alumno.setVerticalAlignment(javax.swing.SwingConstants.TOP);
-        jPanel2.add(lb_info_alumno, new org.netbeans.lib.awtextra.AbsoluteConstraints(20, 250, 160, 130));
+        panel_contenido.add(lb_info_alumno, new org.netbeans.lib.awtextra.AbsoluteConstraints(20, 250, 160, 130));
 
         lb_info_maestro.setFont(new java.awt.Font("Arial", 0, 18)); // NOI18N
         lb_info_maestro.setForeground(new java.awt.Color(255, 255, 255));
         lb_info_maestro.setText("Descrip maestro");
         lb_info_maestro.setVerticalAlignment(javax.swing.SwingConstants.TOP);
-        jPanel2.add(lb_info_maestro, new org.netbeans.lib.awtextra.AbsoluteConstraints(300, 250, 160, 130));
+        panel_contenido.add(lb_info_maestro, new org.netbeans.lib.awtextra.AbsoluteConstraints(300, 250, 160, 130));
 
-        getContentPane().add(jPanel2, new org.netbeans.lib.awtextra.AbsoluteConstraints(0, 76, 800, 420));
+        fondo.add(panel_contenido);
+        panel_contenido.setBounds(0, 90, 800, 390);
+
+        panel_logo.setBackground(new java.awt.Color(255, 255, 255));
+        panel_logo.setLayout(new org.netbeans.lib.awtextra.AbsoluteLayout());
+
+        logo_ita.setText("LOGO ITA");
+        panel_logo.add(logo_ita, new org.netbeans.lib.awtextra.AbsoluteConstraints(10, 10, 780, 80));
+
+        fondo.add(panel_logo);
+        panel_logo.setBounds(0, 0, 800, 90);
+
+        getContentPane().add(fondo, "card2");
 
         pack();
     }// </editor-fold>//GEN-END:initComponents
@@ -227,14 +251,15 @@ public class Inicio extends javax.swing.JFrame {
     private javax.swing.JLabel btn_alumno;
     private javax.swing.JLabel btn_coordinador;
     private javax.swing.JLabel btn_maestro;
+    private javax.swing.JPanel fondo;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel2;
     private javax.swing.JLabel jLabel3;
-    private javax.swing.JPanel jPanel1;
-    private javax.swing.JPanel jPanel2;
     private javax.swing.JLabel lb_info_alumno;
     private javax.swing.JLabel lb_info_coordinador;
     private javax.swing.JLabel lb_info_maestro;
     private javax.swing.JLabel logo_ita;
+    private javax.swing.JPanel panel_contenido;
+    private javax.swing.JPanel panel_logo;
     // End of variables declaration//GEN-END:variables
 }

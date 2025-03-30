@@ -10,6 +10,8 @@ import java.awt.Desktop;
 import java.awt.Dimension;
 import java.awt.Image;
 import java.awt.Toolkit;
+import java.awt.event.ComponentAdapter;
+import java.awt.event.ComponentEvent;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
@@ -45,15 +47,28 @@ public class SeccionAlumnos extends javax.swing.JFrame {
         initComponents();
         configuracion_ventana();
         cargar_img();
-    }
-
-        //Funcion para toda la configuracion de la ventana 
-    private void configuracion_ventana(){
-        //No mostrar el panel de datos al inicio
-        panel_datos.setVisible(false);
-        
         //Centrar ventana
         this.setLocationRelativeTo(null);//La ventana aparece en el centro
+         //No mostrar el panel de datos al inicio
+        panel_datos.setVisible(false);      
+    }
+
+    //Funcion para toda la configuracion de la ventana 
+    private void configuracion_ventana() {
+
+        //Añadir el listener para detectar cuando la ventana es redimensionada
+        this.addComponentListener(new ComponentAdapter() {
+            @Override
+            public void componentResized(ComponentEvent e) {
+                int panelWidth = panel_contenido.getWidth();
+                int panel_heigth = panel_contenido.getHeight() - panel_logo.getHeight();
+                int newX = (fondo.getWidth() - panelWidth) / 2; // Calcular la nueva posición en 
+                int newY = (fondo.getHeight() - panel_heigth) / 2;
+                panel_logo.setSize(fondo.getWidth(), panel_logo.getHeight());
+                panel_contenido.setLocation(newX, newY);
+                logo_ita.setLocation(newX, logo_ita.getY());
+            }
+        });
     }
     
         //Funcion para cargar imagenes
@@ -141,7 +156,7 @@ public class SeccionAlumnos extends javax.swing.JFrame {
                 JOptionPane.showMessageDialog(null, "Alumno eliminado exitosamente", "Eliminación exitosa", JOptionPane.INFORMATION_MESSAGE);
                 numControl_busqueda.setText("");
                 panel_datos.setVisible(false);
-                JScrollBar verticalBar = contendor.getVerticalScrollBar();
+                JScrollBar verticalBar = panel_contenido.getVerticalScrollBar();
                 verticalBar.setValue(verticalBar.getMinimum());
             } else {
                 JOptionPane.showMessageDialog(null, "No se encontró el registro con la CURP especificada", "Error en la eliminación", JOptionPane.WARNING_MESSAGE);
@@ -178,9 +193,10 @@ public class SeccionAlumnos extends javax.swing.JFrame {
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
 
-        jPanel1 = new javax.swing.JPanel();
+        fondo = new javax.swing.JPanel();
+        panel_logo = new javax.swing.JPanel();
         logo_ita = new javax.swing.JLabel();
-        contendor = new javax.swing.JScrollPane();
+        panel_contenido = new javax.swing.JScrollPane();
         jPanel2 = new javax.swing.JPanel();
         numControl_busqueda = new javax.swing.JTextField();
         lb_inicial = new javax.swing.JLabel();
@@ -235,17 +251,23 @@ public class SeccionAlumnos extends javax.swing.JFrame {
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
         setBackground(new java.awt.Color(255, 255, 255));
-        getContentPane().setLayout(new org.netbeans.lib.awtextra.AbsoluteLayout());
+        setMinimumSize(new java.awt.Dimension(1220, 650));
+        getContentPane().setLayout(new java.awt.CardLayout());
 
-        jPanel1.setBackground(new java.awt.Color(255, 255, 255));
-        jPanel1.setLayout(new org.netbeans.lib.awtextra.AbsoluteLayout());
+        fondo.setBackground(new java.awt.Color(255, 255, 255));
+        fondo.setLayout(null);
+
+        panel_logo.setBackground(new java.awt.Color(255, 255, 255));
+        panel_logo.setLayout(new org.netbeans.lib.awtextra.AbsoluteLayout());
 
         logo_ita.setText("LOGO ITA");
-        jPanel1.add(logo_ita, new org.netbeans.lib.awtextra.AbsoluteConstraints(10, 10, 1180, 80));
+        panel_logo.add(logo_ita, new org.netbeans.lib.awtextra.AbsoluteConstraints(10, 10, 1180, 80));
 
-        getContentPane().add(jPanel1, new org.netbeans.lib.awtextra.AbsoluteConstraints(0, 0, 1200, 90));
+        fondo.add(panel_logo);
+        panel_logo.setBounds(0, 0, 1200, 90);
 
-        contendor.setHorizontalScrollBarPolicy(javax.swing.ScrollPaneConstants.HORIZONTAL_SCROLLBAR_NEVER);
+        panel_contenido.setBorder(null);
+        panel_contenido.setHorizontalScrollBarPolicy(javax.swing.ScrollPaneConstants.HORIZONTAL_SCROLLBAR_NEVER);
 
         jPanel2.setBackground(new java.awt.Color(255, 255, 255));
         jPanel2.setMinimumSize(new java.awt.Dimension(1190, 1000));
@@ -582,7 +604,6 @@ public class SeccionAlumnos extends javax.swing.JFrame {
         fecha_nacimiento.setFocusable(false);
         panel_datos.add(fecha_nacimiento, new org.netbeans.lib.awtextra.AbsoluteConstraints(100, 330, 230, 40));
 
-        ruta_ine.setForeground(new java.awt.Color(0, 0, 0));
         ruta_ine.setText("jLabel1");
         ruta_ine.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
         ruta_ine.addMouseListener(new java.awt.event.MouseAdapter() {
@@ -592,7 +613,6 @@ public class SeccionAlumnos extends javax.swing.JFrame {
         });
         panel_datos.add(ruta_ine, new org.netbeans.lib.awtextra.AbsoluteConstraints(900, 690, 210, 30));
 
-        ruta_acta.setForeground(new java.awt.Color(0, 0, 0));
         ruta_acta.setText("jLabel1");
         ruta_acta.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
         ruta_acta.addMouseListener(new java.awt.event.MouseAdapter() {
@@ -602,7 +622,6 @@ public class SeccionAlumnos extends javax.swing.JFrame {
         });
         panel_datos.add(ruta_acta, new org.netbeans.lib.awtextra.AbsoluteConstraints(50, 690, 210, 30));
 
-        ruta_curp.setForeground(new java.awt.Color(0, 0, 0));
         ruta_curp.setText("jLabel1");
         ruta_curp.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
         ruta_curp.addMouseListener(new java.awt.event.MouseAdapter() {
@@ -612,7 +631,6 @@ public class SeccionAlumnos extends javax.swing.JFrame {
         });
         panel_datos.add(ruta_curp, new org.netbeans.lib.awtextra.AbsoluteConstraints(330, 690, 210, 30));
 
-        ruta_certificado.setForeground(new java.awt.Color(0, 0, 0));
         ruta_certificado.setText("jLabel1");
         ruta_certificado.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
         ruta_certificado.addMouseListener(new java.awt.event.MouseAdapter() {
@@ -623,22 +641,18 @@ public class SeccionAlumnos extends javax.swing.JFrame {
         panel_datos.add(ruta_certificado, new org.netbeans.lib.awtextra.AbsoluteConstraints(620, 690, 210, 30));
 
         jLabel1.setFont(new java.awt.Font("Segoe UI", 1, 14)); // NOI18N
-        jLabel1.setForeground(new java.awt.Color(0, 0, 0));
         jLabel1.setText("INE");
         panel_datos.add(jLabel1, new org.netbeans.lib.awtextra.AbsoluteConstraints(900, 660, 200, 30));
 
         jLabel2.setFont(new java.awt.Font("Segoe UI", 1, 14)); // NOI18N
-        jLabel2.setForeground(new java.awt.Color(0, 0, 0));
         jLabel2.setText("Acta de nacimiento");
         panel_datos.add(jLabel2, new org.netbeans.lib.awtextra.AbsoluteConstraints(50, 660, 180, 30));
 
         jLabel3.setFont(new java.awt.Font("Segoe UI", 1, 14)); // NOI18N
-        jLabel3.setForeground(new java.awt.Color(0, 0, 0));
         jLabel3.setText("CURP");
         panel_datos.add(jLabel3, new org.netbeans.lib.awtextra.AbsoluteConstraints(330, 660, 180, 30));
 
         jLabel4.setFont(new java.awt.Font("Segoe UI", 1, 14)); // NOI18N
-        jLabel4.setForeground(new java.awt.Color(0, 0, 0));
         jLabel4.setText("Certificado de preparatoria");
         panel_datos.add(jLabel4, new org.netbeans.lib.awtextra.AbsoluteConstraints(620, 660, 200, 30));
 
@@ -661,9 +675,12 @@ public class SeccionAlumnos extends javax.swing.JFrame {
         });
         jPanel2.add(btn_regresar, new org.netbeans.lib.awtextra.AbsoluteConstraints(20, 20, 100, 30));
 
-        contendor.setViewportView(jPanel2);
+        panel_contenido.setViewportView(jPanel2);
 
-        getContentPane().add(contendor, new org.netbeans.lib.awtextra.AbsoluteConstraints(0, 90, 1200, 560));
+        fondo.add(panel_contenido);
+        panel_contenido.setBounds(0, 93, 1200, 550);
+
+        getContentPane().add(fondo, "card2");
 
         pack();
     }// </editor-fold>//GEN-END:initComponents
@@ -851,16 +868,15 @@ public class SeccionAlumnos extends javax.swing.JFrame {
     private javax.swing.JTextField carrera;
     private javax.swing.JTextField codigo_postal;
     private javax.swing.JTextField colonia;
-    private javax.swing.JScrollPane contendor;
     private javax.swing.JTextField correo;
     private javax.swing.JTextField estado;
     private javax.swing.JTextField fecha_nacimiento;
+    private javax.swing.JPanel fondo;
     private javax.swing.JLabel icon_buscar;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel2;
     private javax.swing.JLabel jLabel3;
     private javax.swing.JLabel jLabel4;
-    private javax.swing.JPanel jPanel1;
     private javax.swing.JPanel jPanel2;
     private javax.swing.JLabel lb_datosAlumno;
     private javax.swing.JLabel lb_datosAlumno3;
@@ -873,7 +889,9 @@ public class SeccionAlumnos extends javax.swing.JFrame {
     private javax.swing.JTextField num_Interior;
     private javax.swing.JTextField num_exterior;
     private javax.swing.JTextField num_telefono;
+    private javax.swing.JScrollPane panel_contenido;
     private javax.swing.JPanel panel_datos;
+    private javax.swing.JPanel panel_logo;
     private javax.swing.JLabel ruta_acta;
     private javax.swing.JLabel ruta_certificado;
     private javax.swing.JLabel ruta_curp;
