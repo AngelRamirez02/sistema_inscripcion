@@ -260,7 +260,7 @@ public class InscripcionAlumno extends javax.swing.JFrame {
         }
         else{
              JOptionPane.showMessageDialog(null,"Hubo un error al registrar los datos, intente otra vez", "Error en el registro", JOptionPane.WARNING_MESSAGE);
-                 return;
+                return;
         }
 
     }
@@ -339,6 +339,22 @@ public class InscripcionAlumno extends javax.swing.JFrame {
             Logger.getLogger(InscripcionAlumno.class.getName()).log(Level.SEVERE, null, ex);
         }
         return false;//Retorna falso si no encuentra el correo
+    }
+    
+    public boolean numeroRepetido(){
+        try {
+            //Prepara la consulta para verificar si existe el correo
+            String consulta_correo = "SELECT * FROM alumno WHERE telefono = ?";
+            PreparedStatement ps = cx.conectar().prepareStatement(consulta_correo);
+            ps.setString(1, entrada_telefono.getText());
+            ResultSet rs = ps.executeQuery();
+            if(rs.next()){//si encuentra un fila con el numero quiere decir que ya existe
+                return true;
+            }
+        } catch (SQLException ex) {
+            Logger.getLogger(InscripcionAlumno.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        return false;//Retorna falso si no encuentra el numero
     }
     
     /*
@@ -543,6 +559,11 @@ public class InscripcionAlumno extends javax.swing.JFrame {
         lb_curp2.setText("Curp");
         jPanel2.add(lb_curp2, new org.netbeans.lib.awtextra.AbsoluteConstraints(590, 300, -1, -1));
 
+        entrada_nombres.addFocusListener(new java.awt.event.FocusAdapter() {
+            public void focusLost(java.awt.event.FocusEvent evt) {
+                entrada_nombresFocusLost(evt);
+            }
+        });
         entrada_nombres.addKeyListener(new java.awt.event.KeyAdapter() {
             public void keyTyped(java.awt.event.KeyEvent evt) {
                 entrada_nombresKeyTyped(evt);
@@ -550,6 +571,11 @@ public class InscripcionAlumno extends javax.swing.JFrame {
         });
         jPanel2.add(entrada_nombres, new org.netbeans.lib.awtextra.AbsoluteConstraints(40, 110, 370, 50));
 
+        entrada_apellidoPaterno.addFocusListener(new java.awt.event.FocusAdapter() {
+            public void focusLost(java.awt.event.FocusEvent evt) {
+                entrada_apellidoPaternoFocusLost(evt);
+            }
+        });
         entrada_apellidoPaterno.addKeyListener(new java.awt.event.KeyAdapter() {
             public void keyTyped(java.awt.event.KeyEvent evt) {
                 entrada_apellidoPaternoKeyTyped(evt);
@@ -598,6 +624,11 @@ public class InscripcionAlumno extends javax.swing.JFrame {
         jLabel9.setText("Genero");
         jPanel2.add(jLabel9, new org.netbeans.lib.awtextra.AbsoluteConstraints(50, 480, -1, -1));
 
+        entrada_apellidoMaterno.addFocusListener(new java.awt.event.FocusAdapter() {
+            public void focusLost(java.awt.event.FocusEvent evt) {
+                entrada_apellidoMaternoFocusLost(evt);
+            }
+        });
         entrada_apellidoMaterno.addKeyListener(new java.awt.event.KeyAdapter() {
             public void keyTyped(java.awt.event.KeyEvent evt) {
                 entrada_apellidoMaternoKeyTyped(evt);
@@ -819,6 +850,17 @@ public class InscripcionAlumno extends javax.swing.JFrame {
             entrada_fechaNacimiento.requestFocusInWindow();
             return;
         }
+        if(numeroRepetido()){
+             JOptionPane.showMessageDialog(null, "El numero de telefono ya se encuentra registrado\nPor favor ingrese otro", 
+                     "Número telefonico repetido", JOptionPane.WARNING_MESSAGE);
+            entrada_telefono.requestFocusInWindow();
+            return;
+        }
+        if(!valida.validarNumeroTelefono(entrada_telefono.getText())){
+            JOptionPane.showMessageDialog(null, "Ingrese un numero de telefono valido", "Numero de telefono no valido", JOptionPane.WARNING_MESSAGE);
+            entrada_telefono.requestFocusInWindow();
+            return;
+        }
         if (!valida.correo_valido(entrada_correo.getText())) {
             JOptionPane.showMessageDialog(null, "Ingrese un correo electronico valido", "Correo no valido", JOptionPane.WARNING_MESSAGE);
             entrada_correo.requestFocusInWindow();
@@ -827,11 +869,6 @@ public class InscripcionAlumno extends javax.swing.JFrame {
         if (correoRepetido()) {
             JOptionPane.showMessageDialog(null, "El correo ya se encuentra registrado\nPor favor ingrese otro", "Correo repetido", JOptionPane.WARNING_MESSAGE);
             entrada_correo.requestFocusInWindow();
-            return;
-        }
-        if(!valida.validarNumeroTelefono(entrada_telefono.getText())){
-            JOptionPane.showMessageDialog(null, "Ingrese un numero de telefono valido", "Numero de telefono no valido", JOptionPane.WARNING_MESSAGE);
-            entrada_telefono.requestFocusInWindow();
             return;
         }
         if(!valida.cpValido(entrada_cp.getText())) {
@@ -922,6 +959,18 @@ public class InscripcionAlumno extends javax.swing.JFrame {
             evt.consume();
         }
     }//GEN-LAST:event_entrada_cpKeyTyped
+
+    private void entrada_nombresFocusLost(java.awt.event.FocusEvent evt) {//GEN-FIRST:event_entrada_nombresFocusLost
+        entrada_nombres.setText(valida.formatearNombresApellidos(entrada_nombres.getText()));
+    }//GEN-LAST:event_entrada_nombresFocusLost
+
+    private void entrada_apellidoPaternoFocusLost(java.awt.event.FocusEvent evt) {//GEN-FIRST:event_entrada_apellidoPaternoFocusLost
+       entrada_apellidoPaterno.setText(valida.formatearNombresApellidos(entrada_apellidoPaterno.getText()));
+    }//GEN-LAST:event_entrada_apellidoPaternoFocusLost
+
+    private void entrada_apellidoMaternoFocusLost(java.awt.event.FocusEvent evt) {//GEN-FIRST:event_entrada_apellidoMaternoFocusLost
+        entrada_apellidoMaterno.setText(valida.formatearNombresApellidos(entrada_apellidoMaterno.getText()));
+    }//GEN-LAST:event_entrada_apellidoMaternoFocusLost
 
     /**
      * @param args the command line arguments

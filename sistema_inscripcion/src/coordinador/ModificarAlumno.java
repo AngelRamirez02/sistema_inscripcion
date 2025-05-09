@@ -45,6 +45,7 @@ public class ModificarAlumno extends javax.swing.JFrame {
     private String rfc_coordinador;
     private String numControl_original;
     private String correo_original;
+    private String telefono_original;
     
     Validacion valida = new Validacion();
     ObtenerDireccion direc;//objeto para obtener la direccion ¿
@@ -94,84 +95,10 @@ public class ModificarAlumno extends javax.swing.JFrame {
         btn_subir_ine.setIcon(new ImageIcon(icon_subir_archivo.getScaledInstance(btn_subir_ine.getWidth(), btn_subir_ine.getHeight(), Image.SCALE_SMOOTH))); 
     }
 
-    private String seleccionar_pdf() {
-        //Mostrar interfaz para seleccionar la carpeta
-        JFileChooser fileChooser = new JFileChooser();
-        fileChooser.setPreferredSize(new Dimension(800, 600));//Tamño de la ventana
-        fileChooser.setDialogTitle("Seleccionar archivo");
-
-        // Crear un filtro para archivos PDF
-        FileNameExtensionFilter filtroPDF = new FileNameExtensionFilter("Archivos PDF (*.pdf)", "pdf");
-        fileChooser.setFileFilter(filtroPDF); // Solo permitir seleccionar carpetas
-
-        // Abrir el cuadro de diálogo
-        int result = fileChooser.showOpenDialog(null);
-
-        if (result == JFileChooser.APPROVE_OPTION) {
-            File selectedFile = fileChooser.getSelectedFile();
-            // Validar que el archivo termine en ".pdf"
-            if (selectedFile.getName().toLowerCase().endsWith(".pdf")) {
-                return selectedFile.getAbsolutePath();
-            } else {
-                JOptionPane.showMessageDialog(null, "El archivo seleccionado no es un PDF válido.", "Error", JOptionPane.ERROR_MESSAGE);
-                return "";
-            }
-        }
-        return "";
-    }
-    
-    private String crear_carpetaAlumno(String nombreCarpeta) {
-        // Ruta base donde se crearán las nuevas carpetas
-        String basePath = "documentos_alumnos";
-        String folderPath = basePath + File.separator + nombreCarpeta;
-
-        // Crear la carpeta
-        File folder = new File(folderPath);
-        if (!folder.exists()) {
-            if (folder.mkdir()) {
-                return folderPath;
-            }
-        }
-        
-        return "";
-    }
-    
-    private String guardar_pdf(String rutaOrigen, String rutaDestino, String nombreArchivo) {
-        // Ruuta desde donde se copia el archivo
-        String sourceFilePath = rutaOrigen;
-        
-        // Ruta del archivo de destino dentro de la nueva carpeta
-        String destinationFilePath = rutaDestino + File.separator + nombreArchivo + ".pdf";
-        
-        // Copiar el archivo
-        Path sourcePath = Paths.get(sourceFilePath);
-        Path destinationPath = Paths.get(destinationFilePath);
-
-        try {
-            Files.copy(sourcePath, destinationPath);
-            //System.out.println("Archivo copiado a: " + destinationFilePath);
-            //JOptionPane.showMessageDialog(null, "Ejecutable generado con exito", "Archivo generado", JOptionPane.INFORMATION_MESSAGE);
-            return destinationFilePath;
-        } catch (IOException e) {
-            System.out.println("Error al copiar el archivo: " + e.getMessage());
-        }
-        
-        return "";
-    }
-
-
     private void actualizar_alumno() throws SQLException {
         //Obtener todos los datos de entrada
         Date fecha_nacimiento = entrada_fechaNacimiento.getDate();
         java.sql.Date fecha_sql = new java.sql.Date(fecha_nacimiento.getTime());
-        
-        
-
-        //if (!rutaCarpetaAlumno.isEmpty()) {
-            /*String acta = guardar_pdf(ruta_acta.getText(), rutaCarpetaAlumno, "acta_nacimiento");
-            String certificado = guardar_pdf(ruta_certificado.getText(), rutaCarpetaAlumno, "certificado_bachillerato");
-            String curp = guardar_pdf(ruta_curp.getText(), rutaCarpetaAlumno, "curp");
-            String ine = guardar_pdf(ruta_ine.getText(), rutaCarpetaAlumno, "ine");*/
 
            
             String sql = "UPDATE `alumno` SET `carrera` = ?, `semestre` = ?, `nombres` = ?, `apellido_paterno` = ?, "
@@ -223,30 +150,6 @@ public class ModificarAlumno extends javax.swing.JFrame {
         }*/
 
     }
-
-    private void alta_documentos(String numControl, String acta, String certificado, String curp, String ine) throws SQLException {
-        String sql = "INSERT INTO `documentos` (`id_documentos`, `num_control`, `"
-                + "acta_nacimiento`, `certificado_bachillerato`, `curp`, `ine`) "
-                + "VALUES (NULL, ?, ?, ?, ?, ?)";
-
-        PreparedStatement pstmt = cx.conectar().prepareStatement(sql);
-
-        pstmt.setString(1, numControl);
-        pstmt.setString(2, acta);
-        pstmt.setString(3, certificado);
-        pstmt.setString(4, curp);
-        pstmt.setString(5, ine);
-
-        //Verifica que se realizó el registro
-        int filas_insertadas = pstmt.executeUpdate();
-        if (filas_insertadas > 0) {
-            JOptionPane.showMessageDialog(null, "Documentos cargados con exito", "Registro existoso", JOptionPane.INFORMATION_MESSAGE);
-
-        } else {
-            JOptionPane.showMessageDialog(null, "Hubo un error al registrar los docuemntos, intente otra vez", "Error en el registro", JOptionPane.WARNING_MESSAGE);
-            return;
-        }
-    }
     
     public void buscar_alumno(String numControl) throws SQLException {
         String sql = "SELECT * FROM alumno WHERE num_control = ?";
@@ -256,6 +159,7 @@ public class ModificarAlumno extends javax.swing.JFrame {
         if (rs.next()) {
             this.numControl_original=rs.getString("num_control");
             this.correo_original=rs.getString("correo");
+            this.telefono_original = rs.getString("telefono");
             //datos del alumno
             entrada_numControl.setText(rs.getString("num_control"));
             entrada_nombres.setText(rs.getString("nombres"));
@@ -288,6 +192,25 @@ public class ModificarAlumno extends javax.swing.JFrame {
             ps.setString(1, entrada_correo.getText());
             ResultSet rs = ps.executeQuery();
             if(rs.next()){//si encuentra un fila con el correo quiere decir que ya existe
+                return true;
+            }
+        } catch (SQLException ex) {
+            Logger.getLogger(ModificarAlumno.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        return false;//Retorna falso si no encuentra el correo
+    }
+    
+    public boolean numeroRepetido() {
+        if (entrada_telefono.getText().equals(this.numControl_original)) {
+            return false;
+        }
+        try {
+            //Prepara la consulta para verificar si existe el correo
+            String consulta_correo = "SELECT * FROM alumno WHERE telefono = ?";
+            PreparedStatement ps = cx.conectar().prepareStatement(consulta_correo);
+            ps.setString(1, entrada_telefono.getText());
+            ResultSet rs = ps.executeQuery();
+            if (rs.next()) {//si encuentra un fila con el correo quiere decir que ya existe
                 return true;
             }
         } catch (SQLException ex) {
@@ -439,7 +362,15 @@ public class ModificarAlumno extends javax.swing.JFrame {
         jLabel4.setFont(new java.awt.Font("Segoe UI", 1, 18)); // NOI18N
         jLabel4.setText("Numero telefonico");
         jPanel2.add(jLabel4, new org.netbeans.lib.awtextra.AbsoluteConstraints(50, 770, -1, -1));
+
+        entrada_numControl.setEditable(false);
         jPanel2.add(entrada_numControl, new org.netbeans.lib.awtextra.AbsoluteConstraints(50, 110, 370, 50));
+
+        entrada_apellidoPaterno.addFocusListener(new java.awt.event.FocusAdapter() {
+            public void focusLost(java.awt.event.FocusEvent evt) {
+                entrada_apellidoPaternoFocusLost(evt);
+            }
+        });
         jPanel2.add(entrada_apellidoPaterno, new org.netbeans.lib.awtextra.AbsoluteConstraints(50, 290, 370, 50));
 
         jLabel6.setFont(new java.awt.Font("Segoe UI", 1, 18)); // NOI18N
@@ -461,6 +392,12 @@ public class ModificarAlumno extends javax.swing.JFrame {
         jLabel9.setFont(new java.awt.Font("Segoe UI", 1, 18)); // NOI18N
         jLabel9.setText("Fecha de Nacimiento");
         jPanel2.add(jLabel9, new org.netbeans.lib.awtextra.AbsoluteConstraints(40, 560, -1, -1));
+
+        entrada_apellidoMaterno.addFocusListener(new java.awt.event.FocusAdapter() {
+            public void focusLost(java.awt.event.FocusEvent evt) {
+                entrada_apellidoMaternoFocusLost(evt);
+            }
+        });
         jPanel2.add(entrada_apellidoMaterno, new org.netbeans.lib.awtextra.AbsoluteConstraints(50, 390, 370, 50));
         jPanel2.add(entrada_telefono, new org.netbeans.lib.awtextra.AbsoluteConstraints(50, 800, 370, 50));
 
@@ -534,6 +471,12 @@ public class ModificarAlumno extends javax.swing.JFrame {
 
         entrada_colonia.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "<seleccionar>" }));
         jPanel2.add(entrada_colonia, new org.netbeans.lib.awtextra.AbsoluteConstraints(20, 1220, 240, 50));
+
+        entrada_nombres.addFocusListener(new java.awt.event.FocusAdapter() {
+            public void focusLost(java.awt.event.FocusEvent evt) {
+                entrada_nombresFocusLost(evt);
+            }
+        });
         jPanel2.add(entrada_nombres, new org.netbeans.lib.awtextra.AbsoluteConstraints(50, 190, 370, 50));
 
         jLabel20.setFont(new java.awt.Font("Segoe UI", 1, 18)); // NOI18N
@@ -687,39 +630,39 @@ public class ModificarAlumno extends javax.swing.JFrame {
     }// </editor-fold>//GEN-END:initComponents
 
     private void btn_subir_actaMousePressed(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_btn_subir_actaMousePressed
-        if(SwingUtilities.isLeftMouseButton(evt)){
-            String archivo_acta = seleccionar_pdf();
-            if(!archivo_acta.isEmpty()){
-                ruta_acta.setText(archivo_acta);
-            }
-        }
+//        if(SwingUtilities.isLeftMouseButton(evt)){
+//            String archivo_acta = seleccionar_pdf();
+//            if(!archivo_acta.isEmpty()){
+//                ruta_acta.setText(archivo_acta);
+//            }
+//        }
     }//GEN-LAST:event_btn_subir_actaMousePressed
 
     private void btn_subir_certificadoMousePressed(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_btn_subir_certificadoMousePressed
-         if(SwingUtilities.isLeftMouseButton(evt)){
-            String archivo_certificado = seleccionar_pdf();
-            if(!archivo_certificado.isEmpty()){
-                ruta_certificado.setText(archivo_certificado);
-            }
-        }
+//         if(SwingUtilities.isLeftMouseButton(evt)){
+//            String archivo_certificado = seleccionar_pdf();
+//            if(!archivo_certificado.isEmpty()){
+//                ruta_certificado.setText(archivo_certificado);
+//            }
+//        }
     }//GEN-LAST:event_btn_subir_certificadoMousePressed
 
     private void btn_subir_curpMousePressed(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_btn_subir_curpMousePressed
-         if(SwingUtilities.isLeftMouseButton(evt)){
-            String archivo_curp = seleccionar_pdf();
-            if(!archivo_curp.isEmpty()){
-                ruta_curp.setText(archivo_curp);
-            }
-        }
+//         if(SwingUtilities.isLeftMouseButton(evt)){
+//            String archivo_curp = seleccionar_pdf();
+//            if(!archivo_curp.isEmpty()){
+//                ruta_curp.setText(archivo_curp);
+//            }
+//        }
     }//GEN-LAST:event_btn_subir_curpMousePressed
 
     private void btn_subir_ineMousePressed(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_btn_subir_ineMousePressed
-         if(SwingUtilities.isLeftMouseButton(evt)){
-            String archivo_ine = seleccionar_pdf();
-            if(!archivo_ine.isEmpty()){
-                ruta_ine.setText(archivo_ine);
-            }
-        }
+//         if(SwingUtilities.isLeftMouseButton(evt)){
+//            String archivo_ine = seleccionar_pdf();
+//            if(!archivo_ine.isEmpty()){
+//                ruta_ine.setText(archivo_ine);
+//            }
+//        }
     }//GEN-LAST:event_btn_subir_ineMousePressed
 
     private void btn_buscarCodigoPostalActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btn_buscarCodigoPostalActionPerformed
@@ -795,16 +738,21 @@ public class ModificarAlumno extends javax.swing.JFrame {
             entrada_fechaNacimiento.requestFocusInWindow();
             return;
         }
-        
-        //CORREO
-        if (correoRepetido()) {
-            JOptionPane.showMessageDialog(null, "El correo ya se encuentra registrado\nPor favor ingrese otro", "Correo repetido", JOptionPane.WARNING_MESSAGE);
-            entrada_correo.requestFocusInWindow();
+        if(numeroRepetido()){
+            JOptionPane.showMessageDialog(null, "El numero de telefono ya se encuentra registrado\nPor favor ingrese otro", 
+                     "Número telefonico repetido", JOptionPane.WARNING_MESSAGE);
+            entrada_telefono.requestFocusInWindow();
             return;
         }
         if(!valida.validarNumeroTelefono(entrada_telefono.getText())){
             JOptionPane.showMessageDialog(null, "Ingrese un numero de telefono valido", "Numero de telefono no valido", JOptionPane.WARNING_MESSAGE);
             entrada_telefono.requestFocusInWindow();
+            return;
+        }
+        //CORREO
+        if (correoRepetido()) {
+            JOptionPane.showMessageDialog(null, "El correo ya se encuentra registrado\nPor favor ingrese otro", "Correo repetido", JOptionPane.WARNING_MESSAGE);
+            entrada_correo.requestFocusInWindow();
             return;
         }
         if (!valida.cpValido(entrada_cp.getText())) {
@@ -865,6 +813,18 @@ public class ModificarAlumno extends javax.swing.JFrame {
             Logger.getLogger(ModificarAlumno.class.getName()).log(Level.SEVERE, null, ex);
         }
     }//GEN-LAST:event_btn_regresarActionPerformed
+
+    private void entrada_nombresFocusLost(java.awt.event.FocusEvent evt) {//GEN-FIRST:event_entrada_nombresFocusLost
+        entrada_nombres.setText(valida.formatearNombresApellidos(entrada_nombres.getText()));
+    }//GEN-LAST:event_entrada_nombresFocusLost
+
+    private void entrada_apellidoPaternoFocusLost(java.awt.event.FocusEvent evt) {//GEN-FIRST:event_entrada_apellidoPaternoFocusLost
+        entrada_apellidoPaterno.setText(valida.formatearNombresApellidos(entrada_apellidoPaterno.getText()));
+    }//GEN-LAST:event_entrada_apellidoPaternoFocusLost
+
+    private void entrada_apellidoMaternoFocusLost(java.awt.event.FocusEvent evt) {//GEN-FIRST:event_entrada_apellidoMaternoFocusLost
+         entrada_apellidoMaterno.setText(valida.formatearNombresApellidos(entrada_apellidoMaterno.getText()));
+    }//GEN-LAST:event_entrada_apellidoMaternoFocusLost
 
     /**
      * @param args the command line arguments

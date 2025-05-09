@@ -17,7 +17,7 @@ import java.time.Year;
  */
 public class Alumno {
 
-    public String generarNumeroControl(String codigoCarrera) {
+    public String generarNumeroControl(String codigoCarrera) throws SQLException {
         // Obtener el año actual completo
         int añoActual = Year.now().getValue();
 
@@ -42,11 +42,16 @@ public class Alumno {
         return numeroControl;
     }
     
-    private String generarUltimosDigitos() {
-        Random random = new Random();
-        // Generar un número entre 0 y 9999
-        int numero = random.nextInt(10000);
-        // Formatear para que siempre tenga 4 dígitos (con ceros a la izquierda si es necesario)
+    private String generarUltimosDigitos() throws SQLException {
+        Conexion conexion = new Conexion();
+        String sql = "SELECT COUNT(*) FROM alumno";
+        PreparedStatement statement = conexion.conectar().prepareStatement(sql);
+        int numero=0;
+
+        ResultSet resultSet = statement.executeQuery();
+        if (resultSet.next()) {
+            numero = resultSet.getInt(1)+1;
+        }
         return String.format("%04d", numero);
     }
     
@@ -68,7 +73,7 @@ public class Alumno {
         
         return false; // En caso de error, asumimos que no existe
     }
-    public static void main(String[] args) {
+    public static void main(String[] args) throws SQLException {
         Alumno a = new Alumno();
         System.out.println(a.generarNumeroControl("32"));
     }

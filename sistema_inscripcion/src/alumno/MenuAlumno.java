@@ -82,7 +82,23 @@ public class MenuAlumno extends javax.swing.JFrame {
             lb_nombreAlumno.setText("<html> <center>"+nombreCompleto+"</center> </html>");
         }
     }
-    
+
+    private boolean adeudoDocumento() throws SQLException {
+        String sql = "SELECT ine From documentos WHERE num_control = ?";
+
+        PreparedStatement pstm = cx.conectar().prepareStatement(sql);
+        pstm.setString(1, this.numControl);
+
+        ResultSet rs = pstm.executeQuery();
+
+        if (rs.next()) {
+            //Si no tine la ine registrada
+            
+            return rs.getString("ine") == null;
+        }
+
+        return true;
+    }   
     /**
      * This method is called from within the constructor to initialize the form.
      * WARNING: Do NOT modify this code. The content of this method is always
@@ -103,9 +119,9 @@ public class MenuAlumno extends javax.swing.JFrame {
         Calificaciones = new javax.swing.JLabel();
         lb_nombreAlumno = new javax.swing.JLabel();
         btn_cerrar_sesion = new paneles.PanelRound();
-        btn_salir = new javax.swing.JLabel();
+        btn_cerrarSesion = new javax.swing.JLabel();
         btn_elegirMaterias = new paneles.PanelRound();
-        btn_salir1 = new javax.swing.JLabel();
+        btn_seleccionarMaterias = new javax.swing.JLabel();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
         setBackground(new java.awt.Color(255, 255, 255));
@@ -189,12 +205,12 @@ public class MenuAlumno extends javax.swing.JFrame {
         });
         btn_cerrar_sesion.setLayout(new org.netbeans.lib.awtextra.AbsoluteLayout());
 
-        btn_salir.setFont(new java.awt.Font("Segoe UI", 1, 24)); // NOI18N
-        btn_salir.setForeground(new java.awt.Color(51, 51, 255));
-        btn_salir.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
-        btn_salir.setText("Cerrar sesión");
-        btn_salir.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
-        btn_cerrar_sesion.add(btn_salir, new org.netbeans.lib.awtextra.AbsoluteConstraints(0, 0, 500, 60));
+        btn_cerrarSesion.setFont(new java.awt.Font("Segoe UI", 1, 24)); // NOI18N
+        btn_cerrarSesion.setForeground(new java.awt.Color(51, 51, 255));
+        btn_cerrarSesion.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
+        btn_cerrarSesion.setText("Cerrar sesión");
+        btn_cerrarSesion.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
+        btn_cerrar_sesion.add(btn_cerrarSesion, new org.netbeans.lib.awtextra.AbsoluteConstraints(0, 0, 500, 60));
 
         jPanel2.add(btn_cerrar_sesion, new org.netbeans.lib.awtextra.AbsoluteConstraints(620, 450, 500, 60));
 
@@ -210,12 +226,12 @@ public class MenuAlumno extends javax.swing.JFrame {
         });
         btn_elegirMaterias.setLayout(new org.netbeans.lib.awtextra.AbsoluteLayout());
 
-        btn_salir1.setFont(new java.awt.Font("Segoe UI", 1, 24)); // NOI18N
-        btn_salir1.setForeground(new java.awt.Color(51, 51, 255));
-        btn_salir1.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
-        btn_salir1.setText("Seleccionar materias");
-        btn_salir1.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
-        btn_elegirMaterias.add(btn_salir1, new org.netbeans.lib.awtextra.AbsoluteConstraints(0, 0, 500, 60));
+        btn_seleccionarMaterias.setFont(new java.awt.Font("Segoe UI", 1, 24)); // NOI18N
+        btn_seleccionarMaterias.setForeground(new java.awt.Color(51, 51, 255));
+        btn_seleccionarMaterias.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
+        btn_seleccionarMaterias.setText("Seleccionar materias");
+        btn_seleccionarMaterias.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
+        btn_elegirMaterias.add(btn_seleccionarMaterias, new org.netbeans.lib.awtextra.AbsoluteConstraints(0, 0, 500, 60));
 
         jPanel2.add(btn_elegirMaterias, new org.netbeans.lib.awtextra.AbsoluteConstraints(620, 350, 500, 60));
 
@@ -342,15 +358,26 @@ public class MenuAlumno extends javax.swing.JFrame {
     }//GEN-LAST:event_formWindowClosing
 
     private void btn_elegirMateriasMousePressed(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_btn_elegirMateriasMousePressed
-//       if(SwingUtilities.isLeftMouseButton(evt)){
-//           try {
-////               SeleccionarHorario ventana = new SeleccionarHorario(this.numControl, fechaInicioSesion, horaInicioSesion);
-////               ventana.setVisible(true);
-////               this.dispose();
-//           } catch (SQLException ex) {
-//               Logger.getLogger(MenuAlumno.class.getName()).log(Level.SEVERE, null, ex);
-//           }
-//       }
+       if(SwingUtilities.isLeftMouseButton(evt)){
+           try {
+               //si cuenta con aduedo de documento
+               if(adeudoDocumento()){
+                  //Muestra mensaje y solicita cargar el documento restante
+                   JOptionPane.showMessageDialog(null, "Cargue el documento restante para poder seleccionar materias", "Aduedo de documentación", JOptionPane.WARNING_MESSAGE);
+                   ModificarDocumento ventana = new ModificarDocumento(this.numControl);
+                   ventana.setVisible(true);
+                   this.dispose();
+               }
+               //Sino redirige directamente a seleccionar las materias
+               else {
+                   SeleccionarHorario ventana = new SeleccionarHorario(this.numControl, fechaInicioSesion, horaInicioSesion);
+                   ventana.setVisible(true);
+                   this.dispose();
+               }
+           } catch (SQLException ex) {
+               Logger.getLogger(MenuAlumno.class.getName()).log(Level.SEVERE, null, ex);
+           }
+       }
     }//GEN-LAST:event_btn_elegirMateriasMousePressed
 
     /**
@@ -397,11 +424,11 @@ public class MenuAlumno extends javax.swing.JFrame {
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JLabel Calificaciones;
+    private javax.swing.JLabel btn_cerrarSesion;
     private paneles.PanelRound btn_cerrar_sesion;
     private paneles.PanelRound btn_elegirMaterias;
     private javax.swing.JLabel btn_imprimirHorario;
-    private javax.swing.JLabel btn_salir;
-    private javax.swing.JLabel btn_salir1;
+    private javax.swing.JLabel btn_seleccionarMaterias;
     private javax.swing.JPanel jPanel1;
     private javax.swing.JPanel jPanel2;
     private javax.swing.JScrollPane jScrollPane1;

@@ -320,6 +320,7 @@
                 </Component>
                 <Component class="javax.swing.JTextField" name="entrada_nombres">
                   <Events>
+                    <EventHandler event="focusLost" listener="java.awt.event.FocusListener" parameters="java.awt.event.FocusEvent" handler="entrada_nombresFocusLost"/>
                     <EventHandler event="keyTyped" listener="java.awt.event.KeyListener" parameters="java.awt.event.KeyEvent" handler="entrada_nombresKeyTyped"/>
                   </Events>
                   <Constraints>
@@ -330,6 +331,7 @@
                 </Component>
                 <Component class="javax.swing.JTextField" name="entrada_apellidoPaterno">
                   <Events>
+                    <EventHandler event="focusLost" listener="java.awt.event.FocusListener" parameters="java.awt.event.FocusEvent" handler="entrada_apellidoPaternoFocusLost"/>
                     <EventHandler event="keyTyped" listener="java.awt.event.KeyListener" parameters="java.awt.event.KeyEvent" handler="entrada_apellidoPaternoKeyTyped"/>
                   </Events>
                   <Constraints>
@@ -464,6 +466,7 @@
                 </Component>
                 <Component class="javax.swing.JTextField" name="entrada_apellidoMaterno">
                   <Events>
+                    <EventHandler event="focusLost" listener="java.awt.event.FocusListener" parameters="java.awt.event.FocusEvent" handler="entrada_apellidoMaternoFocusLost"/>
                     <EventHandler event="keyTyped" listener="java.awt.event.KeyListener" parameters="java.awt.event.KeyEvent" handler="entrada_apellidoMaternoKeyTyped"/>
                   </Events>
                   <Constraints>

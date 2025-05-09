@@ -143,6 +143,24 @@ public class SeccionAlumnos extends javax.swing.JFrame {
         }
     }
     
+     private boolean eliminarCarpeta(File folder) {
+        if (!folder.exists()) {
+            return false; // La carpeta no existe
+        }
+        
+        File[] files = folder.listFiles();
+        if (files != null) { // Eliminar archivos y subcarpetas
+            for (File file : files) {
+                if (file.isDirectory()) {
+                    eliminarCarpeta(file); // Llamada recursiva
+                } else {
+                    file.delete(); // Eliminar archivo
+                }
+            }
+        }
+        return folder.delete(); // Eliminar la carpeta vacía
+    }
+    
     private void eliminar_alumno(String numControl) {
         try {
             //consulta para eliminar
@@ -153,9 +171,13 @@ public class SeccionAlumnos extends javax.swing.JFrame {
             int filas_eliminadas = ps.executeUpdate();
             //verificar si se elimaron los datos
             if (filas_eliminadas > 0) {
+                String folderPath = "documentos_alumnos/"+numControl; // Reemplazar con la ruta real
+                File folder = new File(folderPath);
+                eliminarCarpeta(folder);
                 JOptionPane.showMessageDialog(null, "Alumno eliminado exitosamente", "Eliminación exitosa", JOptionPane.INFORMATION_MESSAGE);
                 numControl_busqueda.setText("");
                 panel_datos.setVisible(false);
+                //Regresar al comienzo de la pantalla
                 JScrollBar verticalBar = panel_contenido.getVerticalScrollBar();
                 verticalBar.setValue(verticalBar.getMinimum());
             } else {

@@ -11,6 +11,8 @@ import coordinador.*;
 import java.awt.Dimension;
 import java.awt.Image;
 import java.awt.Toolkit;
+import java.awt.event.ComponentAdapter;
+import java.awt.event.ComponentEvent;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
@@ -25,6 +27,7 @@ import javax.swing.ImageIcon;
 import javax.swing.JFileChooser;
 import javax.swing.JOptionPane;
 import javax.swing.SwingUtilities;
+import javax.swing.table.DefaultTableModel;
 
 /**
  *
@@ -49,6 +52,8 @@ public class SeleccionarHorario extends javax.swing.JFrame {
         configuracion_ventana();
         cargar_img();
         cargarDatos_alumno();
+        personalizarTabla();
+        mostrarHorarios(semestreAlumno(numControl));
     }
 
         //Funcion para toda la configuracion de la ventana 
@@ -67,6 +72,17 @@ public class SeleccionarHorario extends javax.swing.JFrame {
         //Profesor
         Image icon_alumno= Toolkit.getDefaultToolkit().getImage(getClass().getResource("/img/icon_maestro_inicio.png"));
     }
+    
+    private void personalizarTabla() {
+        tabla_horarios.getColumnModel().getColumn(0).setMaxWidth(55); 
+        tabla_horarios.getColumnModel().getColumn(1).setMaxWidth(50); 
+        tabla_horarios.getColumnModel().getColumn(2).setMaxWidth(50);
+        tabla_horarios.getColumnModel().getColumn(5).setMaxWidth(80); 
+        tabla_horarios.getColumnModel().getColumn(6).setMaxWidth(80); 
+        
+        tabla_horarios.setRowHeight(30); // Establece altura de 30 píxeles
+
+    }
 
     private void cargarDatos_alumno() throws SQLException {
         // Seleccionar los datos del profesor
@@ -80,6 +96,65 @@ public class SeleccionarHorario extends javax.swing.JFrame {
             String nombreCompleto = rs.getString("nombres") + " " + rs.getString("apellido_paterno") + " " + rs.getString("apellido_materno");
             lb_nombreAlumno.setText("<html> <center>"+nombreCompleto+"</center> </html>");
         }
+    }
+    
+    private String semestreAlumno(String num_control) throws SQLException {
+        String sql = "SELECT semestre FROM alumno WHERE num_control = ?";
+        PreparedStatement ps = cx.conectar().prepareStatement(sql);
+        ps.setString(1, num_control);
+        ResultSet rs = ps.executeQuery();
+        
+        if (rs.next()) {
+            return rs.getString("semestre");
+        }
+        return "";
+    }
+    
+    private void mostrarHorarios(String semestre) throws SQLException {
+        String sql = "SELECT \n"
+                + "	g.id_grupo,\n"
+                + "    -- ... lo demás igual\n"
+                + "    g.nombre_grupo AS grupo,\n"
+                + "    g.salon,\n"
+                + "    g.ciclo_escolar,\n"
+                + "    m.nombre_materia,\n"
+                + "    CONCAT(d.nombres, ' ', d.apellido_paterno, ' ', d.apellido_materno) AS profesor,\n"
+                + "    h.hora_inicio,\n"
+                + "    h.hora_fin,\n"
+                + "    GROUP_CONCAT(hd.dia ORDER BY FIELD(hd.dia, 'Lunes','Martes','Miercoles','Jueves','Viernes') SEPARATOR ', ') AS dias\n"
+                + "FROM grupo g\n"
+                + "JOIN horario h ON g.id_grupo = h.id_grupo\n"
+                + "JOIN docente d ON h.rfc = d.rfc\n"
+                + "JOIN horario_dias hd ON h.id_horario = hd.id_horario\n"
+                + "JOIN materia m ON h.id_materia = m.id_materia\n"
+                + "WHERE m.semestre = ?\n"
+                + "   AND g.ciclo_escolar = '2024-2025'  -- Cambia esto al ciclo que desees\n"
+                + "GROUP BY g.salon, m.nombre_materia, profesor, h.hora_inicio, h.hora_fin";
+        
+        //R
+        PreparedStatement ps = cx.conectar().prepareStatement(sql);
+        ps.setString(1, semestre);
+        ResultSet rs = ps.executeQuery();
+        
+        //Arreglo de datos
+        Object[] historial = new Object[8];
+        DefaultTableModel modelo;//modelo para la tabla
+        modelo = (DefaultTableModel) tabla_horarios.getModel();
+
+        while (rs.next()) {
+            //se obtienen los datos de la tabla
+            historial[0] = rs.getInt("id_grupo");
+            historial[1] = rs.getString("grupo");
+            historial[2] = rs.getString("salon");
+            historial[3] = rs.getString("nombre_materia");
+            historial[4] = rs.getString("profesor");
+            historial[5] = rs.getTime("hora_inicio");
+            historial[6] = rs.getTime("hora_fin");
+            historial[7] = rs.getString("dias");
+            
+            modelo.addRow(historial);
+        }
+        tabla_horarios.setModel(modelo);
     }
     
     /**
@@ -98,7 +173,7 @@ public class SeleccionarHorario extends javax.swing.JFrame {
         titulo = new javax.swing.JLabel();
         lb_nombreAlumno = new javax.swing.JLabel();
         jScrollPane2 = new javax.swing.JScrollPane();
-        jTable1 = new javax.swing.JTable();
+        tabla_horarios = new javax.swing.JTable();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
         setBackground(new java.awt.Color(255, 255, 255));
@@ -132,22 +207,30 @@ public class SeleccionarHorario extends javax.swing.JFrame {
         lb_nombreAlumno.setFont(new java.awt.Font("Segoe UI", 1, 18)); // NOI18N
         lb_nombreAlumno.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
         lb_nombreAlumno.setText("jLabel6");
-        jPanel2.add(lb_nombreAlumno, new org.netbeans.lib.awtextra.AbsoluteConstraints(130, 100, 970, 50));
+        jPanel2.add(lb_nombreAlumno, new org.netbeans.lib.awtextra.AbsoluteConstraints(130, 90, 970, 50));
 
-        jTable1.setModel(new javax.swing.table.DefaultTableModel(
+        tabla_horarios.setFont(new java.awt.Font("Segoe UI", 0, 14)); // NOI18N
+        tabla_horarios.setModel(new javax.swing.table.DefaultTableModel(
             new Object [][] {
-                {null, null, null, null},
-                {null, null, null, null},
-                {null, null, null, null},
-                {null, null, null, null}
+
             },
             new String [] {
-                "Title 1", "Title 2", "Title 3", "Title 4"
+                "Id grupo", "Grupo", "Salon", "Materia", "Profesor", "Hora inicio", "Hora fin", "Dias"
             }
-        ));
-        jScrollPane2.setViewportView(jTable1);
+        ) {
+            boolean[] canEdit = new boolean [] {
+                false, false, false, false, false, false, false, false
+            };
 
-        jPanel2.add(jScrollPane2, new org.netbeans.lib.awtextra.AbsoluteConstraints(170, 190, 920, -1));
+            public boolean isCellEditable(int rowIndex, int columnIndex) {
+                return canEdit [columnIndex];
+            }
+        });
+        tabla_horarios.setSelectionMode(javax.swing.ListSelectionModel.SINGLE_SELECTION);
+        tabla_horarios.getTableHeader().setReorderingAllowed(false);
+        jScrollPane2.setViewportView(tabla_horarios);
+
+        jPanel2.add(jScrollPane2, new org.netbeans.lib.awtextra.AbsoluteConstraints(20, 170, 1150, 330));
 
         jScrollPane1.setViewportView(jPanel2);
 
@@ -245,9 +328,9 @@ public class SeleccionarHorario extends javax.swing.JFrame {
     private javax.swing.JPanel jPanel2;
     private javax.swing.JScrollPane jScrollPane1;
     private javax.swing.JScrollPane jScrollPane2;
-    private javax.swing.JTable jTable1;
     private javax.swing.JLabel lb_nombreAlumno;
     private javax.swing.JLabel logo_ita;
+    private javax.swing.JTable tabla_horarios;
     private javax.swing.JLabel titulo;
     // End of variables declaration//GEN-END:variables
 }

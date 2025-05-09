@@ -14,6 +14,7 @@ import java.util.regex.Pattern;
 public class Validacion {
 
     public boolean nombresValidos(String nombre) {
+        if(nombre.length() <3)return false; //Verifica el tamaño del nomnre
         String regex = "^(De|Del|Los|Las|La)?\\s?[A-ZÁÉÍÓÚÑ][a-záéíóúñ]*(\\s[A-ZÁÉÍÓÚÑ][a-záéíóúñ]*)*$";
         Pattern pattern = Pattern.compile(regex);
         Matcher matcher = pattern.matcher(nombre);
@@ -21,6 +22,7 @@ public class Validacion {
     }
 
     public boolean apellidoValido(String apelido) {
+        if(apelido.length() <3) return false;
         String regex = "^(De|Del|Los|Las|La)?\\s?[A-ZÁÉÍÓÚÑ][a-záéíóúñ]*(\\s[A-ZÁÉÍÓÚÑ][a-záéíóúñ]*)*$";
         Pattern pattern = Pattern.compile(regex);
         Matcher matcher = pattern.matcher(apelido);
@@ -35,6 +37,7 @@ public class Validacion {
     }
 
     public boolean correo_valido(String correo) {//Valida correo electronicos 
+        correo = correo.trim();
         String regex = "^[a-zA-Z0-9_]+([.][a-zA-Z0-9_]+)*@(gmail|yahoo|hotmail|outlook|acapulco)([.][a-zA-Z0-9_]+)?[.](com|net|org|edu|gov|mx|tecnm)$";
         Pattern pattern = Pattern.compile(regex);
         Matcher matcher = pattern.matcher(correo);
@@ -65,10 +68,13 @@ public class Validacion {
         // Verificar que no contenga puntos
         if (numeroTelefono.contains(".")) {
             return false;
-        }
-
+        }       
         // Eliminar espacios en blanco
         numeroTelefono = numeroTelefono.trim();
+        
+        if(numeroTelefono.length()>10){
+            return false;
+        }
 
         // Patrones comunes para números de teléfono
         String patron1 = "^\\+?[0-9]{10,15}$"; // Formato internacional: +123456789012 o 1234567890
@@ -80,8 +86,7 @@ public class Validacion {
                 || numeroTelefono.matches(patron2)
                 || numeroTelefono.matches(patron3);
     }
-
-    
+   
     public String formatearNombresApellidos(String nombre) {
         if (nombre == null || nombre.isEmpty()) {
             return ""; // Maneja el caso de una cadena nula o vacía

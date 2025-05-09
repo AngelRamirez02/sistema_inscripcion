@@ -144,7 +144,7 @@ public class MenuCoordinador extends javax.swing.JFrame {
         panelRound4 = new paneles.PanelRound();
         jLabel4 = new javax.swing.JLabel();
         panelRound5 = new paneles.PanelRound();
-        jLabel5 = new javax.swing.JLabel();
+        btn_horarios = new javax.swing.JLabel();
         btn_cerrar_sesion = new paneles.PanelRound();
         jLabel2 = new javax.swing.JLabel();
         lb_nombreCoordinador = new javax.swing.JLabel();
@@ -241,12 +241,17 @@ public class MenuCoordinador extends javax.swing.JFrame {
         panelRound5.setRoundTopRight(20);
         panelRound5.setLayout(new org.netbeans.lib.awtextra.AbsoluteLayout());
 
-        jLabel5.setFont(new java.awt.Font("Segoe UI", 1, 24)); // NOI18N
-        jLabel5.setForeground(new java.awt.Color(51, 51, 255));
-        jLabel5.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
-        jLabel5.setText("Materias");
-        jLabel5.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
-        panelRound5.add(jLabel5, new org.netbeans.lib.awtextra.AbsoluteConstraints(0, 0, 500, 60));
+        btn_horarios.setFont(new java.awt.Font("Segoe UI", 1, 24)); // NOI18N
+        btn_horarios.setForeground(new java.awt.Color(51, 51, 255));
+        btn_horarios.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
+        btn_horarios.setText("Horarios");
+        btn_horarios.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
+        btn_horarios.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mousePressed(java.awt.event.MouseEvent evt) {
+                btn_horariosMousePressed(evt);
+            }
+        });
+        panelRound5.add(btn_horarios, new org.netbeans.lib.awtextra.AbsoluteConstraints(0, 0, 500, 60));
 
         jPanel2.add(panelRound5, new org.netbeans.lib.awtextra.AbsoluteConstraints(630, 330, 500, 60));
 
@@ -365,6 +370,20 @@ public class MenuCoordinador extends javax.swing.JFrame {
         }
     }//GEN-LAST:event_btn_bitacoraMousePressed
 
+    private void btn_horariosMousePressed(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_btn_horariosMousePressed
+        if (SwingUtilities.isLeftMouseButton(evt)){//si se da click sobre el boton de horario
+            try {
+                //Crear nueva ventana 
+                Alta_Horarios ventana = new Alta_Horarios(rfc);
+                ventana.setVisible(true);
+                this.dispose();
+            } catch (SQLException ex) {
+                Logger.getLogger(MenuCoordinador.class.getName()).log(Level.SEVERE, null, ex);
+            }
+
+        }
+    }//GEN-LAST:event_btn_horariosMousePressed
+
     /**
      * @param args the command line arguments
      */
@@ -415,12 +434,12 @@ public class MenuCoordinador extends javax.swing.JFrame {
     private javax.swing.JLabel btn_alumnos;
     private paneles.PanelRound btn_bitacora;
     private paneles.PanelRound btn_cerrar_sesion;
+    private javax.swing.JLabel btn_horarios;
     private javax.swing.JPanel fondo;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel2;
     private javax.swing.JLabel jLabel3;
     private javax.swing.JLabel jLabel4;
-    private javax.swing.JLabel jLabel5;
     private javax.swing.JLabel jLabel6;
     private javax.swing.JPanel jPanel2;
     private javax.swing.JLabel lb_nombreCoordinador;
