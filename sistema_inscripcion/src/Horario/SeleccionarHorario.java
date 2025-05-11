@@ -4,29 +4,20 @@
  */
 package Horario;
 
-import alumno.*;
-import com.itextpdf.text.DocumentException;
+
 import conexion.Conexion;
-import coordinador.*;
-import java.awt.Dimension;
 import java.awt.Image;
 import java.awt.Toolkit;
-import java.awt.event.ComponentAdapter;
-import java.awt.event.ComponentEvent;
-import java.io.File;
-import java.io.FileNotFoundException;
-import java.io.IOException;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.time.LocalDate;
 import java.time.LocalTime;
+import java.util.ArrayList;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.swing.ImageIcon;
-import javax.swing.JFileChooser;
 import javax.swing.JOptionPane;
-import javax.swing.SwingUtilities;
 import javax.swing.table.DefaultTableModel;
 
 /**
@@ -41,6 +32,10 @@ public class SeleccionarHorario extends javax.swing.JFrame {
     private String numControl;
     private LocalDate fechaInicioSesion;
     private LocalTime horaInicioSesion;
+    
+    //VARIABLES PARA ALMACENAR LAS MATERIAS SELECCIONADAS
+    private ArrayList<String> materias_seleccionadas = new ArrayList<String>();
+    private ArrayList<String> horarios_seleccionados = new ArrayList<String>();
    
     public SeleccionarHorario(String numControl,LocalDate fechaInicioSesion, LocalTime horaInicioSesion) throws SQLException {
         //INICIALIZAR VARIABLES PARA LA BITACORAs
@@ -113,7 +108,6 @@ public class SeleccionarHorario extends javax.swing.JFrame {
     private void mostrarHorarios(String semestre) throws SQLException {
         String sql = "SELECT \n"
                 + "	g.id_grupo,\n"
-                + "    -- ... lo demás igual\n"
                 + "    g.nombre_grupo AS grupo,\n"
                 + "    g.salon,\n"
                 + "    g.ciclo_escolar,\n"
@@ -157,6 +151,20 @@ public class SeleccionarHorario extends javax.swing.JFrame {
         tabla_horarios.setModel(modelo);
     }
     
+    private void registrarMateria(int id_grupo) throws SQLException{
+        String sql = "INSERT INTO `alumno_grupo` (`num_control`, `id_grupo`) VALUES (?, ?)";
+        
+        PreparedStatement psm = cx.conectar().prepareStatement(sql);
+        psm.setString(1, this.numControl);
+        psm.setInt(2, id_grupo);
+        
+        int filas_insertadas = psm.executeUpdate();
+        //Si se logró hacer el registro
+        if(filas_insertadas > 0){
+            JOptionPane.showMessageDialog(null, "Materia cargada con exito", "Materia cargada", JOptionPane.WARNING_MESSAGE);
+        }
+    }
+    
     /**
      * This method is called from within the constructor to initialize the form.
      * WARNING: Do NOT modify this code. The content of this method is always
@@ -174,6 +182,7 @@ public class SeleccionarHorario extends javax.swing.JFrame {
         lb_nombreAlumno = new javax.swing.JLabel();
         jScrollPane2 = new javax.swing.JScrollPane();
         tabla_horarios = new javax.swing.JTable();
+        btn_seleccionarMateria = new javax.swing.JButton();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
         setBackground(new java.awt.Color(255, 255, 255));
@@ -202,12 +211,12 @@ public class SeleccionarHorario extends javax.swing.JFrame {
         titulo.setFont(new java.awt.Font("Segoe UI", 1, 36)); // NOI18N
         titulo.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
         titulo.setText("Selección de materias");
-        jPanel2.add(titulo, new org.netbeans.lib.awtextra.AbsoluteConstraints(310, 30, 580, 50));
+        jPanel2.add(titulo, new org.netbeans.lib.awtextra.AbsoluteConstraints(310, 10, 580, 50));
 
         lb_nombreAlumno.setFont(new java.awt.Font("Segoe UI", 1, 18)); // NOI18N
         lb_nombreAlumno.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
         lb_nombreAlumno.setText("jLabel6");
-        jPanel2.add(lb_nombreAlumno, new org.netbeans.lib.awtextra.AbsoluteConstraints(130, 90, 970, 50));
+        jPanel2.add(lb_nombreAlumno, new org.netbeans.lib.awtextra.AbsoluteConstraints(130, 60, 970, 50));
 
         tabla_horarios.setFont(new java.awt.Font("Segoe UI", 0, 14)); // NOI18N
         tabla_horarios.setModel(new javax.swing.table.DefaultTableModel(
@@ -228,9 +237,22 @@ public class SeleccionarHorario extends javax.swing.JFrame {
         });
         tabla_horarios.setSelectionMode(javax.swing.ListSelectionModel.SINGLE_SELECTION);
         tabla_horarios.getTableHeader().setReorderingAllowed(false);
+        tabla_horarios.addFocusListener(new java.awt.event.FocusAdapter() {
+            public void focusGained(java.awt.event.FocusEvent evt) {
+                tabla_horariosFocusGained(evt);
+            }
+        });
         jScrollPane2.setViewportView(tabla_horarios);
 
-        jPanel2.add(jScrollPane2, new org.netbeans.lib.awtextra.AbsoluteConstraints(20, 170, 1150, 330));
+        jPanel2.add(jScrollPane2, new org.netbeans.lib.awtextra.AbsoluteConstraints(20, 130, 1150, 260));
+
+        btn_seleccionarMateria.setText("Agregar grupo");
+        btn_seleccionarMateria.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btn_seleccionarMateriaActionPerformed(evt);
+            }
+        });
+        jPanel2.add(btn_seleccionarMateria, new org.netbeans.lib.awtextra.AbsoluteConstraints(500, 410, 170, 40));
 
         jScrollPane1.setViewportView(jPanel2);
 
@@ -276,6 +298,43 @@ public class SeleccionarHorario extends javax.swing.JFrame {
             this.setDefaultCloseOperation(this.DO_NOTHING_ON_CLOSE);
         }
     }//GEN-LAST:event_formWindowClosing
+
+    private void btn_seleccionarMateriaActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btn_seleccionarMateriaActionPerformed
+        int fila = tabla_horarios.getSelectedRow();
+        if (fila != -1) {
+            String materia_nombre = tabla_horarios.getValueAt(fila, 3).toString(); // nombre de la materia
+            Object id_grupo = tabla_horarios.getValueAt(fila, 0);
+            String hora_materia = tabla_horarios.getValueAt(fila, 5).toString();
+            
+            if (materias_seleccionadas.contains(materia_nombre)) { //si la  materia ya esta seleccionada
+                JOptionPane.showMessageDialog(null, "Ya tiene seleccionada esta materia", "Materia no cargada", JOptionPane.WARNING_MESSAGE);
+                return;
+            }
+            if(horarios_seleccionados.contains(hora_materia)){ // si la materia tiene la misma hora de inicio
+                JOptionPane.showMessageDialog(null, "Ya tiene seleccionada esta materia", "Materia no cargada", JOptionPane.WARNING_MESSAGE);
+                return;
+            }
+            //Agregar las materias a las listas            materias_seleccionadas.add(materia_nombre);
+            horarios_seleccionados.add(hora_materia);
+            System.out.println("Materia seleccionada: " + materia_nombre);
+            System.out.println("Hora elegida: " + hora_materia);
+            
+            try {
+                //Registrar a alumno en la BD
+                registrarMateria((int) id_grupo);
+            } catch (SQLException ex) {
+                Logger.getLogger(SeleccionarHorario.class.getName()).log(Level.SEVERE, null, ex);
+            }
+            
+        } else {
+            JOptionPane.showMessageDialog(null, "Debe seleccionar un grupo", "Materia no cargada", JOptionPane.WARNING_MESSAGE);
+        }
+    }//GEN-LAST:event_btn_seleccionarMateriaActionPerformed
+
+    private void tabla_horariosFocusGained(java.awt.event.FocusEvent evt) {//GEN-FIRST:event_tabla_horariosFocusGained
+        //Validar que no haya seleccionado esa materia
+        
+    }//GEN-LAST:event_tabla_horariosFocusGained
 
     /**
      * @param args the command line arguments
@@ -324,6 +383,7 @@ public class SeleccionarHorario extends javax.swing.JFrame {
     }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
+    private javax.swing.JButton btn_seleccionarMateria;
     private javax.swing.JPanel jPanel1;
     private javax.swing.JPanel jPanel2;
     private javax.swing.JScrollPane jScrollPane1;

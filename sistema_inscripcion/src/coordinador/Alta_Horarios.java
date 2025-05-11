@@ -5,20 +5,12 @@
 package coordinador;
 
 import bitacora.BitacoraPDF;
-import com.itextpdf.text.DocumentException;
-import com.mysql.cj.xdevapi.Statement;
-import maestro.*;
 import conexion.Conexion;
-import coordinador.*;
-import java.awt.Dimension;
 import java.awt.Image;
 import java.awt.Toolkit;
 import java.awt.event.ComponentAdapter;
 import java.awt.event.ComponentEvent;
 import java.awt.event.ItemEvent;
-import java.io.File;
-import java.io.FileNotFoundException;
-import java.io.IOException;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -30,9 +22,7 @@ import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.swing.ImageIcon;
-import javax.swing.JFileChooser;
 import javax.swing.JOptionPane;
-import javax.swing.SwingUtilities;
 import org.jdesktop.swingx.autocomplete.AutoCompleteDecorator;
 
 /**
@@ -117,7 +107,7 @@ public class Alta_Horarios extends javax.swing.JFrame {
         AutoCompleteDecorator.decorate(entrada_rfcDocente);
     }
     
-    private void mostrarDatosDocente(String toString) throws SQLException {
+    private void mostrarDatosDocente() throws SQLException {
         String sql = "SELECT nombres, apellido_paterno, apellido_materno FROM docente WHERE rfc = ?";
         
         PreparedStatement psmt = cx.conectar().prepareStatement(sql);
@@ -174,6 +164,20 @@ public class Alta_Horarios extends javax.swing.JFrame {
         }
     }
     
+    private boolean altaMaestroGrupo(int id_grupo) throws SQLException{
+        String sql = "INSERT INTO `maestro_grupo` (`rfc`, `id_grupo`, `id_materia`) VALUES (?, ?, ?)";
+        
+        PreparedStatement psmt = cx.conectar().prepareStatement(sql);
+        
+        psmt.setString(1, entrada_rfcDocente.getSelectedItem().toString());
+        psmt.setInt(2, id_grupo);
+        psmt.setString(3, obtenerIdMateria(entrada_materia.getSelectedItem().toString()));
+        
+        int filas_insertadas = psmt.executeUpdate();
+        
+        return filas_insertadas >0;
+    }
+    
     private void altaHorario(Time horaInicio, Time horaFin) throws SQLException {
         String sql = "INSERT INTO `horario` (`id_grupo`, `rfc`, `hora_inicio`, `hora_fin`, `id_materia`) VALUES (?, ?, ?, ?, ?)";
 
@@ -188,6 +192,11 @@ public class Alta_Horarios extends javax.swing.JFrame {
 
         //Si se crea el horario
         if (filas_insertadas > 0) {
+            //Crear el grupo maestro
+            if(!altaMaestroGrupo(ObtenerIdGrupo())){//sino se logra insertar en la tabla grupo maestro
+                JOptionPane.showMessageDialog(null, "No se ha logrado crear el grupo", "Error a crear el grupo", JOptionPane.WARNING_MESSAGE);
+                return;
+            }
             //Si la materia es de 5 creditos
             if (obtenerCreditosMateria() == 5) {
                 //si el horario se carga correctamente
@@ -212,9 +221,8 @@ public class Alta_Horarios extends javax.swing.JFrame {
     }
     
     private boolean altaHorarioCuatroDias() throws SQLException {
-        String sql = "";
         //Si la materia es de 4 creditos insertar solo 4 dias a la semana
-        sql = "INSERT INTO `horario_dias` (`id_horario`, `dia`) VALUES (?, ?), (?, ?),"
+        String sql = "INSERT INTO `horario_dias` (`id_horario`, `dia`) VALUES (?, ?), (?, ?),"
                 + "(?,?), (?,?)";
 
         PreparedStatement pstm = cx.conectar().prepareStatement(sql);
@@ -586,7 +594,7 @@ public class Alta_Horarios extends javax.swing.JFrame {
         //Si se ha seleccionado un rfc
         if (evt.getStateChange() == ItemEvent.SELECTED) {
             try {
-                mostrarDatosDocente(entrada_rfcDocente.getSelectedItem().toString());
+                mostrarDatosDocente();
             } catch (SQLException ex) {
                 Logger.getLogger(Alta_Horarios.class.getName()).log(Level.SEVERE, null, ex);
             }

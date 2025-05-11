@@ -38,6 +38,7 @@ public class MenuAlumno extends javax.swing.JFrame {
     private String numControl;
     private LocalDate fechaInicioSesion;
     private LocalTime horaInicioSesion;
+    private String semestre;
    
     public MenuAlumno(String numControl,LocalDate fechaInicioSesion, LocalTime horaInicioSesion) throws SQLException {
         //INICIALIZAR VARIABLES PARA LA BITACORAs
@@ -71,7 +72,7 @@ public class MenuAlumno extends javax.swing.JFrame {
 
     private void cargarDatos_alumno() throws SQLException {
         // Seleccionar los datos del profesor
-        String consulta = "SELECT nombres, apellido_paterno, apellido_materno FROM alumno WHERE num_control = ?";
+        String consulta = "SELECT nombres, apellido_paterno, apellido_materno, semestre FROM alumno WHERE num_control = ?";
         PreparedStatement ps = cx.conectar().prepareStatement(consulta);
         ps.setString(1, this.numControl); // Asegúrate de asignar el valor del RFC
         ResultSet rs = ps.executeQuery();
@@ -80,6 +81,7 @@ public class MenuAlumno extends javax.swing.JFrame {
         if (rs.next()) {
             String nombreCompleto = rs.getString("nombres") + " " + rs.getString("apellido_paterno") + " " + rs.getString("apellido_materno");
             lb_nombreAlumno.setText("<html> <center>"+nombreCompleto+"</center> </html>");
+            this.semestre = rs.getString("semestre");
         }
     }
 
@@ -92,8 +94,7 @@ public class MenuAlumno extends javax.swing.JFrame {
         ResultSet rs = pstm.executeQuery();
 
         if (rs.next()) {
-            //Si no tine la ine registrada
-            
+            //Si no tine la ine registrada          
             return rs.getString("ine") == null;
         }
 
@@ -359,6 +360,11 @@ public class MenuAlumno extends javax.swing.JFrame {
 
     private void btn_elegirMateriasMousePressed(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_btn_elegirMateriasMousePressed
        if(SwingUtilities.isLeftMouseButton(evt)){
+          //Validar si el alumno es de primer semestre
+           if(this.semestre.equals("Primero")){
+               JOptionPane.showMessageDialog(null, "Su coordinador es el encargado de precargar su horario", "Sin acceso a esta seción ", JOptionPane.WARNING_MESSAGE);
+               return;
+           }
            try {
                //si cuenta con aduedo de documento
                if(adeudoDocumento()){
