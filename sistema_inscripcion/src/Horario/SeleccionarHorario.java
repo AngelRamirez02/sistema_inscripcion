@@ -5,6 +5,7 @@
 package Horario;
 
 
+import alumno.MenuAlumno;
 import conexion.Conexion;
 import java.awt.Image;
 import java.awt.Toolkit;
@@ -183,6 +184,7 @@ public class SeleccionarHorario extends javax.swing.JFrame {
         jScrollPane2 = new javax.swing.JScrollPane();
         tabla_horarios = new javax.swing.JTable();
         btn_seleccionarMateria = new javax.swing.JButton();
+        btn_regresar = new javax.swing.JButton();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
         setBackground(new java.awt.Color(255, 255, 255));
@@ -253,6 +255,14 @@ public class SeleccionarHorario extends javax.swing.JFrame {
             }
         });
         jPanel2.add(btn_seleccionarMateria, new org.netbeans.lib.awtextra.AbsoluteConstraints(500, 410, 170, 40));
+
+        btn_regresar.setText("Regresar");
+        btn_regresar.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btn_regresarActionPerformed(evt);
+            }
+        });
+        jPanel2.add(btn_regresar, new org.netbeans.lib.awtextra.AbsoluteConstraints(40, 20, 100, 40));
 
         jScrollPane1.setViewportView(jPanel2);
 
@@ -336,6 +346,16 @@ public class SeleccionarHorario extends javax.swing.JFrame {
         
     }//GEN-LAST:event_tabla_horariosFocusGained
 
+    private void btn_regresarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btn_regresarActionPerformed
+        try {
+            MenuAlumno ventana = new MenuAlumno(this.numControl, this.fechaInicioSesion, this.horaInicioSesion);
+            ventana.setVisible(true);
+            this.dispose();
+        } catch (SQLException ex) {
+            Logger.getLogger(SeleccionarHorario.class.getName()).log(Level.SEVERE, null, ex);
+        }
+    }//GEN-LAST:event_btn_regresarActionPerformed
+
     /**
      * @param args the command line arguments
      */
@@ -383,6 +403,7 @@ public class SeleccionarHorario extends javax.swing.JFrame {
     }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
+    private javax.swing.JButton btn_regresar;
     private javax.swing.JButton btn_seleccionarMateria;
     private javax.swing.JPanel jPanel1;
     private javax.swing.JPanel jPanel2;

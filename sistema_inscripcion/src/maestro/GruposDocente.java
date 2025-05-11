@@ -2,8 +2,9 @@
  * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
  * Click nbfs://nbhost/SystemFileSystem/Templates/GUIForms/JFrame.java to edit this template
  */
-package coordinador;
+package maestro;
 
+import coordinador.*;
 import Horario.ListasGrupos;
 import bitacora.BitacoraPDF;
 import com.itextpdf.text.DocumentException;
@@ -18,6 +19,8 @@ import java.io.IOException;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.time.LocalDate;
+import java.time.LocalTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.logging.Level;
@@ -31,7 +34,7 @@ import javax.swing.table.DefaultTableModel;
  *
  * @author ar275
  */
-public class GruposCoordinador extends javax.swing.JFrame {
+public class GruposDocente extends javax.swing.JFrame {
    //VARIABLE DE CONEXION A DB
     Conexion cx = new Conexion();
    
@@ -42,7 +45,7 @@ public class GruposCoordinador extends javax.swing.JFrame {
    public List<ListasGrupos> listaAlumnos = new ArrayList<ListasGrupos>();
    ListasGrupos alumno;
    
-    public GruposCoordinador(String rfc) throws SQLException {
+    public GruposDocente(String rfc) throws SQLException {
         this.rfc = rfc;
         
         initComponents();
@@ -106,7 +109,7 @@ public class GruposCoordinador extends javax.swing.JFrame {
     
     private void mostrarHorarios() throws SQLException {
         String sql = "SELECT \n"
-                + "	g.id_grupo,\n"
+                + "    g.id_grupo,\n"
                 + "    g.nombre_grupo AS grupo,\n"
                 + "    g.salon,\n"
                 + "    g.ciclo_escolar,\n"
@@ -120,19 +123,18 @@ public class GruposCoordinador extends javax.swing.JFrame {
                 + "JOIN docente d ON h.rfc = d.rfc\n"
                 + "JOIN horario_dias hd ON h.id_horario = hd.id_horario\n"
                 + "JOIN materia m ON h.id_materia = m.id_materia\n"
-                + "GROUP BY g.salon, m.nombre_materia, profesor, h.hora_inicio, h.hora_fin";
-        
-        //R
+                + "WHERE d.rfc = ?\n"
+                + "GROUP BY g.id_grupo, g.nombre_grupo, g.salon, g.ciclo_escolar, m.nombre_materia, profesor, h.hora_inicio, h.hora_fin";
+
         PreparedStatement ps = cx.conectar().prepareStatement(sql);
+        ps.setString(1, this.rfc);  // Establece el RFC del docente
         ResultSet rs = ps.executeQuery();
-        
-        //Arreglo de datos
+
         Object[] historial = new Object[8];
-        DefaultTableModel modelo;//modelo para la tabla
-        modelo = (DefaultTableModel) tabla_horarios.getModel();
+        DefaultTableModel modelo = (DefaultTableModel) tabla_horarios.getModel();
+        modelo.setRowCount(0);  // Limpiar tabla antes de agregar nuevas filas
 
         while (rs.next()) {
-            //se obtienen los datos de la tabla
             historial[0] = rs.getInt("id_grupo");
             historial[1] = rs.getString("grupo");
             historial[2] = rs.getString("salon");
@@ -141,11 +143,12 @@ public class GruposCoordinador extends javax.swing.JFrame {
             historial[5] = rs.getTime("hora_inicio");
             historial[6] = rs.getTime("hora_fin");
             historial[7] = rs.getString("dias");
-            
+
             modelo.addRow(historial);
         }
         tabla_horarios.setModel(modelo);
     }
+
     
     private void cargarListaAlumnos(int id_grupo) throws SQLException {
         listaAlumnos.clear();//limpiar la lista
@@ -273,7 +276,7 @@ public class GruposCoordinador extends javax.swing.JFrame {
                 btn_regresarActionPerformed(evt);
             }
         });
-        jPanel2.add(btn_regresar, new org.netbeans.lib.awtextra.AbsoluteConstraints(20, 30, -1, -1));
+        jPanel2.add(btn_regresar, new org.netbeans.lib.awtextra.AbsoluteConstraints(10, 10, 100, 30));
 
         panel_contenido.setViewportView(jPanel2);
 
@@ -303,7 +306,7 @@ public class GruposCoordinador extends javax.swing.JFrame {
             try {
                 cargarListaAlumnos(id_grupo);
             } catch (SQLException ex) {
-                Logger.getLogger(GruposCoordinador.class.getName()).log(Level.SEVERE, null, ex);
+                Logger.getLogger(GruposDocente.class.getName()).log(Level.SEVERE, null, ex);
             }
             
             JFileChooser fileChooser = new JFileChooser();
@@ -319,9 +322,9 @@ public class GruposCoordinador extends javax.swing.JFrame {
                 try {
                     alumno.generarListaGrupo(listaAlumnos, grupo, docente, materia, salon, hora_inicio, hora_fin, rutaCarpeta);
                 } catch (DocumentException ex) {
-                    Logger.getLogger(GruposCoordinador.class.getName()).log(Level.SEVERE, null, ex);
+                    Logger.getLogger(GruposDocente.class.getName()).log(Level.SEVERE, null, ex);
                 } catch (IOException ex) {
-                    Logger.getLogger(GruposCoordinador.class.getName()).log(Level.SEVERE, null, ex);
+                    Logger.getLogger(GruposDocente.class.getName()).log(Level.SEVERE, null, ex);
                 }
             }
 
@@ -331,14 +334,13 @@ public class GruposCoordinador extends javax.swing.JFrame {
     }//GEN-LAST:event_btn_seleccionarMateriaActionPerformed
 
     private void btn_regresarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btn_regresarActionPerformed
-       MenuCoordinador ventana;
         try {
-            ventana = new MenuCoordinador(rfc);
+            MenuProfesor ventana = new MenuProfesor(rfc, LocalDate.now(), LocalTime.now());
             ventana.setVisible(true);
-       this.dispose();
+            this.dispose();
         } catch (SQLException ex) {
-            Logger.getLogger(GruposCoordinador.class.getName()).log(Level.SEVERE, null, ex);
-        }   
+            Logger.getLogger(GruposDocente.class.getName()).log(Level.SEVERE, null, ex);
+        }
     }//GEN-LAST:event_btn_regresarActionPerformed
 
     /**
@@ -358,14 +360,30 @@ public class GruposCoordinador extends javax.swing.JFrame {
                 }
             }
         } catch (ClassNotFoundException ex) {
-            java.util.logging.Logger.getLogger(GruposCoordinador.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+            java.util.logging.Logger.getLogger(GruposDocente.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
         } catch (InstantiationException ex) {
-            java.util.logging.Logger.getLogger(GruposCoordinador.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+            java.util.logging.Logger.getLogger(GruposDocente.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
         } catch (IllegalAccessException ex) {
-            java.util.logging.Logger.getLogger(GruposCoordinador.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+            java.util.logging.Logger.getLogger(GruposDocente.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
         } catch (javax.swing.UnsupportedLookAndFeelException ex) {
-            java.util.logging.Logger.getLogger(GruposCoordinador.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+            java.util.logging.Logger.getLogger(GruposDocente.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
         }
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
         //</editor-fold>
         //</editor-fold>
         //</editor-fold>
@@ -387,9 +405,9 @@ public class GruposCoordinador extends javax.swing.JFrame {
         java.awt.EventQueue.invokeLater(new Runnable() {
             public void run() {
                 try {
-                    new GruposCoordinador(null).setVisible(true);
+                    new GruposDocente(null).setVisible(true);
                 } catch (SQLException ex) {
-                    Logger.getLogger(GruposCoordinador.class.getName()).log(Level.SEVERE, null, ex);
+                    Logger.getLogger(GruposDocente.class.getName()).log(Level.SEVERE, null, ex);
                 }
             }
         });

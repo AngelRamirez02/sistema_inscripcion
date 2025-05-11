@@ -144,6 +144,11 @@ public class MenuProfesor extends javax.swing.JFrame {
         jLabel1.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
         jLabel1.setText("Visualizar grupos");
         jLabel1.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
+        jLabel1.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mousePressed(java.awt.event.MouseEvent evt) {
+                jLabel1MousePressed(evt);
+            }
+        });
         panelRound1.add(jLabel1, new org.netbeans.lib.awtextra.AbsoluteConstraints(0, 0, 500, 60));
 
         jPanel2.add(panelRound1, new org.netbeans.lib.awtextra.AbsoluteConstraints(630, 30, 500, 60));
@@ -324,6 +329,18 @@ public class MenuProfesor extends javax.swing.JFrame {
         }
         this.setDefaultCloseOperation(this.DO_NOTHING_ON_CLOSE);
     }//GEN-LAST:event_formWindowClosing
+
+    private void jLabel1MousePressed(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jLabel1MousePressed
+       if(SwingUtilities.isLeftMouseButton(evt)){
+           try {
+               GruposDocente ventana = new GruposDocente(this.rfc);
+               ventana.setVisible(true);
+               this.dispose();
+           } catch (SQLException ex) {
+               Logger.getLogger(MenuProfesor.class.getName()).log(Level.SEVERE, null, ex);
+           }
+       }
+    }//GEN-LAST:event_jLabel1MousePressed
 
     /**
      * @param args the command line arguments

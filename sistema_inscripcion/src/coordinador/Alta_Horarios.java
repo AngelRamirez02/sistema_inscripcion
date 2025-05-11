@@ -372,6 +372,7 @@ public class Alta_Horarios extends javax.swing.JFrame {
         btn_guardarHorario = new javax.swing.JButton();
         jLabel14 = new javax.swing.JLabel();
         jLabel15 = new javax.swing.JLabel();
+        btn_regresar = new javax.swing.JButton();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
         setBackground(new java.awt.Color(255, 255, 255));
@@ -508,6 +509,14 @@ public class Alta_Horarios extends javax.swing.JFrame {
         jLabel15.setText("DOCENTE: ");
         jPanel2.add(jLabel15, new org.netbeans.lib.awtextra.AbsoluteConstraints(20, 350, 150, 30));
 
+        btn_regresar.setText("Regresar");
+        btn_regresar.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btn_regresarActionPerformed(evt);
+            }
+        });
+        jPanel2.add(btn_regresar, new org.netbeans.lib.awtextra.AbsoluteConstraints(40, 20, 130, 30));
+
         panel_contenido.setViewportView(jPanel2);
 
         fondo.add(panel_contenido);
@@ -601,6 +610,16 @@ public class Alta_Horarios extends javax.swing.JFrame {
         }
     }//GEN-LAST:event_entrada_rfcDocenteItemStateChanged
 
+    private void btn_regresarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btn_regresarActionPerformed
+        try {
+            MenuCoordinador ventana = new MenuCoordinador(this.rfc);
+            ventana.setVisible(true);
+            this.dispose();
+        } catch (SQLException ex) {
+            Logger.getLogger(Alta_Horarios.class.getName()).log(Level.SEVERE, null, ex);
+        }
+    }//GEN-LAST:event_btn_regresarActionPerformed
+
     /**
      * @param args the command line arguments
      */
@@ -659,6 +678,7 @@ public class Alta_Horarios extends javax.swing.JFrame {
     private javax.swing.JTextField apellidoMaterno_docente;
     private javax.swing.JTextField apellidoPaterno_docente;
     private javax.swing.JButton btn_guardarHorario;
+    private javax.swing.JButton btn_regresar;
     private com.toedter.calendar.DateUtil dateUtil1;
     private javax.swing.JTextField entrada_cicloEscolar;
     private javax.swing.JTextField entrada_horaFin;

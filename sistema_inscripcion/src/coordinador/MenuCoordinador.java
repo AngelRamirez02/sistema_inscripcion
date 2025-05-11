@@ -249,7 +249,7 @@ public class MenuCoordinador extends javax.swing.JFrame {
         btn_horarios.setFont(new java.awt.Font("Segoe UI", 1, 24)); // NOI18N
         btn_horarios.setForeground(new java.awt.Color(51, 51, 255));
         btn_horarios.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
-        btn_horarios.setText("Horarios");
+        btn_horarios.setText("Cargar horarios");
         btn_horarios.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
         btn_horarios.addMouseListener(new java.awt.event.MouseAdapter() {
             public void mousePressed(java.awt.event.MouseEvent evt) {
