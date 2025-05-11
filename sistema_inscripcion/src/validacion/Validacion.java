@@ -50,6 +50,13 @@ public class Validacion {
         Matcher matcher = pattern.matcher(num);
         return matcher.matches();//retorna el resultado de evaluar el correo con la expresion regular
     }
+    
+    public boolean validarCalif(String calif){
+        String regex = "^(100|[1-9]?[0-9])$";
+        Pattern pattern = Pattern.compile(regex);
+        Matcher matcher = pattern.matcher(calif);
+        return matcher.matches();//retorna el resultado de evaluar el correo con la expresion regular
+    }
 
     /**
     * Valida si una cadena de texto corresponde a un número de teléfono válido.

@@ -122,6 +122,7 @@ public class MenuProfesor extends javax.swing.JFrame {
 
         getContentPane().add(jPanel1, new org.netbeans.lib.awtextra.AbsoluteConstraints(0, 0, 1200, 90));
 
+        jScrollPane1.setBackground(new java.awt.Color(255, 255, 255));
         jScrollPane1.setHorizontalScrollBarPolicy(javax.swing.ScrollPaneConstants.HORIZONTAL_SCROLLBAR_NEVER);
 
         jPanel2.setBackground(new java.awt.Color(255, 255, 255));
@@ -181,6 +182,11 @@ public class MenuProfesor extends javax.swing.JFrame {
         jLabel4.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
         jLabel4.setText("Capturar calificaciones");
         jLabel4.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
+        jLabel4.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mousePressed(java.awt.event.MouseEvent evt) {
+                jLabel4MousePressed(evt);
+            }
+        });
         panelRound4.add(jLabel4, new org.netbeans.lib.awtextra.AbsoluteConstraints(0, 0, 500, 60));
 
         jPanel2.add(panelRound4, new org.netbeans.lib.awtextra.AbsoluteConstraints(630, 140, 500, 60));
@@ -320,6 +326,7 @@ public class MenuProfesor extends javax.swing.JFrame {
                 int rowsInserted = ps.executeUpdate();
                 if (rowsInserted > 0) {
                     System.out.println("Historial guardado");
+                    this.dispose();
                 }
             } catch (SQLException ex) {
                 Logger.getLogger(MenuAlumno.class.getName()).log(Level.SEVERE, null, ex);
@@ -341,6 +348,18 @@ public class MenuProfesor extends javax.swing.JFrame {
            }
        }
     }//GEN-LAST:event_jLabel1MousePressed
+
+    private void jLabel4MousePressed(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jLabel4MousePressed
+      if(SwingUtilities.isLeftMouseButton(evt)){
+          try {
+              GruposDocenteCalif ventana = new GruposDocenteCalif(this.rfc);
+              ventana.setVisible(true);
+              this.dispose();
+          } catch (SQLException ex) {
+              Logger.getLogger(MenuProfesor.class.getName()).log(Level.SEVERE, null, ex);
+          }
+      }
+    }//GEN-LAST:event_jLabel4MousePressed
 
     /**
      * @param args the command line arguments
