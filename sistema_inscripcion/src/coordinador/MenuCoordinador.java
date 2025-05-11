@@ -142,7 +142,7 @@ public class MenuCoordinador extends javax.swing.JFrame {
         panelRound3 = new paneles.PanelRound();
         jLabel3 = new javax.swing.JLabel();
         panelRound4 = new paneles.PanelRound();
-        jLabel4 = new javax.swing.JLabel();
+        btn_grupos = new javax.swing.JLabel();
         panelRound5 = new paneles.PanelRound();
         btn_horarios = new javax.swing.JLabel();
         btn_cerrar_sesion = new paneles.PanelRound();
@@ -194,8 +194,8 @@ public class MenuCoordinador extends javax.swing.JFrame {
         btn_alumnos.setText("Alumnos");
         btn_alumnos.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
         btn_alumnos.addMouseListener(new java.awt.event.MouseAdapter() {
-            public void mouseClicked(java.awt.event.MouseEvent evt) {
-                btn_alumnosMouseClicked(evt);
+            public void mousePressed(java.awt.event.MouseEvent evt) {
+                btn_alumnosMousePressed(evt);
             }
         });
         panelRound1.add(btn_alumnos, new org.netbeans.lib.awtextra.AbsoluteConstraints(0, 0, 500, 60));
@@ -225,12 +225,17 @@ public class MenuCoordinador extends javax.swing.JFrame {
         panelRound4.setRoundTopRight(20);
         panelRound4.setLayout(new org.netbeans.lib.awtextra.AbsoluteLayout());
 
-        jLabel4.setFont(new java.awt.Font("Segoe UI", 1, 24)); // NOI18N
-        jLabel4.setForeground(new java.awt.Color(51, 51, 255));
-        jLabel4.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
-        jLabel4.setText("Profesores");
-        jLabel4.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
-        panelRound4.add(jLabel4, new org.netbeans.lib.awtextra.AbsoluteConstraints(0, 0, 500, 60));
+        btn_grupos.setFont(new java.awt.Font("Segoe UI", 1, 24)); // NOI18N
+        btn_grupos.setForeground(new java.awt.Color(51, 51, 255));
+        btn_grupos.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
+        btn_grupos.setText("Grupos");
+        btn_grupos.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
+        btn_grupos.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mousePressed(java.awt.event.MouseEvent evt) {
+                btn_gruposMousePressed(evt);
+            }
+        });
+        panelRound4.add(btn_grupos, new org.netbeans.lib.awtextra.AbsoluteConstraints(0, 0, 500, 60));
 
         jPanel2.add(panelRound4, new org.netbeans.lib.awtextra.AbsoluteConstraints(630, 120, 500, 60));
 
@@ -325,18 +330,6 @@ public class MenuCoordinador extends javax.swing.JFrame {
         }
     }//GEN-LAST:event_btn_cerrar_sesionMousePressed
 
-    private void btn_alumnosMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_btn_alumnosMouseClicked
-        if(SwingUtilities.isLeftMouseButton(evt)){
-            try {
-                SeccionAlumnos ventana = new SeccionAlumnos(this.rfc);
-                ventana.setVisible(true);
-                this.dispose();
-            } catch (SQLException ex) {
-                Logger.getLogger(MenuCoordinador.class.getName()).log(Level.SEVERE, null, ex);
-            }
-        }
-    }//GEN-LAST:event_btn_alumnosMouseClicked
-
     private void btn_bitacoraMousePressed(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_btn_bitacoraMousePressed
         //generar pdf de los registros
         if (SwingUtilities.isLeftMouseButton(evt)) {
@@ -383,6 +376,30 @@ public class MenuCoordinador extends javax.swing.JFrame {
 
         }
     }//GEN-LAST:event_btn_horariosMousePressed
+
+    private void btn_gruposMousePressed(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_btn_gruposMousePressed
+        if(SwingUtilities.isLeftMouseButton(evt)){ //si da click izquierdo
+            try {
+                GruposCoordinador ventana = new GruposCoordinador(this.rfc);
+                ventana.setVisible(true);
+                this.dispose();
+            } catch (SQLException ex) {
+                Logger.getLogger(MenuCoordinador.class.getName()).log(Level.SEVERE, null, ex);
+            }
+        }
+    }//GEN-LAST:event_btn_gruposMousePressed
+
+    private void btn_alumnosMousePressed(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_btn_alumnosMousePressed
+        if(SwingUtilities.isLeftMouseButton(evt)){
+            try {
+                SeccionAlumnos ventana = new SeccionAlumnos(this.rfc);
+                ventana.setVisible(true);
+                this.dispose();
+            } catch (SQLException ex) {
+                Logger.getLogger(MenuCoordinador.class.getName()).log(Level.SEVERE, null, ex);
+            }
+        }
+    }//GEN-LAST:event_btn_alumnosMousePressed
 
     /**
      * @param args the command line arguments
@@ -434,12 +451,12 @@ public class MenuCoordinador extends javax.swing.JFrame {
     private javax.swing.JLabel btn_alumnos;
     private paneles.PanelRound btn_bitacora;
     private paneles.PanelRound btn_cerrar_sesion;
+    private javax.swing.JLabel btn_grupos;
     private javax.swing.JLabel btn_horarios;
     private javax.swing.JPanel fondo;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel2;
     private javax.swing.JLabel jLabel3;
-    private javax.swing.JLabel jLabel4;
     private javax.swing.JLabel jLabel6;
     private javax.swing.JPanel jPanel2;
     private javax.swing.JLabel lb_nombreCoordinador;
